@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LMS Application
 
-## Getting Started
+Proyek ini adalah sebuah aplikasi Learning Management System (LMS) komprehensif yang dirancang untuk memfasilitasi kegiatan belajar mengajar dengan peran pengguna untuk Admin, Guru, dan Siswa.
 
-First, run the development server:
+## Teknologi yang Digunakan
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Aplikasi ini dibangun menggunakan arsitektur modern yang memisahkan antara frontend dan backend:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Frontend (Web):**
+  - [Next.js](https://nextjs.org/) (React Framework)
+  - TypeScript
+  - Tailwind CSS
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Backend (API):**
+  - [Node.js](https://nodejs.org/) dengan [Express.js](https://expressjs.com/)
+  - TypeScript
+  - MongoDB dengan [Mongoose](https://mongoosejs.com/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Struktur Direktori
 
-## Learn More
+- `/src`: Berisi kode untuk Frontend Next.js (halaman untuk admin, guru, komponen UI, dll).
+- `/backend`: Berisi kode untuk Backend Node.js API (controller, model Mongoose, routing, middleware).
 
-To learn more about Next.js, take a look at the following resources:
+## Cara Menjalankan Aplikasi Secara Lokal
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 1. Menjalankan Backend
+1. Masuk ke direktori backend:
+   ```bash
+   cd backend
+   ```
+2. Instal dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy file konfigurasi environment (jika ada file contoh `.env.example`, silakan copy menjadi `.env` dan atur URI MongoDB).
+4. Jalankan server backend (development mode):
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Menjalankan Frontend
+1. Buka terminal baru dan masuk ke direktori utama proyek:
+   ```bash
+   cd lms-dafiand
+   ```
+2. Instal dependencies:
+   ```bash
+   npm install
+   ```
+3. Jalankan server frontend:
+   ```bash
+   npm run dev
+   ```
+4. Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
