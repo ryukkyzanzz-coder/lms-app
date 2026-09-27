@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopHeader from './TopHeader';
 
-export default function AppShell({ children, role = 'guru' }: { children: React.ReactNode, role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' }) {
+export default function AppShell({ children, role = 'guru' }: { children: React.ReactNode, role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin' }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (

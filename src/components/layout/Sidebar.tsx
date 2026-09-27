@@ -21,6 +21,13 @@ import {
   Target,
   Calendar,
   CheckSquare,
+  Building2,
+  Users,
+  GraduationCap,
+  Award,
+  ArrowRightLeft,
+  FolderTree,
+  CheckCircle2,
   LucideIcon
 } from 'lucide-react';
 
@@ -31,6 +38,22 @@ type NavItem = {
   icon?: LucideIcon;
   badge?: string;
 };
+
+const adminNavItems: NavItem[] = [
+  { name: 'Beranda Admin', path: '/admin/dashboard', icon: LayoutDashboard },
+  { type: 'group', name: 'Data Akademik' },
+  { name: 'Siswa', path: '/admin/siswa', icon: Users },
+  { name: 'Guru', path: '/admin/guru', icon: Award },
+  { name: 'Kelas', path: '/admin/kelas', icon: DoorOpen },
+  { name: 'Mata Pelajaran', path: '/admin/mapel', icon: BookOpen },
+  { name: 'Pengampu Mata Pelajaran', path: '/admin/pengampu-mapel', icon: ClipboardCheck },
+  { name: 'Penempatan Siswa', path: '/admin/penempatan-siswa', icon: ArrowRightLeft },
+  { type: 'group', name: 'Pembelajaran' },
+  { name: 'Jadwal Pelajaran', path: '/admin/jadwal-pelajaran', icon: CalendarCheck },
+  { name: 'Struktur Kurikulum', path: '/admin/struktur-kurikulum', icon: FolderTree },
+  { type: 'group', name: 'Monitoring' },
+  { name: 'Status Akademik', path: '/admin/status-akademik', icon: CheckCircle2, badge: '100% Valid' },
+];
 
 const guruNavItems: NavItem[] = [
   { name: 'Beranda', path: '/guru/dashboard', icon: Home },
@@ -75,9 +98,27 @@ const kurikulumNavItems: NavItem[] = [
   { name: 'Semester', path: '/kurikulum/tahun-ajaran', icon: Calendar },
 ];
 
-export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: () => void, role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' }) {
+export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: () => void, role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin' }) {
   const pathname = usePathname();
-  const navItems = role === 'guru' ? guruNavItems : role === 'siswa' ? siswaNavItems : role === 'kepsek' ? kepsekNavItems : kurikulumNavItems;
+  const navItems = role === 'admin' 
+    ? adminNavItems 
+    : role === 'guru' 
+    ? guruNavItems 
+    : role === 'siswa' 
+    ? siswaNavItems 
+    : role === 'kepsek' 
+    ? kepsekNavItems 
+    : kurikulumNavItems;
+
+  const roleLabel = role === 'admin' 
+    ? 'Administrator' 
+    : role === 'guru' 
+    ? 'Guru' 
+    : role === 'siswa' 
+    ? 'Siswa' 
+    : role === 'kepsek' 
+    ? 'Kepala Sekolah' 
+    : 'Kurikulum';
 
   return (
     <aside className="h-full w-full bg-white border-r border-slate-200/60 flex flex-col justify-between select-none">
@@ -103,7 +144,7 @@ export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: ()
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
             <span className="font-body text-[11px] font-medium text-slate-500">Peran:</span>
             <span className="font-body text-[11px] font-semibold text-slate-900 bg-blue-100 px-1.5 py-0.5 rounded">
-              {role === 'guru' ? 'Guru' : role === 'siswa' ? 'Siswa' : role === 'kepsek' ? 'Kepala Sekolah' : 'Kurikulum'}
+              {roleLabel}
             </span>
           </div>
           <span className="font-body text-[11px] text-slate-400">v2.6</span>
@@ -121,11 +162,12 @@ export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: ()
             }
 
             const Icon = item.icon as React.ElementType;
-            const isActive = pathname?.startsWith(item.path as string) || (pathname === `/${role}` && item.path === `/${role}/dashboard`);
+            const targetPath = item.path?.split('#')[0].split('?')[0] as string;
+            const isActive = pathname === targetPath || (pathname?.startsWith(targetPath) && targetPath !== '/admin');
             
             return (
               <Link 
-                key={item.path} 
+                key={`${item.name}-${index}`} 
                 href={item.path as string}
                 onClick={onNavigate}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg font-body text-[13px] font-medium transition-colors ${
@@ -140,7 +182,7 @@ export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: ()
                 </div>
                 {item.badge && (
                   <span className={`font-body text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                    isActive ? "bg-white/20 text-white" : "bg-red-100 text-red-600"
+                    isActive ? "bg-white/20 text-white" : item.badge.includes('Valid') ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
                   }`}>
                     {item.badge}
                   </span>
@@ -164,7 +206,18 @@ export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: ()
           </Link>
         </nav>
 
-        {role === 'guru' ? (
+        {role === 'admin' ? (
+          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
+            <div className="w-9 h-9 rounded-full bg-blue-900 text-white flex items-center justify-center font-display text-sm font-semibold shrink-0">
+              BS
+            </div>
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="font-body text-xs font-semibold text-slate-900 truncate">Bambang Sudarmono, S.AP.</span>
+              <span className="font-body text-[10px] text-slate-500 truncate">NIP: 19780514 200501 1 003</span>
+              <span className="font-body text-[10px] font-medium text-blue-700 truncate">Kepala Tata Usaha</span>
+            </div>
+          </div>
+        ) : role === 'guru' ? (
           <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
               HS

@@ -20,10 +20,24 @@ interface TopHeaderProps {
   onOpenMobileMenu?: () => void;
   mobileMenuOpen?: boolean;
   setMobileMenuOpen?: (open: boolean) => void;
-  role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum';
+  role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin';
 }
 
 export default function TopHeader({ mobileMenuOpen, setMobileMenuOpen, role = 'guru' }: TopHeaderProps) {
+  const adminPlaceholder = role === 'admin' 
+    ? 'Cari kelas, siswa, guru, mapel...' 
+    : 'Cari kelas, siswa, atau tugas...';
+
+  const avatarName = role === 'admin'
+    ? 'Bambang+Sudarmono'
+    : role === 'guru' 
+    ? 'Hendra+Setiawan' 
+    : role === 'siswa' 
+    ? 'Rakha+Arkana' 
+    : role === 'kepsek' 
+    ? 'Wardoyo' 
+    : 'Ahmad+Hidayat';
+
   return (
     <header className="fixed top-0 left-0 lg:left-[260px] right-0 h-[60px] bg-white border-b border-slate-200/60 z-40 px-4 lg:px-6 flex items-center justify-between gap-4">
       
@@ -58,7 +72,7 @@ export default function TopHeader({ mobileMenuOpen, setMobileMenuOpen, role = 'g
           <input 
             type="text" 
             className="w-full h-9 pl-9 pr-3 bg-slate-50 border border-slate-200/60 rounded-md text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-900 focus:bg-white transition-colors"
-            placeholder="Cari kelas, siswa, atau tugas..." 
+            placeholder={adminPlaceholder} 
           />
         </div>
       </div>
@@ -80,7 +94,7 @@ export default function TopHeader({ mobileMenuOpen, setMobileMenuOpen, role = 'g
         
         <div className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-1 -mr-1 rounded-md transition-colors">
           <img 
-            src={`https://ui-avatars.com/api/?name=${role === 'guru' ? 'Hendra+Setiawan' : role === 'siswa' ? 'Rakha+Arkana' : role === 'kepsek' ? 'Wardoyo' : 'Ahmad+Hidayat'}&background=d5e3fd&color=1e3a8a`} 
+            src={`https://ui-avatars.com/api/?name=${avatarName}&background=d5e3fd&color=1e3a8a`} 
             alt="Profile" 
             className="w-7 h-7 rounded-full object-cover border border-slate-200"
           />
