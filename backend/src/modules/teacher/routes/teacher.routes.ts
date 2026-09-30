@@ -4,6 +4,8 @@ import { Role } from '../../core/model/User';
 import { 
   getMyProfile, 
   getMyClasses, 
+  getMyClassDetail,
+  getMyClassStudents,
   getMySubjects, 
   getMyAssignments,
   getMyDashboard,
@@ -21,6 +23,8 @@ router.use(requireRole(Role.GURU));
 router.get('/me', getMyProfile);
 router.get('/me/dashboard', getMyDashboard);
 router.get('/me/classes', getMyClasses);
+router.get('/me/classes/:kelasId', getMyClassDetail);
+router.get('/me/classes/:kelasId/students', getMyClassStudents);
 router.get('/me/subjects', getMySubjects);
 router.get('/me/assignments', getMyAssignments);
 

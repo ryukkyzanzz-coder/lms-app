@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import { Guru } from '../../core/model/Guru';
 import { Pengampu } from '../../core/model/Pengampu';
 import { Tugas } from '../../core/model/Tugas';
@@ -6,9 +7,10 @@ import { PengumpulanTugas } from '../../core/model/PengumpulanTugas';
 import { Bab } from '../../core/model/Bab';
 import { Materi } from '../../core/model/Materi';
 import { Pengumuman } from '../../core/model/Pengumuman';
+import { Kelas } from '../../core/model/Kelas';
+import { Siswa } from '../../core/model/Siswa';
 
 // Explicit model imports for Mongoose .populate() registration
-import '../../core/model/Kelas';
 import '../../core/model/MataPelajaran';
 import '../../core/model/TahunAjaran';
 import '../../core/model/Semester';
@@ -214,3 +216,170 @@ export const getTeacherStudentProgress = async (req: Request, res: Response, nex
     next(error);
   }
 };
+
+export const getMyClassDetail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { kelasId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(kelasId)) {
+      return next(new AppError('Format ID kelas tidak valid', 400, 'INVALID_ID'));
+    }
+
+    const guru = await Guru.findOne({ userId: req.user?.userId });
+    if (!guru) return next(new AppError('Guru profile not found', 404, 'NOT_FOUND'));
+
+    const kelas = await Kelas.findById(kelasId)
+      .populate('waliKelasId', 'nama nip')
+      .populate('tahunAjaranId', 'nama status')
+      .lean();
+
+    if (!kelas) {
+      return next(new AppError('Kelas tidak ditemukan', 404, 'NOT_FOUND'));
+    }
+
+    // Verify through the existing teaching assignment relationship
+    const assignments = await Pengampu.find({
+      guruId: guru._id,
+      kelasId: kelas._id,
+      status: 'Aktif',
+    })
+      .populate('mataPelajaranId')
+      .populate('semesterId')
+      .lean();
+
+    if (assignments.length === 0) {
+      return next(
+        new AppError('Akses ditolak: Anda tidak memiliki penugasan aktif untuk kelas ini', 403, 'FORBIDDEN')
+      );
+    }
+
+    // Extract unique subjects taught by Guru in this class
+    const subjectMap = new Map();
+    assignments.forEach((a: any) => {
+      if (a.mataPelajaranId && !subjectMap.has(a.mataPelajaranId._id.toString())) {
+        subjectMap.set(a.mataPelajaranId._id.toString(), {
+          id: a.mataPelajaranId._id.toString(),
+          kode: a.mataPelajaranId.kode,
+          nama: a.mataPelajaranId.nama,
+        });
+      }
+    });
+
+    const data = {
+      id: kelas._id.toString(),
+      nama: kelas.nama,
+      tingkat: kelas.tingkat,
+      program: kelas.program,
+      waliKelas: kelas.waliKelasId
+        ? {
+            id: (kelas.waliKelasId as any)._id.toString(),
+            nama: (kelas.waliKelasId as any).nama,
+          }
+        : null,
+      tahunAjaran: kelas.tahunAjaranId
+        ? {
+            id: (kelas.tahunAjaranId as any)._id.toString(),
+            nama: (kelas.tahunAjaranId as any).nama,
+          }
+        : null,
+      semester: assignments[0]?.semesterId
+        ? {
+            id: (assignments[0].semesterId as any)._id.toString(),
+            nama: (assignments[0].semesterId as any).nama,
+          }
+        : null,
+      jumlahSiswa: kelas.siswaIds?.length || 0,
+      subjects: Array.from(subjectMap.values()),
+    };
+
+    return sendSuccess(res, data);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getMyClassStudents = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { kelasId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(kelasId)) {
+      return next(new AppError('Format ID kelas tidak valid', 400, 'INVALID_ID'));
+    }
+
+    const guru = await Guru.findOne({ userId: req.user?.userId });
+    if (!guru) return next(new AppError('Guru profile not found', 404, 'NOT_FOUND'));
+
+    const kelas = await Kelas.findById(kelasId).select('siswaIds').lean();
+    if (!kelas) {
+      return next(new AppError('Kelas tidak ditemukan', 404, 'NOT_FOUND'));
+    }
+
+    // Verify through the existing teaching assignment relationship
+    const isAssigned = await Pengampu.exists({
+      guruId: guru._id,
+      kelasId: kelas._id,
+      status: 'Aktif',
+    });
+
+    if (!isAssigned) {
+      return next(
+        new AppError('Akses ditolak: Anda tidak memiliki penugasan aktif untuk kelas ini', 403, 'FORBIDDEN')
+      );
+    }
+
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 30));
+    const skip = (page - 1) * limit;
+    const search = typeof req.query.search === 'string' ? req.query.search.trim() : '';
+
+    if (!kelas.siswaIds || kelas.siswaIds.length === 0) {
+      return sendSuccess(res, [], undefined, 200, {
+        page: 1,
+        limit,
+        total: 0,
+        totalPages: 1,
+      });
+    }
+
+    const filter: Record<string, any> = { _id: { $in: kelas.siswaIds } };
+    if (search) {
+      filter.$or = [
+        { nama: { $regex: search, $options: 'i' } },
+        { nisn: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    let sortOption: Record<string, any> = { nama: 1 };
+    if (req.query.sort === '-nama') sortOption = { nama: -1 };
+    else if (req.query.sort === 'nisn') sortOption = { nisn: 1 };
+    else if (req.query.sort === '-nisn') sortOption = { nisn: -1 };
+
+    const [total, students] = await Promise.all([
+      Siswa.countDocuments(filter),
+      Siswa.find(filter)
+        .select('_id nisn nama jenisKelamin status')
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    ]);
+
+    const totalPages = Math.ceil(total / limit) || 1;
+    const data = students.map((s: any) => ({
+      id: s._id.toString(),
+      nisn: s.nisn,
+      nama: s.nama,
+      jenisKelamin: s.jenisKelamin || 'L',
+      avatar: null,
+      status: s.status || 'Aktif',
+    }));
+
+    return sendSuccess(res, data, undefined, 200, {
+      page,
+      limit,
+      total,
+      totalPages,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+

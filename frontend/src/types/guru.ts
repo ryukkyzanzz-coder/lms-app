@@ -121,3 +121,44 @@ export interface MaterialPagination {
   totalPages: number;
 }
 
+export interface TeacherClassDetail {
+  id: string;
+  nama: string;
+  tingkat: string;
+  program: string;
+  waliKelas: {
+    id: string;
+    nama: string;
+  } | null;
+  tahunAjaran: {
+    id: string;
+    nama: string;
+  } | null;
+  semester: {
+    id: string;
+    nama: string;
+  } | null;
+  jumlahSiswa: number;
+  subjects: {
+    id: string;
+    kode: string;
+    nama: string;
+  }[];
+}
+
+export interface TeacherStudent {
+  id: string;
+  nisn: string;
+  nama: string;
+  jenisKelamin: 'L' | 'P' | string;
+  avatar: string | null;
+  status: 'Aktif' | 'Lulus' | 'Pindah' | 'Drop Out' | string;
+}
+
+export interface StudentPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+

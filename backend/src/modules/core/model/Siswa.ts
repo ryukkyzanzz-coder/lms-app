@@ -4,6 +4,7 @@ export interface ISiswa extends Document {
   userId: mongoose.Types.ObjectId;
   nisn: string;
   nama: string;
+  jenisKelamin?: 'L' | 'P';
   status: 'Aktif' | 'Lulus' | 'Pindah' | 'Drop Out';
 }
 
@@ -24,6 +25,11 @@ const siswaSchema = new Schema<ISiswa>(
     nama: {
       type: String,
       required: true,
+    },
+    jenisKelamin: {
+      type: String,
+      enum: ['L', 'P'],
+      default: 'L',
     },
     status: {
       type: String,
