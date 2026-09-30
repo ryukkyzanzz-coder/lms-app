@@ -104,8 +104,8 @@ export const getMyDashboard = async (req: Request, res: Response, next: NextFunc
     // Perlu Tindakan
     const tugasAktif = await Tugas.find({ pengampuId: { $in: pengampuIds }, status: 'Aktif' });
     const tugasAktifIds = tugasAktif.map(t => t._id);
-    const belumDiperiksa = await PengumpulanTugas.countDocuments({ tugasId: { $in: tugasAktifIds }, status: 'Dikumpulkan' });
-    const belumKumpul = await PengumpulanTugas.countDocuments({ tugasId: { $in: tugasAktifIds }, status: 'Belum' });
+    const belumDiperiksa = await PengumpulanTugas.countDocuments({ tugasId: { $in: tugasAktifIds }, status: { $in: ['Dikumpulkan', 'SUBMITTED', 'RESUBMITTED'] } });
+    const belumKumpul = await PengumpulanTugas.countDocuments({ tugasId: { $in: tugasAktifIds }, status: { $in: ['Belum'] } });
 
     // Kelas stats
     const kelasStats = await Promise.all(pengampuList.map(async (p) => {

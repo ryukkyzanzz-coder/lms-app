@@ -162,3 +162,96 @@ export interface StudentPagination {
   totalPages: number;
 }
 
+export interface ITugas {
+  _id: string;
+  guruId: string;
+  kelasId: string | { _id: string; nama: string; tingkat?: string };
+  mapelId: string | { _id: string; nama: string; kode?: string };
+  babId?: string | { _id: string; judul: string; urutan?: number };
+  judul: string;
+  deskripsi: string;
+  instruksi?: string;
+  lampiran?: {
+    name: string;
+    url: string;
+    mimeType: string;
+    size: number;
+  }[];
+  deadline: string;
+  maxScore: number;
+  status: 'draft' | 'published' | 'closed';
+  version: number;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AssignmentPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ISubmissionFile {
+  name: string;
+  url: string;
+  mimeType: string;
+  size: number;
+}
+
+export interface IPengumpulanTugas {
+  _id: string;
+  tugasId: string;
+  siswaId: string | TeacherStudent;
+  status: 'SUBMITTED' | 'GRADED' | 'RESUBMITTED' | string;
+  isLate: boolean;
+  submittedAt: string;
+  files: ISubmissionFile[];
+  catatanSiswa?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubmissionStats {
+  totalStudents: number;
+  submittedCount: number;
+  unsubmittedCount: number;
+  lateCount: number;
+  gradedCount: number;
+}
+
+export interface SubmissionRosterItem {
+  siswa: {
+    _id: string;
+    nama: string;
+    nisn: string;
+    jenisKelamin: 'L' | 'P' | string;
+    status: string;
+  };
+  hasSubmitted: boolean;
+  submission: IPengumpulanTugas | null;
+}
+
+export interface AssignmentSubmissionsResponse {
+  assignment: {
+    id: string;
+    judul: string;
+    deskripsi?: string;
+    deadline: string;
+    maxScore: number;
+    status: 'draft' | 'published' | 'closed';
+    version: number;
+    kelas: { id: string; nama: string };
+    mapel: { id: string; nama: string };
+  };
+  stats: SubmissionStats;
+  data: SubmissionRosterItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+

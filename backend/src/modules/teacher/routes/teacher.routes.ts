@@ -13,6 +13,8 @@ import {
   getTeacherStudentProgress
 } from '../controller/teacher.controller';
 import materialRoutes from '../../material/material.routes';
+import assignmentRoutes from '../../assignment/assignment.routes';
+import submissionRoutes from '../../submission/submission.routes';
 
 const router = Router();
 
@@ -30,6 +32,13 @@ router.get('/me/assignments', getMyAssignments);
 
 // Mount material domain routes
 router.use('/me', materialRoutes);
+
+// Mount assignment domain routes
+router.use('/me', assignmentRoutes);
+
+// Mount submission domain routes
+router.use('/me', submissionRoutes);
+
 
 router.get('/me/classes/:kelasId/announcements', getTeacherAnnouncements);
 router.get('/me/classes/:kelasId/students-progress', getTeacherStudentProgress);
