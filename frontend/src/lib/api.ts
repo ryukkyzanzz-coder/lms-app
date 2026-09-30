@@ -1,5 +1,10 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
+export interface ApiError extends Error {
+  status?: number;
+  code?: string;
+}
+
 export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -30,7 +35,11 @@ export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.message || (data.error && data.error.message) || 'API request failed');
+    const errorMsg = data.message || (data.error && data.error.message) || 'API request failed';
+    const err = new Error(errorMsg) as ApiError;
+    err.status = response.status;
+    err.code = data.error?.code;
+    throw err;
   }
 
   return data;

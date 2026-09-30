@@ -1,5 +1,5 @@
 export interface TeacherDashboardStats {
-  jadwalHariIni: any[];
+  jadwalHariIni: unknown[];
   perluTindakan: {
     belumDiperiksa: number;
     belumKumpul: number;
@@ -85,3 +85,39 @@ export interface TeacherStudentProgress {
   rataRataNilai: number;
   status: string;
 }
+
+export interface IMateri {
+  _id: string;
+  guruId: string;
+  kelasId: string;
+  mapelId: string;
+  babId?: {
+    _id: string;
+    judul: string;
+    urutan: number;
+  } | string;
+  judul: string;
+  deskripsi?: string;
+  tipe: 'TEXT' | 'PDF' | 'VIDEO' | 'LINK' | 'DOCUMENT';
+  konten?: string;
+  file?: {
+    name: string;
+    url: string;
+    mimeType: string;
+    size: number;
+  };
+  urutan: number;
+  status: 'draft' | 'published' | 'archived';
+  version: number;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MaterialPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+

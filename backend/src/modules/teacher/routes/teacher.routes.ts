@@ -7,10 +7,10 @@ import {
   getMySubjects, 
   getMyAssignments,
   getMyDashboard,
-  getTeacherMaterials,
   getTeacherAnnouncements,
   getTeacherStudentProgress
 } from '../controller/teacher.controller';
+import materialRoutes from '../../material/material.routes';
 
 const router = Router();
 
@@ -24,7 +24,9 @@ router.get('/me/classes', getMyClasses);
 router.get('/me/subjects', getMySubjects);
 router.get('/me/assignments', getMyAssignments);
 
-router.get('/me/classes/:kelasId/subjects/:mapelId/materials', getTeacherMaterials);
+// Mount material domain routes
+router.use('/me', materialRoutes);
+
 router.get('/me/classes/:kelasId/announcements', getTeacherAnnouncements);
 router.get('/me/classes/:kelasId/students-progress', getTeacherStudentProgress);
 
