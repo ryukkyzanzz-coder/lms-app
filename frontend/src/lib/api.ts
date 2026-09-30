@@ -19,6 +19,15 @@ export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
     },
   });
 
+  if (response.status === 401) {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
+    }
+  }
+
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.message || (data.error && data.error.message) || 'API request failed');

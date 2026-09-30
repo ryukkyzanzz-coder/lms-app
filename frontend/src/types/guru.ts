@@ -19,12 +19,27 @@ export interface TeacherDashboardStats {
   };
 }
 
+export interface TeacherProfile {
+  _id: string;
+  userId: string;
+  nip: string;
+  nama: string;
+  email?: string;
+  nomorTelepon?: string;
+  status: 'Aktif' | 'Cuti' | 'Pensiun';
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface TeacherClass {
   _id: string;
   nama: string;
   tingkat: string;
   program: string;
   siswaIds?: string[];
+  status?: 'Aktif' | 'Non-Aktif' | string;
+  waliKelasId?: string;
+  tahunAjaranId?: string;
 }
 
 export interface TeacherSubject {

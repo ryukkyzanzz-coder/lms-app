@@ -21,9 +21,7 @@ import {
   Target,
   Calendar,
   CheckSquare,
-  Building2,
   Users,
-  GraduationCap,
   Award,
   ArrowRightLeft,
   FolderTree,
@@ -98,7 +96,15 @@ const kurikulumNavItems: NavItem[] = [
   { name: 'Semester', path: '/kurikulum/tahun-ajaran', icon: Calendar },
 ];
 
-export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: () => void, role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin' }) {
+export default function Sidebar({ 
+  onNavigate, 
+  role = 'guru',
+  userProfile,
+}: { 
+  onNavigate?: () => void; 
+  role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin';
+  userProfile?: { name: string; idNumber?: string; roleSub?: string };
+}) {
   const pathname = usePathname();
   const navItems = role === 'admin' 
     ? adminNavItems 
@@ -220,12 +226,20 @@ export default function Sidebar({ onNavigate, role = 'guru' }: { onNavigate?: ()
         ) : role === 'guru' ? (
           <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              HS
+              {userProfile?.name 
+                ? userProfile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+                : 'HS'}
             </div>
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">Drs. Hendra Setiawan</span>
-              <span className="font-body text-[10px] text-slate-500 truncate">19850412 201001 1 018</span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">Guru Produktif RPL</span>
+              <span className="font-body text-xs font-semibold text-slate-900 truncate">
+                {userProfile?.name || 'Drs. Hendra Setiawan'}
+              </span>
+              <span className="font-body text-[10px] text-slate-500 truncate">
+                {userProfile?.idNumber || '19850412 201001 1 018'}
+              </span>
+              <span className="font-body text-[10px] font-medium text-blue-700 truncate">
+                {userProfile?.roleSub || 'Guru Produktif RPL'}
+              </span>
             </div>
           </div>
         ) : role === 'siswa' ? (

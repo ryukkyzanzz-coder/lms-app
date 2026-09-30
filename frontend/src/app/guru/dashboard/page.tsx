@@ -23,16 +23,39 @@ import {
   Shield
 } from 'lucide-react';
 
+import { useTeacher } from '@/lib/guru/teacher-context';
+
 export default function Dashboard() {
+  const { teacher, isLoading: loadingTeacher } = useTeacher();
   const [data, setData] = useState<TeacherDashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+  const reloadDashboard = () => {
+    setLoading(true);
+    setError('');
     fetchAPI('/teachers/me/dashboard')
       .then(res => setData(res.data))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchAPI('/teachers/me/dashboard')
+      .then(res => {
+        if (isMounted) setData(res.data);
+      })
+      .catch(err => {
+        if (isMounted) setError(err.message);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   if (loading) {
@@ -47,6 +70,12 @@ export default function Dashboard() {
           Gagal memuat dashboard. <br />
           <span className="text-sm text-slate-500">{error}</span>
         </div>
+        <button
+          onClick={reloadDashboard}
+          className="px-4 py-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
+        >
+          Coba Lagi
+        </button>
       </div>
     );
   }
@@ -62,8 +91,12 @@ export default function Dashboard() {
       <div className="bg-white border border-slate-200/60 rounded-xl p-6 shadow-sm flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex flex-col">
           <div className="flex flex-col gap-1">
-            <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">Selamat datang kembali, Pak Hendra</h1>
-            <span className="font-body text-[13px] text-slate-500 font-medium">NIP. 19850412 201001 1 018</span>
+            <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
+              Selamat datang kembali, {loadingTeacher ? '...' : (teacher?.nama || 'Bapak/Ibu Guru')}
+            </h1>
+            <span className="font-body text-[13px] text-slate-500 font-medium">
+              NIP. {loadingTeacher ? '...' : (teacher?.nip || '-')}
+            </span>
           </div>
           <div className="flex flex-wrap items-center gap-3 mt-4 text-[13px] font-medium text-slate-600">
             <span className="flex items-center gap-1.5">

@@ -21,14 +21,17 @@ interface TopHeaderProps {
   mobileMenuOpen?: boolean;
   setMobileMenuOpen?: (open: boolean) => void;
   role?: 'guru' | 'siswa' | 'kepsek' | 'kurikulum' | 'admin';
+  userProfile?: { name: string; idNumber?: string; roleSub?: string };
 }
 
-export default function TopHeader({ mobileMenuOpen, setMobileMenuOpen, role = 'guru' }: TopHeaderProps) {
+export default function TopHeader({ mobileMenuOpen, setMobileMenuOpen, role = 'guru', userProfile }: TopHeaderProps) {
   const adminPlaceholder = role === 'admin' 
     ? 'Cari kelas, siswa, guru, mapel...' 
     : 'Cari kelas, siswa, atau tugas...';
 
-  const avatarName = role === 'admin'
+  const avatarName = userProfile?.name
+    ? encodeURIComponent(userProfile.name)
+    : role === 'admin'
     ? 'Bambang+Sudarmono'
     : role === 'guru' 
     ? 'Hendra+Setiawan' 
