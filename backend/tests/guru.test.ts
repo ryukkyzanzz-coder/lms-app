@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../src/app';
-import { env } from '../src/config/env';
 import { User, Role } from '../src/modules/core/model/User';
 import { Guru } from '../src/modules/core/model/Guru';
 import { Kelas } from '../src/modules/core/model/Kelas';
@@ -10,7 +9,6 @@ import { MataPelajaran } from '../src/modules/core/model/MataPelajaran';
 import { TahunAjaran } from '../src/modules/core/model/TahunAjaran';
 import { Semester } from '../src/modules/core/model/Semester';
 import { Siswa } from '../src/modules/core/model/Siswa';
-import bcrypt from 'bcrypt';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -81,6 +79,7 @@ describe('Guru API', () => {
     const res = await request(app).get('/api/v1/teachers/me').set('Authorization', `Bearer ${tokenGuru1}`);
     expect(res.status).toBe(200);
     expect(res.body.data.nip).toBe('GURU1');
+    expect(res.body.data._id).toBe(guru1Id);
   });
 
   it('3. GET /teachers/me/classes', async () => {
@@ -111,5 +110,21 @@ describe('Guru API', () => {
   it('7. Unauthorized request', async () => {
     const res = await request(app).get(`/api/v1/teachers/me`);
     expect(res.status).toBe(401);
+  });
+
+  it('8. GET /teachers/me/assignments (regression test for MissingSchemaError)', async () => {
+    const res = await request(app).get('/api/v1/teachers/me/assignments').set('Authorization', `Bearer ${tokenGuru1}`);
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(1);
+    expect(res.body.data[0].kelasId).toBeDefined();
+    expect(res.body.data[0].kelasId.nama).toBe('Kelas 1');
+    expect(res.body.data[0].mataPelajaranId).toBeDefined();
+    expect(res.body.data[0].mataPelajaranId.kode).toBe('M1');
+    expect(res.body.data[0].tahunAjaranId).toBeDefined();
+    expect(res.body.data[0].tahunAjaranId.nama).toBe('2026/2027');
+    expect(res.body.data[0].semesterId).toBeDefined();
+    expect(res.body.data[0].semesterId.nama).toBe('Ganjil');
   });
 });

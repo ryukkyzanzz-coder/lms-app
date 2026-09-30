@@ -1,7 +1,13 @@
+'use client';
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { BookOpen, GraduationCap, Building2, Layers } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 export default function Home() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl border border-slate-200/60 p-8 flex flex-col items-center">
@@ -32,19 +38,20 @@ export default function Home() {
           <button 
             onClick={async () => {
               try {
-                const res = await fetch((process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1') + '/auth/login', {
+                const res = await fetch(`${API_BASE_URL}/auth/login`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ username: '198504122010011014', password: 'password123' })
                 });
                 const data = await res.json();
-                if (res.ok) {
-                  localStorage.setItem('token', data.data.token);
-                  window.location.href = '/guru/dashboard';
+                if (res.ok && data.data?.accessToken) {
+                  localStorage.setItem('token', data.data.accessToken);
+                  router.push('/guru/dashboard');
                 } else {
-                  alert('Login failed: ' + data.message);
+                  alert('Login failed: ' + (data.message || (data.error && data.error.message) || 'Unknown error'));
                 }
               } catch (e) {
+                console.error('Login error:', e);
                 alert('Network error');
               }
             }}

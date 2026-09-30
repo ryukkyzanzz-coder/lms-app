@@ -6,6 +6,13 @@ import { PengumpulanTugas } from '../../core/model/PengumpulanTugas';
 import { Bab } from '../../core/model/Bab';
 import { Materi } from '../../core/model/Materi';
 import { Pengumuman } from '../../core/model/Pengumuman';
+
+// Explicit model imports for Mongoose .populate() registration
+import '../../core/model/Kelas';
+import '../../core/model/MataPelajaran';
+import '../../core/model/TahunAjaran';
+import '../../core/model/Semester';
+
 import { sendSuccess } from '../../../shared/utils/response';
 import { AppError } from '../../../shared/errors/AppError';
 
