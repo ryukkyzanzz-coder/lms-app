@@ -68,8 +68,8 @@ export default function ProgresSiswaPage() {
     {
       nis: '2204128',
       no: '#24',
-      name: 'Rakha Arkana',
-      initials: 'RA',
+      name: 'Dafiand',
+      initials: 'D',
       classInfo: 'XII RPL 1 • Hadir Penuh',
       materiProgress: 92,
       materiCount: '11 / 12 Modul',

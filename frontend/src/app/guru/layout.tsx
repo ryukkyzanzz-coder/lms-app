@@ -25,14 +25,19 @@ function GuruShellWrapper({ children }: { children: React.ReactNode }) {
   );
 }
 
+import { RoleGuard } from '@/lib/auth/role-guard';
+
 export default function GuruLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <TeacherProvider>
-      <GuruShellWrapper>{children}</GuruShellWrapper>
-    </TeacherProvider>
+    <RoleGuard allowedRoles={['GURU']}>
+      <TeacherProvider>
+        <GuruShellWrapper>{children}</GuruShellWrapper>
+      </TeacherProvider>
+    </RoleGuard>
   );
 }
+

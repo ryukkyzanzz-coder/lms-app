@@ -32,7 +32,7 @@ export default function SiswaDashboardPage() {
           <div className="flex flex-col gap-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                Selamat datang kembali, Rakha
+                Selamat datang kembali, Dafiand
               </h1>
               <Badge variant="secondary" className="font-semibold text-xs py-0.5">
                 NISN 2204128

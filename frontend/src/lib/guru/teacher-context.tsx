@@ -33,8 +33,11 @@ export interface TeacherContextValue {
 
 const TeacherContext = createContext<TeacherContextValue | undefined>(undefined);
 
+import { useAuth } from '@/lib/auth/auth-context';
+
 export function TeacherProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { logout: authLogout } = useAuth();
 
   // Auth & Profile State
   const [teacher, setTeacher] = useState<TeacherProfile | null>(null);
@@ -53,13 +56,11 @@ export function TeacherProvider({ children }: { children: React.ReactNode }) {
   const [errorSubjects, setErrorSubjects] = useState<string | null>(null);
 
   const logout = useCallback(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-    }
     setIsAuthenticated(false);
     setTeacher(null);
-    router.replace('/login');
-  }, [router]);
+    authLogout();
+  }, [authLogout]);
+
 
   const refetchTeacher = useCallback(async () => {
     setIsLoading(true);

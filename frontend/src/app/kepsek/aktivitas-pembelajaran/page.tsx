@@ -76,13 +76,13 @@ export default function AktivitasPembelajaranPage() {
             <div className="max-w-3xl space-y-2">
               <div className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded text-[11px] font-bold uppercase tracking-wider">
                 <School size={14} />
-                SMK Negeri / Swasta Kejuruan Unggulan
+                SMK CITRA NEGARA
               </div>
               <h1 className="font-display text-3xl text-slate-900 font-bold tracking-tight">
                 Aktivitas Pembelajaran & Kedisiplinan KBM
               </h1>
               <p className="font-body text-sm text-slate-600">
-                Audit kronologis dan analitik kepatuhan pengajaran guru serta responsivitas siswa dalam ekosistem LMS SMK Nusantara.
+                Audit kronologis dan analitik kepatuhan pengajaran guru serta responsivitas siswa dalam ekosistem LMS SMK CITRA NEGARA.
               </p>
             </div>
             

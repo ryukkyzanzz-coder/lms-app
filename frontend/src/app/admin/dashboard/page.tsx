@@ -62,7 +62,7 @@ export default function AdminDashboardPage() {
             </span>
           </div>
           <p className="font-body text-[13px] text-slate-500 max-w-3xl leading-relaxed">
-            Ringkasan data operasional sekolah — Pusat kendali satu data terpadu SMK N 1 Surabaya. Mengelola keutuhan data induk rombel, siswa, guru pengampu, serta sinkronisasi kurikulum operasional secara terpadu.
+            Ringkasan data operasional sekolah — Pusat kendali satu data terpadu SMK CITRA NEGARA. Mengelola keutuhan data induk rombel, siswa, guru pengampu, serta sinkronisasi kurikulum operasional secara terpadu.
           </p>
         </div>
 

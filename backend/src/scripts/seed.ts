@@ -71,13 +71,20 @@ const seedDatabase = async () => {
 
     // 3. Siswa
     const userSiswa1 = await User.create({ username: '0061234567', passwordHash: 'password123', role: Role.SISWA });
-    const siswa1 = await Siswa.create({ userId: userSiswa1._id, nisn: '0061234567', nama: 'Rakha Arkana', status: 'Aktif' });
+    const siswa1 = await Siswa.create({ userId: userSiswa1._id, nisn: '0061234567', nama: 'Dafiand', status: 'Aktif' });
 
     const userSiswa2 = await User.create({ username: '0061234568', passwordHash: 'password123', role: Role.SISWA });
     const siswa2 = await Siswa.create({ userId: userSiswa2._id, nisn: '0061234568', nama: 'Andi Saputra', status: 'Aktif' });
 
     const userSiswa3 = await User.create({ username: '0061234569', passwordHash: 'password123', role: Role.SISWA });
     const siswa3 = await Siswa.create({ userId: userSiswa3._id, nisn: '0061234569', nama: 'Dewi Lestari', status: 'Aktif' });
+
+    // 3b. Staff & Pimpinan (Admin, Kepala Sekolah, Kurikulum)
+    await User.create({ username: 'admin', passwordHash: 'password123', role: Role.ADMIN });
+    await User.create({ username: '197805142005011003', passwordHash: 'password123', role: Role.ADMIN });
+    await User.create({ username: '196803151993031004', passwordHash: 'password123', role: Role.KEPALA_SEKOLAH });
+    await User.create({ username: '197508202000121002', passwordHash: 'password123', role: Role.KURIKULUM });
+
 
     // 4. Kelas
     const kelasXII_Rpl1 = await Kelas.create({
@@ -102,14 +109,16 @@ const seedDatabase = async () => {
     });
     
     const materi1 = await Materi.create({
+      guruId: guru1._id,
+      kelasId: kelasXII_Rpl1._id,
+      mapelId: mapelWeb._id,
       babId: bab1._id,
       urutan: 1,
       judul: 'Pengenalan HTTP, Web Protocol',
-      tipe: 'Dokumen PDF',
-      status: 'Dipublikasikan',
-      tanggalRilis: new Date(),
-      fileSize: '4.2 MB',
-      aksesSiswa: { total: 3, membaca: 3 }
+      deskripsi: 'Memahami dasar arsitektur web dan protokol HTTP',
+      tipe: 'PDF',
+      status: 'published',
+      publishedAt: new Date(),
     });
     
     const bab2 = await Bab.create({
@@ -133,11 +142,15 @@ const seedDatabase = async () => {
     
     // 9. Tugas
     const tugas1 = await Tugas.create({
-      pengampuId: pengampuWeb._id,
+      guruId: guru1._id,
+      kelasId: kelasXII_Rpl1._id,
+      mapelId: mapelWeb._id,
+      babId: bab1._id,
       judul: 'Tugas 03: Otentikasi JWT',
-      deskripsi: 'Submission repositori git',
-      tenggatWaktu: new Date(Date.now() + 86400000), // tomorrow
-      status: 'Aktif'
+      deskripsi: 'Submission repositori git implementasi auth',
+      deadline: new Date(Date.now() + 86400000), // tomorrow
+      maxScore: 100,
+      status: 'published',
     });
     
     await PengumpulanTugas.create({ tugasId: tugas1._id, siswaId: siswa1._id, status: 'Dikumpulkan' });
@@ -145,6 +158,7 @@ const seedDatabase = async () => {
 
     console.log('✅ Seed data successfully injected!');
     process.exit(0);
+
   } catch (error) {
     console.error('❌ Error seeding data:', error);
     process.exit(1);

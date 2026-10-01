@@ -390,7 +390,7 @@ export default function SiswaDetailMateriPage() {
               </div>
               <Progress value={50} className="h-2" />
               <div className="mt-2 p-2.5 bg-muted/40 border border-border rounded-lg flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Peserta: <strong className="text-foreground">Rakha Arkana</strong></span>
+                <span className="text-muted-foreground">Peserta: <strong className="text-foreground">Dafiand</strong></span>
                 <span className="text-muted-foreground font-semibold">XII RPL 1</span>
               </div>
             </CardContent>

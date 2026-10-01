@@ -1,4 +1,4 @@
-// Shared Domain Data & Types for LMS Akademik (SMK N 1 Surabaya)
+// Shared Domain Data & Types for LMS Akademik (SMK CITRA NEGARA)
 // Serves as the Technical & Shared Data Source of Truth across all roles (Admin, Guru, Siswa, Kurikulum, Kepsek).
 
 export interface TahunAjaranInfo {
@@ -458,7 +458,7 @@ export const MASTER_SISWA_SAMPEL: Siswa[] = [
     id: 's-0061234567',
     nisn: '0061234567',
     nis: '22231001',
-    nama: 'Rakha Arkana',
+    nama: 'Dafiand',
     jenisKelamin: 'L',
     tingkat: 'XII',
     jurusanSingkat: 'RPL',

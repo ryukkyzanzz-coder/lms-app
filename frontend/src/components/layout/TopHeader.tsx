@@ -1,12 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Calendar, 
   Search, 
   Bell, 
   ChevronDown, 
-  CheckCircle2 
+  CheckCircle2,
+  LogOut,
+  User as UserIcon,
+  Shield
 } from 'lucide-react';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Input } from '@/components/ui/input';
@@ -19,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useAuth } from '@/lib/auth/auth-context';
 
 interface TopHeaderProps {
   onOpenMobileMenu?: () => void;
@@ -29,21 +33,34 @@ interface TopHeaderProps {
 }
 
 export default function TopHeader({ role = 'guru', userProfile }: TopHeaderProps) {
+  const { user, logout } = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const adminPlaceholder = role === 'admin' 
     ? 'Cari kelas, siswa, guru, mapel...' 
     : 'Cari kelas, siswa, atau tugas...';
 
-  const userInitial = userProfile?.name
-    ? userProfile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
-    : role === 'admin'
-    ? 'BS'
-    : role === 'guru'
-    ? 'D'
-    : role === 'siswa'
-    ? 'RA'
-    : role === 'kepsek'
-    ? 'W'
-    : 'AH';
+  const displayName = userProfile?.name || user?.profile?.nama || (role === 'admin' ? 'Administrator' : user?.username || 'Pengguna');
+  const displayId = userProfile?.idNumber || (user?.profile?.nip ? `NIP: ${user.profile.nip}` : user?.profile?.nisn ? `NISN: ${user.profile.nisn}` : user?.username || '');
+  const displayRoleSub = userProfile?.roleSub || user?.profile?.roleSub || (role === 'admin' ? 'Administrator' : role.toUpperCase());
+
+  const userInitial = displayName
+    ? displayName.split(' ').map((n: string) => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()
+    : 'U';
 
   return (
     <TooltipProvider>
@@ -101,16 +118,63 @@ export default function TopHeader({ role = 'guru', userProfile }: TopHeaderProps
             </TooltipContent>
           </Tooltip>
           
-          <div className="flex items-center gap-2 cursor-pointer hover:bg-muted/60 p-1 -mr-1 rounded-md transition-colors">
-            <Avatar size="sm">
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
-                {userInitial}
-              </AvatarFallback>
-            </Avatar>
-            <ChevronDown className="size-3.5 text-muted-foreground hidden sm:block" />
+          {/* User Profile Trigger & Dropdown Menu */}
+          <div className="relative" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setUserMenuOpen((prev) => !prev)}
+              className="flex items-center gap-2 cursor-pointer hover:bg-muted/60 p-1 -mr-1 rounded-md transition-colors focus:outline-none"
+            >
+              <Avatar size="sm">
+                <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                  {userInitial}
+                </AvatarFallback>
+              </Avatar>
+              <ChevronDown className="size-3.5 text-muted-foreground hidden sm:block" />
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute right-0 mt-2 w-64 rounded-xl border border-border bg-card p-3 shadow-xl z-50 animate-in fade-in zoom-in-95">
+                <div className="flex items-center gap-3 pb-3 border-b border-border">
+                  <Avatar size="default">
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">
+                      {userInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-semibold text-xs truncate text-foreground leading-tight">
+                      {displayName}
+                    </span>
+                    {displayId && (
+                      <span className="text-[11px] text-muted-foreground truncate mt-0.5">
+                        {displayId}
+                      </span>
+                    )}
+                    <span className="text-[10px] font-medium text-primary mt-0.5">
+                      {displayRoleSub}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-col gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors text-left"
+                  >
+                    <LogOut size={15} />
+                    <span>Keluar dari Akun (Logout)</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
     </TooltipProvider>
   );
 }
+

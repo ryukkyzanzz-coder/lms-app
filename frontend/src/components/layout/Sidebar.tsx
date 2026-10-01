@@ -118,6 +118,9 @@ const kurikulumNavItems: NavItem[] = [
   { name: 'Semester', path: '/kurikulum/tahun-ajaran', icon: Calendar },
 ];
 
+import { useAuth } from '@/lib/auth/auth-context';
+import { LogOut } from 'lucide-react';
+
 export default function Sidebar({ 
   onNavigate, 
   role = 'guru',
@@ -129,6 +132,7 @@ export default function Sidebar({
 }) {
   const pathname = usePathname();
   const { setOpenMobile, isMobile } = useSidebar();
+  const { user, logout } = useAuth();
 
   const handleNavClick = () => {
     if (onNavigate) onNavigate();
@@ -154,6 +158,13 @@ export default function Sidebar({
     : role === 'kepsek' 
     ? 'Kepala Sekolah' 
     : 'Kurikulum';
+
+  const displayName = userProfile?.name || user?.profile?.nama || (role === 'admin' ? 'Administrator' : user?.username || 'Pengguna');
+  const displayId = userProfile?.idNumber || (user?.profile?.nip ? `NIP: ${user.profile.nip}` : user?.profile?.nisn ? `NISN: ${user.profile.nisn}` : user?.username ? `ID: ${user.username}` : '');
+  const displayRoleSub = userProfile?.roleSub || user?.profile?.roleSub || (role === 'admin' ? 'Kepala Tata Usaha' : roleLabel);
+  const userInitial = displayName
+    ? displayName.split(' ').map((n: string) => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase()
+    : 'U';
 
   // Group items into sections
   const groupedSections: { title?: string; items: NavItem[] }[] = [];
@@ -267,47 +278,40 @@ export default function Sidebar({
         <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-2 text-card-foreground">
           <Avatar size="default">
             <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
-              {role === 'admin' ? 'BS' : role === 'guru' ? (userProfile?.name ? userProfile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'D') : role === 'siswa' ? 'RA' : role === 'kepsek' ? 'W' : 'AH'}
+              {userInitial}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col min-w-0 flex-1 leading-tight">
             <span className="text-xs font-semibold truncate text-foreground">
-              {role === 'admin'
-                ? 'Bambang Sudarmono, S.AP.'
-                : role === 'guru'
-                ? userProfile?.name || 'Dafiand'
-                : role === 'siswa'
-                ? 'Rakha Arkana'
-                : role === 'kepsek'
-                ? 'Drs. H. Wardoyo, M.Pd.'
-                : 'Ahmad Hidayat, M.Kom'}
+              {displayName}
             </span>
-            <span className="text-[10px] text-muted-foreground truncate mt-0.5">
-              {role === 'admin'
-                ? 'NIP: 19780514 200501 1 003'
-                : role === 'guru'
-                ? userProfile?.idNumber || 'NIP. —'
-                : role === 'siswa'
-                ? 'NISN: 0061234567'
-                : role === 'kepsek'
-                ? '19680315 199303 1 004'
-                : 'NIP: 19750820 200012 1 002'}
-            </span>
-            <span className="text-[10px] font-medium text-primary truncate">
-              {role === 'admin'
-                ? 'Kepala Tata Usaha'
-                : role === 'guru'
-                ? userProfile?.roleSub || 'Guru Pengampu'
-                : role === 'siswa'
-                ? 'XII RPL 1'
-                : role === 'kepsek'
-                ? 'Kepala Sekolah'
-                : 'Waka Kurikulum'}
+            {displayId && (
+              <span className="text-[10px] text-muted-foreground truncate mt-0.5">
+                {displayId}
+              </span>
+            )}
+            <span className="text-[10px] font-medium text-primary truncate mt-0.5">
+              {displayRoleSub}
             </span>
           </div>
         </div>
+
+        {/* Logout Action in Sidebar */}
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={logout}
+              size="sm"
+              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer"
+            >
+              <LogOut className="size-4" />
+              <span>Keluar (Logout)</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
       <SidebarRail />
     </ShadcnSidebar>
   );
 }
+

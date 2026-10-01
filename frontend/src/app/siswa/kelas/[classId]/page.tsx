@@ -264,7 +264,7 @@ export default function SiswaDetailKelasPage() {
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="text-xs font-semibold text-foreground">Draf Tersedia:</span>
                           <span className="text-xs font-medium text-primary hover:underline cursor-pointer truncate">
-                            rakha_jwt_express_v1.zip (14.2 MB)
+                            dafiand_jwt_express_v1.zip (14.2 MB)
                           </span>
                         </div>
                         <span className="text-[10px] text-muted-foreground mt-0.5">Terakhir diperbarui: 25 Sep 2026, 14.10 WIB</span>
