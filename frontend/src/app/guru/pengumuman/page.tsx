@@ -1,15 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
-  ChevronRight, 
   Megaphone, 
   TrendingUp, 
   Users, 
   Clock, 
   Search, 
-  ChevronDown, 
   Pin,
   GraduationCap,
   Calendar,
@@ -29,167 +27,254 @@ import {
   ShieldCheck,
   Plus
 } from 'lucide-react';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function PengumumanPage() {
+  const [activeTab, setActiveTab] = useState<'semua' | 'published' | 'scheduled' | 'draft'>('semua');
+  const [selectedClass, setSelectedClass] = useState('XII RPL 1');
+  const [selectedSemester, setSelectedSemester] = useState('ganjil');
+
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-8">
       {/* ACADEMIC CONTEXT HEADER */}
       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
         <div className="flex flex-col gap-2">
-          <nav className="flex items-center gap-1.5 text-[12px] font-medium" aria-label="Breadcrumb">
-            <Link href="/guru/kelas" className="text-blue-700 hover:underline">Kelas Saya</Link>
-            <ChevronRight size={14} className="text-slate-400" />
-            <span className="text-slate-600">XII RPL 1</span>
-            <ChevronRight size={14} className="text-slate-400" />
-            <span className="text-slate-900 font-semibold bg-slate-100 px-2 py-0.5 rounded">Pengumuman Kelas</span>
-          </nav>
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink render={<Link href="/guru/kelas" />}>
+                  Kelas Saya
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink render={<Link href="/guru/kelas" />}>
+                  XII RPL 1
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Pengumuman Kelas</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
           <div className="flex flex-wrap items-center gap-3 mt-1">
-            <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">Pengumuman Kelas</h1>
-            <span className="text-slate-400 font-normal hidden sm:inline">—</span>
-            <span className="font-display text-xl font-bold text-slate-700 hidden sm:inline">Pemrograman Web</span>
-            <span className="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider border border-blue-100 ml-auto sm:ml-0">
-              Kurikulum Merdeka
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              Pengumuman Kelas
+            </h1>
+            <span className="text-muted-foreground font-normal hidden sm:inline">—</span>
+            <span className="text-xl font-semibold text-foreground/80 hidden sm:inline">
+              Pemrograman Web
             </span>
+            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary ml-auto sm:ml-0">
+              Kurikulum Merdeka
+            </Badge>
           </div>
-          <p className="text-[13px] text-slate-500 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
             Sampaikan informasi resmi, pembaruan silabus, jadwal praktikum lab, dan instruksi asesmen kepada peserta didik di rombel Anda.
           </p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-          <button className="flex items-center justify-center gap-2 bg-white border border-slate-200/60 hover:bg-slate-50 text-slate-700 rounded-lg px-4 py-2.5 text-[13px] font-medium transition-colors shadow-sm">
-            <Users size={18} className="text-blue-700" />
+          <Button variant="outline" className="gap-2">
+            <Users className="size-4 text-primary" />
             <span className="hidden sm:inline">Sinkronisasi Orang Tua</span>
             <span className="sm:hidden">Sinkron Ortu</span>
-          </button>
-          <button className="flex items-center justify-center gap-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg px-4 py-2.5 text-[13px] font-semibold transition-colors shadow-sm">
-            <Plus size={18} />
+          </Button>
+          <Button className="gap-2">
+            <Plus className="size-4" />
             <span>Buat Pengumuman Baru</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* KPI STATS SUMMARY ROW */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1 */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col gap-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="font-semibold text-[13px]">Total Pengumuman</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center">
-              <Megaphone size={18} />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Pengumuman</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Megaphone className="size-4" />
             </div>
-          </div>
-          <div className="flex flex-col">
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1">
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[28px] font-bold text-slate-900 tracking-tight leading-none">14</span>
-              <span className="text-[12px] font-semibold text-slate-500">Rilis</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">14</span>
+              <span className="text-xs font-semibold text-muted-foreground">Rilis</span>
             </div>
-            <span className="text-[11px] text-slate-500 font-medium mt-2">8 Aktif • 4 Terjadwal • 2 Arsip</span>
-          </div>
-        </div>
+            <span className="text-xs text-muted-foreground font-medium mt-1">
+              8 Aktif • 4 Terjadwal • 2 Arsip
+            </span>
+          </CardContent>
+        </Card>
 
         {/* Card 2 */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col gap-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="font-semibold text-[13px]">Tingkat Keterbacaan</span>
-            <span className="flex items-center gap-1 text-[12px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">
-              <TrendingUp size={14} /> +3.5%
-            </span>
-          </div>
-          <div className="flex flex-col gap-1.5">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Tingkat Keterbacaan</CardTitle>
+            <Badge variant="outline" className="gap-1 border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-400">
+              <TrendingUp className="size-3.5" /> +3.5%
+            </Badge>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[28px] font-bold text-slate-900 tracking-tight leading-none">91.2%</span>
-              <span className="text-[12px] font-medium text-slate-500">rerata</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">91.2%</span>
+              <span className="text-xs font-medium text-muted-foreground">rerata</span>
             </div>
-            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
-              <div className="h-full bg-blue-600 rounded-full" style={{ width: '91.2%' }}></div>
-            </div>
-            <span className="text-[11px] text-slate-500 font-medium mt-1">29 dari 32 siswa aktif membaca</span>
-          </div>
-        </div>
+            <Progress value={91.2} className="h-1.5" />
+            <span className="text-xs text-muted-foreground font-medium">
+              29 dari 32 siswa aktif membaca
+            </span>
+          </CardContent>
+        </Card>
 
         {/* Card 3 */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col gap-4">
-          <div className="flex items-center justify-between text-slate-600">
-            <span className="font-semibold text-[13px]">Target Kelas Aktif</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
-              <Users size={18} />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Target Kelas Aktif</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <Users className="size-4" />
             </div>
-          </div>
-          <div className="flex flex-col">
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1">
             <div className="flex items-baseline gap-2">
-              <span className="font-display text-[28px] font-bold text-slate-900 tracking-tight leading-none">3</span>
-              <span className="text-[12px] font-semibold text-slate-500">Rombel</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">3</span>
+              <span className="text-xs font-semibold text-muted-foreground">Rombel</span>
             </div>
-            <span className="text-[11px] text-slate-500 font-medium mt-2 leading-relaxed">XII RPL 1 (Utama), XII RPL 2, X PPLG 1</span>
-          </div>
-        </div>
+            <span className="text-xs text-muted-foreground font-medium mt-1 leading-relaxed">
+              XII RPL 1 (Utama), XII RPL 2, X PPLG 1
+            </span>
+          </CardContent>
+        </Card>
 
         {/* Card 4 */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col gap-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-5 opacity-10">
-            <Clock size={60} className="text-orange-600" />
-          </div>
-          <div className="relative z-10 flex items-center justify-between text-slate-600">
-            <span className="font-semibold text-[13px]">Broadcast Terdekat</span>
-            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-700 flex items-center justify-center">
-              <Clock size={18} />
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Broadcast Terdekat</CardTitle>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400 flex items-center justify-center">
+              <Clock className="size-4" />
             </div>
-          </div>
-          <div className="relative z-10 flex flex-col mt-1">
-            <span className="font-display text-[15px] font-bold text-slate-900 truncate" title="Praktikum Lab 2">Praktikum Lab 2</span>
-            <div className="flex items-center gap-1.5 mt-2 bg-slate-50 border border-slate-100 rounded p-1.5 w-fit">
-              <Calendar size={14} className="text-slate-400" />
-              <span className="text-[11px] text-slate-600 font-medium">Rabu, 30 Sep • 06.30 WIB</span>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <span className="text-base font-semibold text-foreground truncate" title="Praktikum Lab 2">
+              Praktikum Lab 2
+            </span>
+            <div className="flex items-center gap-1.5 bg-muted/60 border rounded px-2 py-1 w-fit">
+              <Calendar className="size-3.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground font-medium">
+                Rabu, 30 Sep • 06.30 WIB
+              </span>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* FILTER & CONTROL TOOLBAR */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/60 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-4">
         <div className="flex overflow-x-auto no-scrollbar gap-2 pb-2 md:pb-0">
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white text-[13px] font-semibold whitespace-nowrap shadow-sm">
+          <Button 
+            variant={activeTab === 'semua' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setActiveTab('semua')}
+            className="rounded-full gap-2"
+          >
             Semua Pengumuman
-            <span className="bg-blue-600/30 text-blue-200 px-1.5 py-0.5 rounded text-[11px]">14</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/60 text-slate-600 hover:bg-slate-50 text-[13px] font-medium whitespace-nowrap transition-colors">
+            <Badge variant={activeTab === 'semua' ? 'secondary' : 'outline'} className="text-[10px] px-1.5 py-0 h-4">
+              14
+            </Badge>
+          </Button>
+          <Button 
+            variant={activeTab === 'published' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setActiveTab('published')}
+            className="rounded-full gap-2"
+          >
             Dipublikasikan
-            <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[11px]">8</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/60 text-slate-600 hover:bg-slate-50 text-[13px] font-medium whitespace-nowrap transition-colors">
+            <Badge variant={activeTab === 'published' ? 'secondary' : 'outline'} className="text-[10px] px-1.5 py-0 h-4">
+              8
+            </Badge>
+          </Button>
+          <Button 
+            variant={activeTab === 'scheduled' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setActiveTab('scheduled')}
+            className="rounded-full gap-2"
+          >
             Terjadwal
-            <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[11px]">4</span>
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200/60 text-slate-600 hover:bg-slate-50 text-[13px] font-medium whitespace-nowrap transition-colors">
+            <Badge variant={activeTab === 'scheduled' ? 'secondary' : 'outline'} className="text-[10px] px-1.5 py-0 h-4">
+              4
+            </Badge>
+          </Button>
+          <Button 
+            variant={activeTab === 'draft' ? 'default' : 'outline'} 
+            size="sm"
+            onClick={() => setActiveTab('draft')}
+            className="rounded-full gap-2"
+          >
             Draft Guru
-            <span className="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded text-[11px]">2</span>
-          </button>
+            <Badge variant={activeTab === 'draft' ? 'secondary' : 'outline'} className="text-[10px] px-1.5 py-0 h-4">
+              2
+            </Badge>
+          </Button>
         </div>
         
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            <input 
+            <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+            <Input 
               type="text" 
-              className="w-full sm:w-[220px] lg:w-[280px] h-10 pl-9 pr-3 bg-white border border-slate-200/60 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-shadow"
+              className="w-full sm:w-[220px] lg:w-[260px] pl-9"
               placeholder="Cari judul, topik..." 
             />
           </div>
           <div className="flex gap-2">
-            <div className="relative flex-1 sm:flex-none">
-              <select className="w-full appearance-none h-10 pl-3 pr-8 bg-white border border-slate-200/60 rounded-lg text-sm text-slate-700 font-medium focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-shadow">
-                <option>XII RPL 1</option>
-                <option>XII RPL 2</option>
-              </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            </div>
-            <div className="relative flex-1 sm:flex-none">
-              <select className="w-full appearance-none h-10 pl-3 pr-8 bg-white border border-slate-200/60 rounded-lg text-sm text-slate-700 font-medium focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-shadow">
-                <option>Semester Ganjil</option>
-              </select>
-              <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-            </div>
+            <Select value={selectedClass} onValueChange={(val) => val && setSelectedClass(val)}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue placeholder="Pilih Kelas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="XII RPL 1">XII RPL 1</SelectItem>
+                <SelectItem value="XII RPL 2">XII RPL 2</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedSemester} onValueChange={(val) => val && setSelectedSemester(val)}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Semester" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ganjil">Semester Ganjil</SelectItem>
+                <SelectItem value="genap">Semester Genap</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -197,179 +282,180 @@ export default function PengumumanPage() {
       {/* ANNOUNCEMENT LISTING */}
       <div className="flex flex-col gap-6">
         {/* ITEM 1: PINNED / RESMI PENTING */}
-        <article className="bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-sm relative flex flex-col pl-2">
-          {/* Accent Strip */}
-          <div className="absolute left-0 top-0 bottom-0 w-2 bg-red-600"></div>
-          
-          <div className="p-5 lg:p-6 flex flex-col gap-5">
+        <Card className="relative overflow-hidden pl-2 border-l-4 border-l-destructive">
+          <CardHeader className="gap-3 pb-3">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="flex items-center gap-1 bg-red-50 text-red-700 border border-red-200 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
-                  <Pin size={12} className="rotate-45" />
+                <Badge variant="destructive" className="gap-1 uppercase tracking-wider text-[10px]">
+                  <Pin className="size-3 rotate-45" />
                   Pengumuman Resmi Penting • Pinned
-                </span>
-                <span className="flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200/60 px-2 py-0.5 rounded-md text-[11px] font-semibold">
-                  <GraduationCap size={12} />
+                </Badge>
+                <Badge variant="outline" className="gap-1 text-[11px]">
+                  <GraduationCap className="size-3" />
                   Target: XII RPL 1
-                </span>
-                <span className="flex items-center gap-1.5 bg-green-50 text-green-700 px-2 py-0.5 rounded text-[11px] font-bold border border-green-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                </Badge>
+                <Badge variant="outline" className="gap-1.5 border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-400 text-[11px]">
+                  <span className="size-1.5 rounded-full bg-green-600 dark:bg-green-400"></span>
                   Dipublikasikan
-                </span>
+                </Badge>
               </div>
-              <div className="flex items-center gap-2 text-[12px] text-slate-500 font-medium shrink-0">
-                <Clock size={14} className="text-slate-400" />
+              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium shrink-0">
+                <Clock className="size-3.5 text-muted-foreground" />
                 <span>28 Sep 2026, 08:30</span>
-                <span className="text-slate-300">•</span>
-                <span className="flex items-center gap-1 text-slate-700">
-                  <User size={14} />
-                  Drs. Hendra S.
+                <span className="text-muted-foreground/40">•</span>
+                <span className="flex items-center gap-1 text-foreground font-medium">
+                  <User className="size-3.5 text-muted-foreground" />
+                  Dafiand
                 </span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-display text-[18px] font-bold text-slate-900 leading-snug">
+            <div className="flex flex-col gap-1.5 mt-1">
+              <CardTitle className="text-lg font-semibold leading-snug">
                 Perubahan Jam Praktikum Lab & Persiapan Uji Kompetensi REST API Postman
-              </h2>
-              <p className="text-[14px] text-slate-600 leading-relaxed text-justify">
+              </CardTitle>
+              <CardDescription className="text-sm leading-relaxed text-foreground/80 text-justify">
                 Diberitahukan kepada seluruh siswa kelas XII RPL 1 bahwa sesi laboratorium pada hari Rabu, 30 September dialihkan ke Lab Komputer 2 (IP Static V-LAN). Seluruh siswa wajib memastikan starter template Express.js telah di-clone dan Postman Desktop Client sudah terinstal versi 11.4+. Keterlambatan toleransi maksimal 10 menit.
-              </p>
+              </CardDescription>
             </div>
+          </CardHeader>
 
+          <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-              <Link href="#" className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg p-3 hover:border-red-300 hover:shadow-sm transition-all sm:w-[320px]">
-                <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
-                  <FileText size={20} />
+              <Link 
+                href="#" 
+                className="flex items-center gap-3 border rounded-lg p-3 hover:border-destructive/40 hover:bg-muted/40 transition-colors sm:w-[320px]"
+              >
+                <div className="w-10 h-10 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+                  <FileText className="size-5" />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="font-display text-[13px] font-semibold text-slate-800 truncate">Panduan_Lab_Komputer_2_Config.pdf</span>
-                  <span className="text-[11px] text-slate-500 mt-0.5">1.8 MB • Unduh Dokumen</span>
+                  <span className="text-xs font-semibold text-foreground truncate">Panduan_Lab_Komputer_2_Config.pdf</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">1.8 MB • Unduh Dokumen</span>
                 </div>
-                <Download size={16} className="text-slate-400 shrink-0" />
+                <Download className="size-4 text-muted-foreground shrink-0" />
               </Link>
               
-              <Link href="#" className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg p-3 hover:border-blue-300 hover:shadow-sm transition-all sm:w-[320px]">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                  <Code size={20} />
+              <Link 
+                href="#" 
+                className="flex items-center gap-3 border rounded-lg p-3 hover:border-primary/40 hover:bg-muted/40 transition-colors sm:w-[320px]"
+              >
+                <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <Code className="size-5" />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="font-display text-[13px] font-semibold text-slate-800 truncate">rest-starter-kit</span>
-                  <span className="text-[11px] text-slate-500 mt-0.5">Repositori Resmi Template</span>
+                  <span className="text-xs font-semibold text-foreground truncate">rest-starter-kit</span>
+                  <span className="text-[11px] text-muted-foreground mt-0.5">Repositori Resmi Template</span>
                 </div>
-                <ExternalLink size={16} className="text-slate-400 shrink-0" />
+                <ExternalLink className="size-4 text-muted-foreground shrink-0" />
               </Link>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4 mt-2">
+            <div className="bg-muted/50 border rounded-lg p-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
               <div className="flex flex-col flex-1 gap-2">
                 <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-[13px] font-semibold text-slate-900">
-                    <Eye size={16} className="text-blue-700" />
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                    <Eye className="size-4 text-primary" />
                     29 / 32 Siswa Telah Membaca (90.6%)
                   </span>
-                  <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[11px] font-bold">
+                  <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
                     3 Belum Membaca
-                  </span>
+                  </Badge>
                 </div>
-                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-blue-600 rounded-full" style={{ width: '90.6%' }}></div>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] mt-1">
-                  <span className="text-slate-500">Menunggu konfirmasi:</span>
-                  <span className="font-semibold text-slate-700">Ahmad Fauzi, Rizky Pratama, Zulfikar</span>
+                <Progress value={90.6} className="h-1.5" />
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="text-muted-foreground">Menunggu konfirmasi:</span>
+                  <span className="font-semibold text-foreground">Ahmad Fauzi, Rizky Pratama, Zulfikar</span>
                 </div>
               </div>
               
-              <div className="flex flex-wrap items-center gap-2 shrink-0 xl:pl-6 xl:border-l xl:border-slate-200">
-                <button className="flex items-center gap-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-md text-[12px] font-semibold transition-colors shadow-sm">
-                  <BarChart2 size={14} className="text-slate-400" />
+              <div className="flex flex-wrap items-center gap-2 shrink-0 xl:pl-6 xl:border-l">
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs">
+                  <BarChart2 className="size-3.5 text-muted-foreground" />
                   <span>Detail Pembaca</span>
-                </button>
-                <button className="flex items-center gap-1.5 bg-white border border-red-200 hover:bg-red-50 text-red-700 px-3 py-2 rounded-md text-[12px] font-semibold transition-colors shadow-sm">
-                  <Bell size={14} />
+                </Button>
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs border-destructive/30 text-destructive hover:bg-destructive/10">
+                  <Bell className="size-3.5" />
                   <span>Kirim Pengingat (3)</span>
-                </button>
-                <button className="p-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-500 rounded-md shadow-sm transition-colors">
-                  <Edit size={16} />
-                </button>
-                <button className="p-2 text-slate-400 hover:bg-slate-100 rounded-md transition-colors">
-                  <MoreVertical size={20} />
-                </button>
+                </Button>
+                <Button variant="outline" size="icon-sm">
+                  <Edit className="size-3.5" />
+                </Button>
+                <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
+                  <MoreVertical className="size-4" />
+                </Button>
               </div>
             </div>
-          </div>
-        </article>
+          </CardContent>
+        </Card>
 
         {/* ITEM 2: DIPUBLIKASIKAN (TUGAS / DEADLINE) */}
-        <article className="bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-sm relative flex flex-col pl-[2px]">
-          <div className="p-5 lg:p-6 flex flex-col gap-5">
+        <Card className="relative overflow-hidden pl-2">
+          <CardHeader className="gap-3 pb-3">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="flex items-center gap-1 bg-slate-100 text-blue-700 border border-slate-200/60 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider">
-                  <ClipboardList size={14} />
+                <Badge variant="secondary" className="gap-1 uppercase tracking-wider text-[10px]">
+                  <ClipboardList className="size-3 text-primary" />
                   Tenggat & Asesmen
-                </span>
-                <span className="flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200/60 px-2 py-0.5 rounded-md text-[11px] font-semibold">
+                </Badge>
+                <Badge variant="outline" className="text-[11px]">
                   XII RPL 1
-                </span>
-                <span className="flex items-center gap-1.5 bg-green-50 text-green-700 px-2 py-0.5 rounded text-[11px] font-bold border border-green-100">
+                </Badge>
+                <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-400 text-[11px]">
                   Terbaca: 31/32 (96.8%)
-                </span>
+                </Badge>
               </div>
-              <div className="flex items-center gap-2 text-[12px] text-slate-500 font-medium shrink-0">
-                <Clock size={14} className="text-slate-400" />
+              <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium shrink-0">
+                <Clock className="size-3.5 text-muted-foreground" />
                 <span>25 Sep 2026, 14:00</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <h2 className="font-display text-[17px] font-bold text-slate-900 leading-snug">
+            <div className="flex flex-col gap-1.5 mt-1">
+              <CardTitle className="text-base font-semibold leading-snug">
                 Pemberitahuan Tenggat Waktu Pengumpulan Tugas 03: Otentikasi JWT & Middleware
-              </h2>
-              <p className="text-[14px] text-slate-600 leading-relaxed text-justify">
+              </CardTitle>
+              <CardDescription className="text-sm leading-relaxed text-foreground/80 text-justify">
                 Tenggat waktu submission repositori Git dan dokumentasi Postman Runner berakhir malam ini pukul 23.59 WIB. Kebijakan toleransi keterlambatan (grace period) 24 jam dengan penalti potongan 10 poin otomatis pada sistem rekap nilai LMS.
-              </p>
+              </CardDescription>
             </div>
+          </CardHeader>
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 mt-2 border-t border-slate-100">
-              <div className="flex items-center gap-2 text-[12px] text-slate-500 font-medium bg-slate-50 px-3 py-1.5 rounded-md border border-slate-200/60 w-fit">
-                <CheckCircle2 size={16} className="text-green-600" />
-                <span>Notifikasi Push & Email Siswa Terkirim</span>
-              </div>
-              
-              <div className="flex items-center gap-2 shrink-0">
-                <button className="bg-slate-50 hover:bg-slate-100 border border-slate-200/60 text-slate-700 px-3 py-1.5 rounded-md text-[12px] font-semibold transition-colors">
-                  Lihat
-                </button>
-                <button className="bg-slate-50 hover:bg-slate-100 border border-slate-200/60 text-slate-700 px-3 py-1.5 rounded-md text-[12px] font-semibold transition-colors">
-                  Edit
-                </button>
-                <button className="flex items-center gap-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 text-slate-700 px-3 py-1.5 rounded-md text-[12px] font-semibold transition-colors">
-                  <Copy size={14} className="text-slate-400" />
-                  <span className="hidden md:inline">Duplikasi ke XII RPL 2</span>
-                  <span className="md:hidden">Duplikasi</span>
-                </button>
-              </div>
+          <CardFooter className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium bg-muted/40 px-3 py-1.5 rounded-md border w-fit">
+              <CheckCircle2 className="size-4 text-green-600" />
+              <span>Notifikasi Push & Email Siswa Terkirim</span>
             </div>
-          </div>
-        </article>
+            
+            <div className="flex items-center gap-2 shrink-0">
+              <Button variant="outline" size="sm">
+                Lihat
+              </Button>
+              <Button variant="outline" size="sm">
+                Edit
+              </Button>
+              <Button variant="outline" size="sm" className="gap-1.5">
+                <Copy className="size-3.5 text-muted-foreground" />
+                <span className="hidden md:inline">Duplikasi ke XII RPL 2</span>
+                <span className="md:hidden">Duplikasi</span>
+              </Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
 
       {/* BOTTOM OPERATIONAL DISCIPLINE BANNER */}
-      <div className="mt-4 bg-blue-50/50 border border-blue-100 rounded-xl p-4 lg:p-5 flex flex-col md:flex-row md:items-center gap-4 shadow-sm">
-        <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-          <ShieldCheck size={24} />
-        </div>
+      <Alert className="bg-primary/5 border-primary/20 flex items-start gap-4">
+        <ShieldCheck className="size-5 text-primary shrink-0 mt-0.5" />
         <div className="flex flex-col gap-1">
-          <span className="font-display text-[14px] text-slate-900 font-bold">
+          <AlertTitle className="text-sm font-semibold text-foreground">
             Kebijakan Komunikasi & Notifikasi Multi-Peran
-          </span>
-          <p className="text-[13px] text-slate-600 leading-relaxed">
-            Pengumuman yang dipublikasikan secara otomatis memicu <strong className="font-semibold text-slate-800">push notification</strong> pada aplikasi mobile Murid, portal orang tua, dan tercatat dalam buku log kegiatan mengajar guru untuk supervisi Kurikulum & Kepala Sekolah.
-          </p>
+          </AlertTitle>
+          <AlertDescription className="text-xs text-muted-foreground leading-relaxed">
+            Pengumuman yang dipublikasikan secara otomatis memicu <strong className="font-semibold text-foreground">push notification</strong> pada aplikasi mobile Murid, portal orang tua, dan tercatat dalam buku log kegiatan mengajar guru untuk supervisi Kurikulum & Kepala Sekolah.
+          </AlertDescription>
         </div>
-      </div>
+      </Alert>
     </div>
   );
 }

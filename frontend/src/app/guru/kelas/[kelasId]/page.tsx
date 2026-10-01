@@ -24,6 +24,36 @@ import {
 import { useTeacher } from '@/lib/guru/teacher-context';
 import { fetchAPI, ApiError } from '@/lib/api';
 import { TeacherClassDetail, TeacherStudent, StudentPagination } from '@/types/guru';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 function getInitials(name: string): string {
   if (!name) return '??';
@@ -169,206 +199,207 @@ export default function DetailRuangKelasPage() {
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
       {/* 1. Academic Breadcrumbs & Context */}
-      <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div className="flex items-center gap-2 text-slate-500 text-xs">
-          <Link 
-            href="/guru/kelas" 
-            className="hover:text-blue-900 transition-colors flex items-center gap-1 font-medium"
-          >
-            <DoorOpen size={14} className="text-blue-700" />
-            <span>Kelas Saya</span>
-          </Link>
-          <span className="text-slate-300">/</span>
-          <span className="font-semibold text-slate-800">
-            {classDetail ? classDetail.nama : 'Detail Ruang Kelas'}
-          </span>
-          <span className="text-slate-300">/</span>
-          <span className="text-blue-700 font-semibold">Rombel & Siswa</span>
-        </div>
+      <Card>
+        <CardContent className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <Breadcrumb>
+            <BreadcrumbList className="text-xs">
+              <BreadcrumbItem>
+                <BreadcrumbLink render={<Link href="/guru/kelas" className="flex items-center gap-1 font-medium" />}>
+                  <DoorOpen className="size-3.5 text-primary" />
+                  <span>Kelas Saya</span>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <span className="font-semibold text-foreground">
+                  {classDetail ? classDetail.nama : 'Detail Ruang Kelas'}
+                </span>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-primary font-semibold">Rombel & Siswa</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
 
-        <div className="flex items-center gap-2 self-start md:self-auto">
-          {classDetail?.tahunAjaran && classDetail?.semester && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 text-slate-700 text-[11px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-              TA {classDetail.tahunAjaran.nama} • {classDetail.semester.nama}
-            </span>
-          )}
-          {classDetail?.tingkat && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-blue-50 text-blue-700 text-[11px] font-semibold border border-blue-100">
-              <GraduationCap size={13} />
-              Tingkat {classDetail.tingkat}
-            </span>
-          )}
-        </div>
-      </div>
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            {classDetail?.tahunAjaran && classDetail?.semester && (
+              <Badge variant="secondary" className="gap-1 font-semibold text-[11px]">
+                <span className="size-1.5 rounded-full bg-emerald-600" />
+                TA {classDetail.tahunAjaran.nama} • {classDetail.semester.nama}
+              </Badge>
+            )}
+            {classDetail?.tingkat && (
+              <Badge variant="outline" className="gap-1 font-semibold text-[11px] text-primary border-primary/20">
+                <GraduationCap className="size-3" />
+                Tingkat {classDetail.tingkat}
+              </Badge>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Class Error State */}
       {errorClass && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <AlertTriangle size={24} className="text-red-600 shrink-0" />
-            <div className="text-sm text-red-800">
-              <strong>Gagal mengakses detail kelas:</strong> {errorClass}
+        <Alert variant="destructive">
+          <AlertTriangle className="size-5" />
+          <AlertTitle>Gagal Mengakses Detail Kelas</AlertTitle>
+          <AlertDescription className="mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span>{errorClass}</span>
+            <div className="flex items-center gap-2 shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRefreshDetailTrigger((v) => v + 1)}
+                className="gap-1.5"
+              >
+                <RotateCcw className="size-3.5" />
+                <span>Coba Lagi</span>
+              </Button>
+              <Button render={<Link href="/guru/kelas" />} variant="outline" size="sm">
+                Kembali ke Kelas Saya
+              </Button>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setRefreshDetailTrigger((v) => v + 1)}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm"
-            >
-              <RotateCcw size={14} />
-              <span>Coba Lagi</span>
-            </button>
-            <Link
-              href="/guru/kelas"
-              className="px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-colors shadow-sm"
-            >
-              Kembali ke Kelas Saya
-            </Link>
-          </div>
-        </div>
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* Class Loading State */}
       {isLoadingClass && !errorClass && (
-        <div className="bg-white border border-slate-200/60 rounded-xl p-6 shadow-sm flex flex-col gap-4 animate-pulse">
-          <div className="h-6 w-48 bg-slate-200 rounded"></div>
-          <div className="h-4 w-96 bg-slate-100 rounded"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        <Card className="p-6 flex flex-col gap-4">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-4 w-96 max-w-full" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-24 bg-slate-100 rounded-lg"></div>
+              <Skeleton key={i} className="h-20" />
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Class Detail Content */}
       {!isLoadingClass && classDetail && (
         <>
           {/* 2. Class Identity Header */}
-          <div className="bg-white border border-slate-200/60 rounded-xl p-6 shadow-sm flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-            <div className="flex flex-col gap-3 max-w-3xl">
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/guru/kelas"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-blue-900 transition-colors"
-                >
-                  <ArrowLeft size={14} />
-                  <span>Kembali ke Kelas Saya</span>
-                </Link>
+          <Card>
+            <CardContent className="p-6 flex flex-col lg:flex-row lg:items-start justify-between gap-6">
+              <div className="flex flex-col gap-3 max-w-3xl">
+                <div>
+                  <Button render={<Link href="/guru/kelas" className="gap-1.5" />} variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2 mb-1">
+                    <ArrowLeft className="size-3.5" />
+                    <span>Kembali ke Kelas Saya</span>
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+                    Kelas {classDetail.nama}
+                  </h1>
+                  <Badge variant="outline" className="font-bold uppercase tracking-wider text-[11px] text-emerald-700 dark:text-emerald-400 border-emerald-300">
+                    Rombel Aktif
+                  </Badge>
+                  <Badge variant="outline" className="font-semibold text-[11px] text-primary border-primary/20">
+                    Tingkat {classDetail.tingkat}
+                  </Badge>
+                  <Badge variant="secondary" className="font-medium text-[11px]">
+                    {classDetail.program}
+                  </Badge>
+                </div>
+
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <School className="size-4 shrink-0" />
+                  <span>Rombongan Belajar Kompetensi Keahlian {classDetail.program} • Kurikulum SMK</span>
+                </p>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2.5">
-                <h1 className="font-display text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
-                  Kelas {classDetail.nama}
-                </h1>
-                <span className="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold uppercase tracking-wider">
-                  Rombel Aktif
-                </span>
-                <span className="px-2.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 text-[11px] font-semibold">
-                  Tingkat {classDetail.tingkat}
-                </span>
-                <span className="px-2.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-medium">
-                  {classDetail.program}
-                </span>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button render={<Link href="/guru/materi" className="gap-2" />} className="font-semibold text-xs">
+                  <BookOpen className="size-4" />
+                  <span>Buka Materi Kelas</span>
+                  <ArrowRight className="size-3.5" />
+                </Button>
               </div>
-
-              <p className="text-[13px] text-slate-500 flex items-center gap-2">
-                <School size={16} className="text-slate-400 shrink-0" />
-                <span>Rombongan Belajar Kompetensi Keahlian {classDetail.program} • Kurikulum SMK</span>
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3 shrink-0">
-              <Link
-                href="/guru/materi"
-                className="inline-flex items-center gap-2 bg-blue-900 hover:bg-blue-800 text-white rounded-lg px-4 py-2.5 text-[13px] font-semibold transition-colors shadow-sm"
-              >
-                <BookOpen size={16} />
-                <span>Buka Materi Kelas</span>
-                <ArrowRight size={14} />
-              </Link>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* 3. 4 Key Stat Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Wali Kelas Card */}
-            <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm flex items-start gap-3.5">
-              <div className="w-11 h-11 rounded-lg bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                <UserCheck size={22} />
+            <Card className="p-4 flex items-start gap-3.5">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <UserCheck className="size-5" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Wali Kelas</span>
-                <h4 className="font-display text-[15px] font-bold text-slate-900 truncate mt-0.5">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Wali Kelas</span>
+                <h4 className="text-sm font-semibold text-foreground truncate mt-0.5">
                   {classDetail.waliKelas?.nama || 'Belum Ditentukan'}
                 </h4>
-                <span className="text-[11px] text-slate-400 font-medium mt-0.5">Pendidik Penanggung Jawab</span>
+                <span className="text-[10px] text-muted-foreground mt-0.5">Pendidik Penanggung Jawab</span>
               </div>
-            </div>
+            </Card>
 
             {/* Jumlah Siswa Card */}
-            <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm flex items-start gap-3.5">
-              <div className="w-11 h-11 rounded-lg bg-green-50 text-green-700 flex items-center justify-center shrink-0">
-                <Users size={22} />
+            <Card className="p-4 flex items-start gap-3.5">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+                <Users className="size-5" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Jumlah Siswa</span>
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Jumlah Siswa</span>
                 <div className="flex items-baseline gap-1 mt-0.5">
-                  <span className="font-display text-[20px] font-bold text-slate-900">
+                  <span className="text-lg font-bold text-foreground">
                     {classDetail.jumlahSiswa}
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">Siswa Terdaftar</span>
+                  <span className="text-xs text-muted-foreground font-medium">Siswa Terdaftar</span>
                 </div>
-                <span className="text-[11px] text-green-600 font-medium mt-0.5">Rombel Terverifikasi</span>
+                <span className="text-[10px] text-emerald-600 font-medium mt-0.5">Rombel Terverifikasi</span>
               </div>
-            </div>
+            </Card>
 
             {/* Mata Pelajaran Diampu Card */}
-            <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm flex items-start gap-3.5">
-              <div className="w-11 h-11 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
-                <BookOpen size={22} />
+            <Card className="p-4 flex items-start gap-3.5">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
+                <BookOpen className="size-5" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mapel Diampu</span>
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Mapel Diampu</span>
                 <div className="flex items-baseline gap-1 mt-0.5">
-                  <span className="font-display text-[20px] font-bold text-slate-900">
+                  <span className="text-lg font-bold text-foreground">
                     {classDetail.subjects?.length || 0}
                   </span>
-                  <span className="text-xs text-slate-500 font-medium">Mata Pelajaran</span>
+                  <span className="text-xs text-muted-foreground font-medium">Mata Pelajaran</span>
                 </div>
-                <span className="text-[11px] text-slate-400 font-medium mt-0.5">Alokasi Penugasan Mengajar</span>
+                <span className="text-[10px] text-muted-foreground font-medium mt-0.5">Alokasi Penugasan Mengajar</span>
               </div>
-            </div>
+            </Card>
 
             {/* Periode Akademik Card */}
-            <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-sm flex items-start gap-3.5">
-              <div className="w-11 h-11 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-                <Calendar size={22} />
+            <Card className="p-4 flex items-start gap-3.5">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-teal-600 dark:bg-teal-950 dark:text-teal-400">
+                <Calendar className="size-5" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Periode Akademik</span>
-                <h4 className="font-display text-[15px] font-bold text-slate-900 truncate mt-0.5">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Periode Akademik</span>
+                <h4 className="text-sm font-semibold text-foreground truncate mt-0.5">
                   {classDetail.tahunAjaran?.nama || '-'}
                 </h4>
-                <span className="text-[11px] text-teal-700 font-medium mt-0.5">
+                <span className="text-[10px] text-teal-700 dark:text-teal-400 font-medium mt-0.5">
                   Semester {classDetail.semester?.nama || '-'}
                 </span>
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* 4. Active Subjects Ribbon */}
           {classDetail.subjects && classDetail.subjects.length > 0 && (
-            <div className="bg-white border border-slate-200/60 rounded-xl p-5 shadow-sm flex flex-col gap-3">
+            <Card className="p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <BadgeCheck size={18} className="text-blue-700" />
-                  <h3 className="font-display text-sm font-bold text-slate-800">
+                  <BadgeCheck className="size-4 text-primary" />
+                  <h3 className="text-sm font-semibold text-foreground">
                     Mata Pelajaran yang Anda Ampu di Kelas Ini
                   </h3>
                 </div>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-muted-foreground">
                   {classDetail.subjects.length} Mapel aktif
                 </span>
               </div>
@@ -376,75 +407,78 @@ export default function DetailRuangKelasPage() {
                 {classDetail.subjects.map((sub) => (
                   <div
                     key={sub.id}
-                    className="flex items-center gap-2 bg-blue-50/70 border border-blue-100 rounded-lg px-3.5 py-2"
+                    className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-1.5"
                   >
-                    <span className="bg-blue-900 text-white font-mono text-[11px] font-bold px-2 py-0.5 rounded">
+                    <Badge variant="default" className="font-mono text-[10px] font-bold px-1.5 py-0">
                       {sub.kode}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-800">{sub.nama}</span>
-                    <Link
-                      href="/guru/materi"
-                      className="ml-2 text-[11px] text-blue-700 hover:text-blue-900 font-medium underline flex items-center gap-0.5"
-                    >
+                    </Badge>
+                    <span className="text-xs font-semibold text-foreground">{sub.nama}</span>
+                    <Button render={<Link href="/guru/materi" />} variant="ghost" size="xs" className="h-6 px-1.5 text-primary">
                       <span>Materi</span>
-                      <ArrowRight size={10} />
-                    </Link>
+                      <ArrowRight className="size-3" />
+                    </Button>
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
           )}
 
           {/* 5. Student Roster Section */}
-          <div className="bg-white border border-slate-200/60 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <Card className="overflow-hidden flex flex-col">
             {/* Header & Subtitle */}
-            <div className="p-5 border-b border-slate-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="font-display text-lg font-bold text-slate-900">
+                <h2 className="text-base font-semibold text-foreground">
                   Daftar Peserta Didik (Roster Siswa)
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Tercatat {pagination ? pagination.total : classDetail.jumlahSiswa} siswa aktif terdaftar pada rombongan belajar ini.
                 </p>
               </div>
 
               <div className="flex items-center gap-2 self-start sm:self-auto">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 text-xs font-semibold">
-                  <ShieldCheck size={14} />
+                <Badge variant="outline" className="gap-1.5 text-primary border-primary/20 py-1 font-semibold text-xs">
+                  <ShieldCheck className="size-3.5" />
                   <span>Dapodik Sinkron</span>
-                </span>
+                </Badge>
               </div>
             </div>
 
             {/* Search & Filter Toolbar */}
-            <div className="p-4 bg-slate-50 border-b border-slate-200/60 flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="p-4 bg-muted/20 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-3">
               <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-md">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <input
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+                <Input
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Cari nama siswa atau NISN..."
-                  className="w-full h-9 pl-9 pr-3 bg-white border border-slate-200/60 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-all"
+                  className="pl-9 h-9"
                 />
               </form>
 
               <div className="flex items-center gap-2 self-end md:self-auto">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-slate-500 font-medium">Gender:</span>
-                  <select
+                  <span className="text-xs text-muted-foreground font-medium">Gender:</span>
+                  <Select
                     value={genderFilter}
-                    onChange={(e) => setGenderFilter(e.target.value as 'all' | 'L' | 'P')}
-                    className="h-9 px-2.5 bg-white border border-slate-200/60 rounded-lg text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-900"
+                    onValueChange={(val) => setGenderFilter((val as 'all' | 'L' | 'P') || 'all')}
                   >
-                    <option value="all">Semua ({students.length})</option>
-                    <option value="L">Laki-laki (L)</option>
-                    <option value="P">Perempuan (P)</option>
-                  </select>
+                    <SelectTrigger className="h-9 min-w-36">
+                      <SelectValue placeholder="Semua" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua ({students.length})</SelectItem>
+                      <SelectItem value="L">Laki-laki (L)</SelectItem>
+                      <SelectItem value="P">Perempuan (P)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => {
                     setSearchInput('');
                     setSearchQuery('');
@@ -453,176 +487,178 @@ export default function DetailRuangKelasPage() {
                     setRefreshStudentsTrigger((v) => v + 1);
                   }}
                   title="Reset Filter"
-                  className="h-9 px-3 bg-white border border-slate-200/60 hover:bg-slate-50 text-slate-600 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors shadow-sm"
+                  className="h-9 gap-1.5 text-xs"
                 >
-                  <RotateCcw size={13} />
+                  <RotateCcw className="size-3.5" />
                   <span>Reset</span>
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Error Roster State */}
             {errorStudents && (
-              <div className="p-6 bg-red-50 border-b border-red-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-xs text-red-700">
-                  <AlertTriangle size={16} className="text-red-500 shrink-0" />
-                  <span>Gagal memuat daftar siswa: {errorStudents}</span>
-                </div>
-                <button
-                  onClick={() => setRefreshStudentsTrigger((v) => v + 1)}
-                  className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold transition-colors"
-                >
-                  Coba Lagi
-                </button>
-              </div>
+              <Alert variant="destructive" className="rounded-none border-x-0">
+                <AlertTriangle className="size-4" />
+                <AlertTitle>Gagal Memuat Daftar Siswa</AlertTitle>
+                <AlertDescription className="mt-1 flex items-center justify-between gap-3">
+                  <span>{errorStudents}</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setRefreshStudentsTrigger((v) => v + 1)}
+                  >
+                    Coba Lagi
+                  </Button>
+                </AlertDescription>
+              </Alert>
             )}
 
             {/* Table Area */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200/60 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3 px-4 w-12 text-center">No</th>
-                    <th className="py-3 px-4">Nama Lengkap Siswa</th>
-                    <th className="py-3 px-4">NISN</th>
-                    <th className="py-3 px-3 text-center">L/P</th>
-                    <th className="py-3 px-3">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                  {isLoadingStudents ? (
-                    [1, 2, 3, 4, 5].map((i) => (
-                      <tr key={i} className="animate-pulse">
-                        <td className="py-3.5 px-4 text-center">
-                          <div className="w-4 h-4 bg-slate-200 rounded mx-auto"></div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-slate-200 shrink-0"></div>
-                            <div className="h-4 w-40 bg-slate-200 rounded"></div>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="h-4 w-28 bg-slate-200 rounded font-mono"></div>
-                        </td>
-                        <td className="py-3.5 px-3 text-center">
-                          <div className="h-4 w-6 bg-slate-200 rounded mx-auto"></div>
-                        </td>
-                        <td className="py-3.5 px-3">
-                          <div className="h-4 w-14 bg-slate-200 rounded"></div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : displayedStudents.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="py-12 text-center">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <Users size={36} className="text-slate-300" />
-                          <p className="text-sm font-semibold text-slate-700">
-                            Tidak Ada Siswa Ditemukan
-                          </p>
-                          <p className="text-xs text-slate-400 max-w-sm">
-                            {searchQuery || genderFilter !== 'all'
-                              ? 'Tidak ada siswa yang sesuai dengan filter pencarian.'
-                              : 'Belum ada data siswa terdaftar dalam rombel ini.'}
-                          </p>
+            <Table>
+              <TableHeader className="bg-muted/40">
+                <TableRow>
+                  <TableHead className="w-12 text-center text-[11px] font-bold uppercase tracking-wider">No</TableHead>
+                  <TableHead className="text-[11px] font-bold uppercase tracking-wider">Nama Lengkap Siswa</TableHead>
+                  <TableHead className="text-[11px] font-bold uppercase tracking-wider">NISN</TableHead>
+                  <TableHead className="text-center text-[11px] font-bold uppercase tracking-wider">L/P</TableHead>
+                  <TableHead className="text-[11px] font-bold uppercase tracking-wider">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoadingStudents ? (
+                  [1, 2, 3, 4, 5].map((i) => (
+                    <TableRow key={i}>
+                      <TableCell className="text-center">
+                        <Skeleton className="size-4 mx-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="size-8 rounded-full" />
+                          <Skeleton className="h-4 w-40" />
                         </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    displayedStudents.map((siswa, idx) => {
-                      const rowNumber = pagination
-                        ? (pagination.page - 1) * pagination.limit + idx + 1
-                        : idx + 1;
-                      return (
-                        <tr
-                          key={siswa.id}
-                          className="hover:bg-slate-50/70 transition-colors"
-                        >
-                          <td className="py-3.5 px-4 text-center font-mono text-slate-400 text-xs">
-                            {rowNumber < 10 ? `0${rowNumber}` : rowNumber}
-                          </td>
-                          <td className="py-3.5 px-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-bold flex items-center justify-center text-[11px] shrink-0 border border-blue-200">
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-28" />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <Skeleton className="h-4 w-6 mx-auto" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-4 w-14" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : displayedStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-12 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <Users className="size-9 text-muted-foreground/50" />
+                        <p className="text-sm font-semibold text-foreground">
+                          Tidak Ada Siswa Ditemukan
+                        </p>
+                        <p className="text-xs text-muted-foreground max-w-sm">
+                          {searchQuery || genderFilter !== 'all'
+                            ? 'Tidak ada siswa yang sesuai dengan filter pencarian.'
+                            : 'Belum ada data siswa terdaftar dalam rombel ini.'}
+                        </p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  displayedStudents.map((siswa, idx) => {
+                    const rowNumber = pagination
+                      ? (pagination.page - 1) * pagination.limit + idx + 1
+                      : idx + 1;
+                    return (
+                      <TableRow key={siswa.id}>
+                        <TableCell className="text-center font-mono text-muted-foreground text-xs">
+                          {rowNumber < 10 ? `0${rowNumber}` : rowNumber}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar size="sm">
+                              <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                                 {getInitials(siswa.nama)}
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="font-semibold text-slate-900 text-[13px]">
-                                  {siswa.nama}
-                                </span>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4 font-mono text-xs text-slate-600">
-                            {siswa.nisn || '-'}
-                          </td>
-                          <td className="py-3.5 px-3 text-center">
-                            <span
-                              className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                                siswa.jenisKelamin === 'P'
-                                  ? 'bg-rose-50 text-rose-700 border border-rose-100'
-                                  : 'bg-blue-50 text-blue-700 border border-blue-100'
-                              }`}
-                            >
-                              {siswa.jenisKelamin || '-'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="font-semibold text-foreground text-sm">
+                              {siswa.nama}
                             </span>
-                          </td>
-                          <td className="py-3.5 px-3">
-                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                              {siswa.status || 'Aktif'}
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">
+                          {siswa.nisn || '-'}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge
+                            variant="secondary"
+                            className={`text-xs font-semibold ${
+                              siswa.jenisKelamin === 'P'
+                                ? 'text-rose-700 bg-rose-50 dark:bg-rose-950 dark:text-rose-300'
+                                : 'text-primary bg-primary/10'
+                            }`}
+                          >
+                            {siswa.jenisKelamin || '-'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="gap-1 font-semibold text-emerald-700 dark:text-emerald-400 border-emerald-300 text-xs">
+                            <span className="size-1.5 rounded-full bg-emerald-600" />
+                            {siswa.status || 'Aktif'}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
 
             {/* Pagination Controls */}
             {pagination && pagination.totalPages > 1 && (
-              <div className="p-4 bg-white border-t border-slate-200/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+              <div className="p-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
                 <span>
                   Menampilkan{' '}
-                  <strong className="text-slate-800">
+                  <strong className="text-foreground">
                     {(pagination.page - 1) * pagination.limit + 1}
                   </strong>{' '}
                   -{' '}
-                  <strong className="text-slate-800">
+                  <strong className="text-foreground">
                     {Math.min(pagination.page * pagination.limit, pagination.total)}
                   </strong>{' '}
-                  dari <strong className="text-slate-800">{pagination.total}</strong> siswa
+                  dari <strong className="text-foreground">{pagination.total}</strong> siswa
                 </span>
 
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={pagination.page <= 1 || isLoadingStudents}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:pointer-events-none transition-colors shadow-sm"
+                    className="gap-1 text-xs"
                   >
-                    <ChevronLeft size={14} />
+                    <ChevronLeft className="size-3.5" />
                     <span>Sebelumnya</span>
-                  </button>
+                  </Button>
 
-                  <span className="px-2 font-medium text-slate-700">
+                  <span className="px-2 font-medium text-foreground">
                     Halaman {pagination.page} / {pagination.totalPages}
                   </span>
 
-                  <button
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
                     disabled={pagination.page >= pagination.totalPages || isLoadingStudents}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 text-slate-700 disabled:opacity-50 disabled:pointer-events-none transition-colors shadow-sm"
+                    className="gap-1 text-xs"
                   >
                     <span>Berikutnya</span>
-                    <ChevronRight size={14} />
-                  </button>
+                    <ChevronRight className="size-3.5" />
+                  </Button>
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         </>
       )}
     </div>

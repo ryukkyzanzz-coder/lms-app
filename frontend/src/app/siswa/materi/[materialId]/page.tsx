@@ -2,9 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { 
-  Home,
-  BookOpen,
   User,
   Calendar,
   Clock,
@@ -18,94 +17,107 @@ import {
   ArrowRight,
   Shield,
   Database,
-  Terminal,
   Laptop,
   Check,
   PieChart,
   FolderArchive,
   Code
 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 
-export default function SiswaDetailMateriPage({ params }: { params: { materialId: string } }) {
+export default function SiswaDetailMateriPage() {
+  useParams(); // maintain client route integration
+
   return (
-    <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-7xl mx-auto">
+    <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
       {/* 1. Header & Meta Data */}
-      <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 lg:p-6 mb-2">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-          <div className="flex flex-col gap-3 flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-slate-500 font-body text-xs mb-1">
-              <Link href="/siswa/dashboard" className="hover:text-blue-700 transition-colors flex items-center gap-1">
-                <Home size={14} />
-                Portal Siswa
-              </Link>
-              <span>/</span>
-              <Link href="/siswa/materi" className="hover:text-blue-700 transition-colors">
-                Materi Pembelajaran
-              </Link>
-              <span>/</span>
-              <span className="font-semibold text-blue-700 truncate">Modul 09</span>
+      <Card className="border border-border shadow-sm bg-card">
+        <CardContent className="p-5 lg:p-6 flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex flex-col gap-2 flex-1 min-w-0">
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink render={<Link href="/siswa/dashboard" />}>Portal Siswa</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink render={<Link href="/siswa/materi" />}>Materi Pembelajaran</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Modul 09</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+              
+              <div className="flex items-center gap-2 mt-0.5">
+                <Badge variant="outline" className="gap-1.5 font-semibold text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  Sedang Dipelajari
+                </Badge>
+              </div>
+              
+              <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground leading-tight">
+                Modul 09: Implementasi JSON Web Token (JWT) & Middleware Security
+              </h1>
+              
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground text-xs mt-1">
+                <div className="flex items-center gap-1.5">
+                  <User className="size-4 text-primary" />
+                  <span className="text-foreground font-medium">Budi Pratama, S.Kom.</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="size-4" />
+                  <span>Rilis: 20 Sep 2026</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <Clock className="size-4" />
+                  <span>Estimasi: 25 Menit</span>
+                </div>
+                <span>•</span>
+                <div className="flex items-center gap-1.5">
+                  <BarChart className="size-4 text-amber-500" />
+                  <span>Tingkat: Menengah</span>
+                </div>
+              </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 font-body text-[10px] font-bold border border-blue-100">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-                Sedang Dipelajari
-              </span>
-            </div>
-            
-            <h1 className="font-display text-2xl lg:text-3xl text-blue-900 font-bold tracking-tight leading-tight">
-              Modul 09: Implementasi JSON Web Token (JWT) & Middleware Security
-            </h1>
-            
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-slate-500 font-body text-xs mt-1">
-              <div className="flex items-center gap-1.5">
-                <User size={16} className="text-blue-700" />
-                <span className="text-slate-700 font-medium">Budi Pratama, S.Kom.</span>
-              </div>
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1.5">
-                <Calendar size={16} />
-                <span>Rilis: 20 Sep 2026</span>
-              </div>
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1.5">
-                <Clock size={16} />
-                <span>Estimasi: 25 Menit</span>
-              </div>
-              <span className="text-slate-300">•</span>
-              <div className="flex items-center gap-1.5">
-                <BarChart size={16} className="text-orange-500" />
-                <span>Tingkat: Menengah</span>
-              </div>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0 self-start lg:self-center">
+              <Button variant="outline" size="sm" className="gap-2 text-xs font-semibold">
+                <Download className="size-4" />
+                <span>Unduh PDF (2.4 MB)</span>
+              </Button>
+              <Button size="sm" className="gap-2 text-xs font-semibold">
+                <CheckCircle2 className="size-4" />
+                <span>Tandai Selesai & Lanjut</span>
+              </Button>
             </div>
           </div>
           
-          <div className="flex items-center gap-3 shrink-0 self-start lg:self-center">
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-body text-sm font-semibold transition-colors">
-              <Download size={18} />
-              Unduh PDF (2.4 MB)
-            </button>
-            <button className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-800 hover:bg-blue-900 text-white font-body text-sm font-bold shadow-sm transition-all active:scale-95">
-              <CheckCircle2 size={18} />
-              Tandai Selesai & Lanjut
-            </button>
+          {/* Live Reading Progress */}
+          <div className="mt-2 pt-3 border-t border-border flex flex-col gap-1.5">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">Progres Membaca Modul Ini</span>
+              <span className="font-semibold text-primary">75% Selesai (~6 menit tersisa)</span>
+            </div>
+            <Progress value={75} className="h-2" />
           </div>
-        </div>
-        
-        {/* Live Reading Progress */}
-        <div className="mt-6 pt-4 border-t border-slate-100">
-          <div className="flex items-center justify-between text-slate-500 font-body text-xs mb-2">
-            <span className="flex items-center gap-1.5 font-medium">
-              <BookOpen size={14} className="text-blue-700" />
-              Progres Membaca Modul Ini
-            </span>
-            <span className="font-bold text-blue-700">75% Selesai (~6 menit tersisa)</span>
-          </div>
-          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-600 rounded-full transition-all duration-500" style={{ width: '75%' }}></div>
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* 2. Workspace Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -114,346 +126,346 @@ export default function SiswaDetailMateriPage({ params }: { params: { materialId
         <div className="lg:col-span-8 flex flex-col gap-6 min-w-0">
           
           {/* A. Capaian Pembelajaran */}
-          <div className="bg-slate-50 rounded-xl p-5 lg:p-6 border border-slate-200/60">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
-                <CheckCircle2 size={24} />
+          <Card className="border border-border bg-muted/30">
+            <CardContent className="p-5 lg:p-6 flex items-start gap-4">
+              <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                <CheckCircle2 className="size-5" />
               </div>
               <div className="flex flex-col gap-2">
-                <h2 className="font-display text-lg text-blue-900 font-bold leading-tight">
+                <h2 className="text-base font-semibold text-foreground leading-tight">
                   Tujuan Pembelajaran (Capaian Pembelajaran Fase F)
                 </h2>
-                <p className="font-body text-sm text-slate-600">
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Setelah menuntaskan modul praktikum ini, peserta didik Kelas XII Rekayasa Perangkat Lunak diharapkan kompeten dalam:
                 </p>
-                <ol className="mt-2 space-y-3 font-body text-sm text-slate-700 list-decimal list-inside pl-1">
+                <ol className="mt-1 space-y-2 text-xs sm:text-sm text-muted-foreground list-decimal list-inside pl-1">
                   <li className="leading-relaxed">
-                    <span className="font-bold text-slate-900">Memahami arsitektur token stateless vs cookie-session:</span> Menganalisis alasan arsitektur microservices dan REST API modern menggunakan JSON Web Token untuk skalabilitas otentikasi.
+                    <span className="font-semibold text-foreground">Memahami arsitektur token stateless vs cookie-session:</span> Menganalisis alasan arsitektur microservices dan REST API modern menggunakan JSON Web Token untuk skalabilitas otentikasi.
                   </li>
                   <li className="leading-relaxed">
-                    <span className="font-bold text-slate-900">Implementasi enkripsi signing HMAC SHA-256:</span> Mengonfigurasi signing payload menggunakan private secret key dari environment variables sistem (<code className="px-1.5 py-0.5 bg-slate-200 rounded text-xs font-mono text-slate-800">.env</code>).
+                    <span className="font-semibold text-foreground">Implementasi enkripsi signing HMAC SHA-256:</span> Mengonfigurasi signing payload menggunakan private secret key dari environment variables sistem (<code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">.env</code>).
                   </li>
                   <li className="leading-relaxed">
-                    <span className="font-bold text-slate-900">Konstruksi custom middleware Express.js:</span> Merancang fungsi interceptor <code className="px-1.5 py-0.5 bg-slate-200 rounded text-xs font-mono text-slate-800">authenticateToken</code> guna memvalidasi HTTP Header Bearer Token sebelum request diteruskan ke protected route.
+                    <span className="font-semibold text-foreground">Konstruksi custom middleware Express.js:</span> Merancang fungsi interceptor <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">authenticateToken</code> guna memvalidasi HTTP Header Bearer Token sebelum request diteruskan ke protected route.
                   </li>
                 </ol>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* B. Main Reading Material */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 lg:p-8 flex flex-col gap-8">
-            
-            {/* Section 1 */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <span className="px-2.5 py-1 rounded bg-blue-800 text-white font-body text-[10px] font-bold tracking-wider">BAGIAN 01</span>
-                <h3 className="font-display text-xl text-slate-900 font-bold">
-                  Anatomi & Struktur Dasar JSON Web Token (RFC 7519)
-                </h3>
-              </div>
-              <p className="font-body text-sm text-slate-600 leading-relaxed">
-                JSON Web Token (JWT) adalah standar terbuka (<a href="#" className="text-blue-700 underline font-medium">RFC 7519</a>) yang mendefinisikan cara ringkas dan mandiri (<em className="italic">self-contained</em>) untuk mentransmisikan informasi antar-pihak secara aman sebagai objek JSON. Informasi ini dapat diverifikasi dan dipercaya karena ditandatangani secara digital menggunakan kunci rahasia HMAC atau pasangan kunci publik/privat RSA.
-              </p>
+          <Card className="border border-border shadow-sm">
+            <CardContent className="p-5 lg:p-8 flex flex-col gap-8">
               
-              <div className="my-2 p-5 bg-slate-50 border border-slate-200/60 rounded-xl flex flex-col gap-4">
-                <span className="font-body text-xs uppercase tracking-widest text-slate-500 font-bold text-center">Tiga Komponen Penyusun Token JWT</span>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                  <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex flex-col items-center">
-                    <span className="font-body text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-700 mb-2">HEADER</span>
-                    <span className="font-mono text-sm font-bold text-slate-900">Algoritma & Tipe</span>
-                    <p className="font-body text-xs text-slate-500 mt-2">Menentukan algoritma hashing (misal: HS256) dan tipe token (<code className="text-[10px]">typ: "JWT"</code>).</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex flex-col items-center">
-                    <span className="font-body text-[10px] font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-700 mb-2">PAYLOAD</span>
-                    <span className="font-mono text-sm font-bold text-slate-900">Claims / Data</span>
-                    <p className="font-body text-xs text-slate-500 mt-2">Menyimpan klaim identitas: <code className="text-[10px]">id, role, exp</code>. Tidak dienkripsi, hanya Base64Url!</p>
-                  </div>
-                  <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-100 flex flex-col items-center">
-                    <span className="font-body text-[10px] font-bold px-2 py-0.5 rounded bg-green-100 text-green-700 mb-2">SIGNATURE</span>
-                    <span className="font-mono text-sm font-bold text-slate-900">Tanda Tangan</span>
-                    <p className="font-body text-xs text-slate-500 mt-2">Kombinasi Header + Payload yang di-hash bersama rahasia server.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 2 Flow */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-3">
-                <span className="px-2.5 py-1 rounded bg-blue-800 text-white font-body text-[10px] font-bold tracking-wider">BAGIAN 02</span>
-                <h3 className="font-display text-xl text-slate-900 font-bold">
-                  Alur Kerja Middleware Autentikasi
-                </h3>
-              </div>
-              <p className="font-body text-sm text-slate-600 leading-relaxed">
-                Pada arsitektur RESTful API Express.js, setiap request yang mengakses rute terproteksi harus melewati filter perantara (<em className="italic">middleware</em>) sebelum diteruskan ke fungsi Controller.
-              </p>
-              
-              <div className="w-full bg-slate-50 border border-slate-200/60 rounded-xl p-6 overflow-x-auto">
-                <div className="min-w-[620px] flex items-center justify-between gap-3">
-                  <div className="flex-1 bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700 mb-2">
-                      <Laptop size={20} />
-                    </div>
-                    <span className="font-body text-sm font-bold text-slate-900">Client</span>
-                    <span className="font-mono text-[10px] text-slate-500 mt-1">Header: Bearer</span>
-                  </div>
-                  <div className="flex flex-col items-center px-1 text-blue-600">
-                    <ArrowRight size={24} />
-                    <span className="font-body text-[9px] font-bold tracking-wider uppercase mt-1 text-slate-400">Req</span>
-                  </div>
-                  <div className="flex-1 bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 mb-2">
-                      <Shield size={20} />
-                    </div>
-                    <span className="font-body text-sm font-bold text-slate-900">Middleware</span>
-                    <span className="font-mono text-[10px] text-slate-500 mt-1">verifyToken()</span>
-                  </div>
-                  <div className="flex flex-col items-center px-1 text-green-600">
-                    <ArrowRight size={24} />
-                    <span className="font-body text-[9px] font-bold tracking-wider uppercase mt-1 text-slate-400">next()</span>
-                  </div>
-                  <div className="flex-1 bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex flex-col items-center text-center">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 mb-2">
-                      <Database size={20} />
-                    </div>
-                    <span className="font-body text-sm font-bold text-slate-900">Controller</span>
-                    <span className="font-mono text-[10px] text-slate-500 mt-1">Kirim JSON</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Practical Code */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
+              {/* Section 1 */}
+              <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-3">
-                  <span className="px-2.5 py-1 rounded bg-blue-800 text-white font-body text-[10px] font-bold tracking-wider">BAGIAN 03</span>
-                  <h3 className="font-display text-xl text-slate-900 font-bold">
-                    Praktikum Laboratorium: Middleware Express
+                  <Badge className="font-semibold text-[10px] tracking-wider uppercase">
+                    BAGIAN 01
+                  </Badge>
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground">
+                    Anatomi & Struktur Dasar JSON Web Token (RFC 7519)
                   </h3>
                 </div>
-                <button className="text-slate-500 hover:text-blue-700 flex items-center gap-1.5 font-body text-xs font-bold transition-colors">
-                  <Code size={16} />
-                  <span>Salin Kode</span>
-                </button>
-              </div>
-              <p className="font-body text-sm text-slate-600 leading-relaxed">
-                Buat berkas baru <code className="px-1.5 py-0.5 bg-slate-100 rounded text-xs font-mono font-semibold text-blue-700">src/middlewares/authMiddleware.js</code> di dalam project starter Express.js kalian.
-              </p>
-              
-              <div className="rounded-xl overflow-hidden bg-[#1e293b] text-slate-300 shadow-sm border border-slate-800">
-                <div className="bg-[#0f172a] px-5 py-3 flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                    <span className="ml-2 font-bold text-slate-200">authMiddleware.js</span>
-                  </div>
-                  <span>JavaScript (Node.js)</span>
-                </div>
-                <pre className="p-5 overflow-x-auto text-[13px] leading-relaxed font-mono text-slate-300">
-                  <code>
-<span className="text-slate-500">{`// Import modul JWT dan konfigurasi`}</span>
-<span className="text-pink-400">const</span> jwt = <span className="text-blue-400">require</span>(<span className="text-green-400">'jsonwebtoken'</span>);
-
-<span className="text-pink-400">function</span> <span className="text-blue-300 font-bold">authenticateToken</span>(req, res, next) {'{'}
-  <span className="text-slate-500">{`// 1. Baca header otorisasi`}</span>
-  <span className="text-pink-400">const</span> authHeader = req.headers[<span className="text-green-400">'authorization'</span>];
-  <span className="text-pink-400">const</span> token = authHeader && authHeader.<span className="text-blue-300">split</span>(<span className="text-green-400">' '</span>)[<span className="text-yellow-300">1</span>];
-
-  <span className="text-slate-500">{`// 2. Validasi keberadaan token`}</span>
-  <span className="text-pink-400">if</span> (!token) {'{'}
-    <span className="text-pink-400">return</span> res.<span className="text-blue-300">status</span>(<span className="text-yellow-300">401</span>).<span className="text-blue-300">json</span>({'{'}
-      success: <span className="text-red-400">false</span>,
-      message: <span className="text-green-400">'Akses ditolak.'</span>
-    {'}'});
-  {'}'}
-
-  <span className="text-slate-500">{`// 3. Verifikasi signature`}</span>
-  jwt.<span className="text-blue-300">verify</span>(token, process.env.<span className="text-yellow-300">JWT_SECRET</span>, (err, decodedUser) =&gt; {'{'}
-    <span className="text-pink-400">if</span> (err) <span className="text-pink-400">return</span> res.<span className="text-blue-300">sendStatus</span>(<span className="text-yellow-300">403</span>);
-    
-    req.user = decodedUser;
-    <span className="text-blue-300">next</span>();
-  {'}'});
-{'}'}
-                  </code>
-                </pre>
-              </div>
-            </div>
-            
-            {/* Attachment Section */}
-            <div className="flex flex-col gap-4 pt-6 border-t border-slate-100">
-              <h4 className="font-display text-lg text-slate-900 font-bold flex items-center gap-2">
-                <FolderArchive size={20} className="text-blue-700" />
-                <span>Berkas Lampiran & Sumber Daya</span>
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl flex flex-col gap-3 hover:border-blue-300 transition-colors">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
-                      <Code size={20} />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-body text-sm font-bold text-slate-900 truncate">auth-starter.zip</span>
-                      <span className="font-body text-[11px] text-slate-500">Starter Code • 4.2 MB</span>
-                    </div>
-                  </div>
-                  <button className="w-full py-2 rounded-lg bg-white border border-slate-200 text-blue-700 font-body text-xs font-bold hover:bg-slate-50 transition-colors flex items-center justify-center gap-1.5">
-                    <Download size={14} />
-                    Unduh
-                  </button>
-                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  JSON Web Token (JWT) adalah standar terbuka (<span className="text-primary underline font-medium">RFC 7519</span>) yang mendefinisikan cara ringkas dan mandiri (<em className="italic">self-contained</em>) untuk mentransmisikan informasi antar-pihak secara aman sebagai objek JSON. Informasi ini dapat diverifikasi dan dipercaya karena ditandatangani secara digital menggunakan kunci rahasia HMAC atau pasangan kunci publik/privat RSA.
+                </p>
                 
-                <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl flex flex-col gap-3 hover:border-blue-300 transition-colors">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-red-100 text-red-700 flex items-center justify-center shrink-0">
-                      <FileText size={20} />
+                <div className="my-2 p-5 bg-muted/40 border border-border rounded-xl flex flex-col gap-4">
+                  <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold text-center">
+                    Tiga Komponen Penyusun Token JWT
+                  </span>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div className="bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center">
+                      <Badge variant="destructive" className="font-semibold text-[10px] mb-2">HEADER</Badge>
+                      <span className="font-mono text-sm font-semibold text-foreground">Algoritma & Tipe</span>
+                      <p className="text-xs text-muted-foreground mt-2">Menentukan algoritma hashing (misal: HS256) dan tipe token (<code className="text-[10px]">typ: &quot;JWT&quot;</code>).</p>
                     </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="font-body text-sm font-bold text-slate-900 truncate">LKS-09-JWT.pdf</span>
-                      <span className="font-body text-[11px] text-slate-500">Lembar Kerja • 1.8 MB</span>
+                    <div className="bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center">
+                      <Badge variant="secondary" className="font-semibold text-[10px] mb-2">PAYLOAD</Badge>
+                      <span className="font-mono text-sm font-semibold text-foreground">Claims / Data</span>
+                      <p className="text-xs text-muted-foreground mt-2">Menyimpan klaim identitas: <code className="text-[10px]">id, role, exp</code>. Tidak dienkripsi, hanya Base64Url!</p>
+                    </div>
+                    <div className="bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center">
+                      <Badge variant="outline" className="text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 font-semibold text-[10px] mb-2">SIGNATURE</Badge>
+                      <span className="font-mono text-sm font-semibold text-foreground">Tanda Tangan</span>
+                      <p className="text-xs text-muted-foreground mt-2">Kombinasi Header + Payload yang di-hash bersama rahasia server.</p>
                     </div>
                   </div>
-                  <button className="w-full py-2 rounded-lg bg-white border border-slate-200 text-blue-700 font-body text-xs font-bold hover:bg-slate-50 transition-colors flex items-center justify-center gap-1.5">
-                    <Download size={14} />
-                    Unduh
-                  </button>
                 </div>
               </div>
-            </div>
-            
-          </div>
+
+              {/* Section 2 Flow */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <Badge className="font-semibold text-[10px] tracking-wider uppercase">
+                    BAGIAN 02
+                  </Badge>
+                  <h3 className="text-lg sm:text-xl font-semibold text-foreground">
+                    Alur Kerja Middleware Autentikasi
+                  </h3>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Pada arsitektur RESTful API Express.js, setiap request yang mengakses rute terproteksi harus melewati filter perantara (<em className="italic">middleware</em>) sebelum diteruskan ke fungsi Controller.
+                </p>
+                
+                <div className="w-full bg-muted/40 border border-border rounded-xl p-5 overflow-x-auto">
+                  <div className="min-w-[560px] flex items-center justify-between gap-3">
+                    <div className="flex-1 bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center text-center">
+                      <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground mb-2">
+                        <Laptop className="size-5" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">Client</span>
+                      <span className="font-mono text-[10px] text-muted-foreground mt-1">Header: Bearer</span>
+                    </div>
+                    <div className="flex flex-col items-center px-1 text-primary">
+                      <ArrowRight className="size-5" />
+                      <span className="text-[9px] font-semibold tracking-wider uppercase mt-1 text-muted-foreground">Req</span>
+                    </div>
+                    <div className="flex-1 bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center text-center">
+                      <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
+                        <Shield className="size-5" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">Middleware</span>
+                      <span className="font-mono text-[10px] text-muted-foreground mt-1">verifyToken()</span>
+                    </div>
+                    <div className="flex flex-col items-center px-1 text-emerald-600">
+                      <ArrowRight className="size-5" />
+                      <span className="text-[9px] font-semibold tracking-wider uppercase mt-1 text-muted-foreground">next()</span>
+                    </div>
+                    <div className="flex-1 bg-card p-4 rounded-lg shadow-sm border border-border flex flex-col items-center text-center">
+                      <div className="size-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 mb-2">
+                        <Database className="size-5" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">Controller</span>
+                      <span className="font-mono text-[10px] text-muted-foreground mt-1">Kirim JSON</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Practical Code */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Badge className="font-semibold text-[10px] tracking-wider uppercase">
+                      BAGIAN 03
+                    </Badge>
+                    <h3 className="text-lg sm:text-xl font-semibold text-foreground">
+                      Praktikum Laboratorium: Middleware Express
+                    </h3>
+                  </div>
+                  <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+                    <Code className="size-4" />
+                    <span>Salin Kode</span>
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Buat berkas baru <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono font-semibold text-primary">src/middlewares/authMiddleware.js</code> di dalam project starter Express.js kalian.
+                </p>
+                
+                <div className="rounded-xl overflow-hidden bg-slate-950 text-slate-200 border border-border shadow-sm">
+                  <div className="bg-slate-900 px-4 py-2.5 flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <span className="size-2.5 rounded-full bg-destructive" />
+                      <span className="size-2.5 rounded-full bg-amber-500" />
+                      <span className="size-2.5 rounded-full bg-emerald-500" />
+                      <span className="ml-2 font-semibold text-slate-200">authMiddleware.js</span>
+                    </div>
+                    <span>JavaScript (Node.js)</span>
+                  </div>
+                  <pre className="p-4 overflow-x-auto text-xs leading-relaxed font-mono text-slate-300">
+                    <code>
+                      {`// Import modul JWT dan konfigurasi\nconst jwt = require('jsonwebtoken');\n\nfunction authenticateToken(req, res, next) {\n  // 1. Baca header otorisasi\n  const authHeader = req.headers['authorization'];\n  const token = authHeader && authHeader.split(' ')[1];\n\n  // 2. Validasi keberadaan token\n  if (!token) {\n    return res.status(401).json({\n      success: false,\n      message: 'Akses ditolak.'\n    });\n  }\n\n  // 3. Verifikasi signature\n  jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {\n    if (err) return res.sendStatus(403);\n    \n    req.user = decodedUser;\n    next();\n  });\n}`}
+                    </code>
+                  </pre>
+                </div>
+              </div>
+              
+              {/* Attachment Section */}
+              <div className="flex flex-col gap-4 pt-4 border-t border-border">
+                <h4 className="text-base font-semibold text-foreground flex items-center gap-2">
+                  <FolderArchive className="size-4 text-primary" />
+                  <span>Berkas Lampiran & Sumber Daya</span>
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card className="border border-border bg-muted/20 hover:border-primary/40 transition-colors">
+                    <CardContent className="p-4 flex flex-col gap-3">
+                      <div className="flex items-start gap-3">
+                        <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                          <Code className="size-4" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-semibold text-foreground truncate">auth-starter.zip</span>
+                          <span className="text-[11px] text-muted-foreground">Starter Code • 4.2 MB</span>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5">
+                        <Download className="size-3.5" />
+                        <span>Unduh</span>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="border border-border bg-muted/20 hover:border-primary/40 transition-colors">
+                    <CardContent className="p-4 flex flex-col gap-3">
+                      <div className="flex items-start gap-3">
+                        <div className="size-9 rounded-lg bg-destructive/10 text-destructive flex items-center justify-center shrink-0">
+                          <FileText className="size-4" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-xs font-semibold text-foreground truncate">LKS-09-JWT.pdf</span>
+                          <span className="text-[11px] text-muted-foreground">Lembar Kerja • 1.8 MB</span>
+                        </div>
+                      </div>
+                      <Button variant="outline" size="sm" className="w-full text-xs font-semibold gap-1.5">
+                        <Download className="size-3.5" />
+                        <span>Unduh</span>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
           {/* C. Pagination Footer */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link href="/siswa/materi/modul-08" className="p-4 bg-white rounded-xl shadow-sm border border-slate-200/60 hover:border-blue-400 transition-colors flex items-center gap-4 group text-left">
-              <div className="w-10 h-10 rounded-lg bg-slate-50 group-hover:bg-blue-50 flex items-center justify-center text-slate-500 group-hover:text-blue-700 shrink-0 transition-colors">
-                <ArrowLeft size={20} />
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-body text-[10px] text-slate-500 uppercase font-bold tracking-wider">Materi Sebelumnya</span>
-                <span className="font-body text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
-                  Modul 08: Setup Express.js Modular
-                </span>
-              </div>
+            <Link href="/siswa/materi/modul-08" className="group">
+              <Card className="border border-border group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-4 flex items-center gap-3.5">
+                  <div className="size-9 rounded-lg bg-muted text-muted-foreground group-hover:text-primary flex items-center justify-center shrink-0 transition-colors">
+                    <ArrowLeft className="size-4" />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">
+                      Materi Sebelumnya
+                    </span>
+                    <span className="text-xs sm:text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                      Modul 08: Setup Express.js Modular
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
             </Link>
             
-            <Link href="/siswa/materi/modul-10" className="p-4 bg-white rounded-xl shadow-sm border border-slate-200/60 hover:border-blue-400 transition-colors flex items-center justify-between gap-4 group text-right">
-              <div className="flex flex-col min-w-0 ml-auto">
-                <span className="font-body text-[10px] text-slate-500 uppercase font-bold tracking-wider">Materi Berikutnya</span>
-                <span className="font-body text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">
-                  Modul 10: Endpoint Testing Postman
-                </span>
-              </div>
-              <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-700 group-hover:bg-blue-600 group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
-                <ArrowRight size={20} />
-              </div>
+            <Link href="/siswa/materi/modul-10" className="group">
+              <Card className="border border-border group-hover:border-primary/50 transition-colors text-right">
+                <CardContent className="p-4 flex items-center justify-between gap-3.5">
+                  <div className="flex flex-col min-w-0 ml-auto">
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wider">
+                      Materi Berikutnya
+                    </span>
+                    <span className="text-xs sm:text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                      Modul 10: Endpoint Testing Postman
+                    </span>
+                  </div>
+                  <div className="size-9 rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground flex items-center justify-center shrink-0 transition-colors">
+                    <ArrowRight className="size-4" />
+                  </div>
+                </CardContent>
+              </Card>
             </Link>
           </div>
-          
         </div>
         
         {/* RIGHT COLUMN (Sidebar) */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           
           {/* Progress Card */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="p-4 pb-3 flex flex-row items-center justify-between border-b border-border space-y-0">
               <div className="flex items-center gap-2">
-                <PieChart size={20} className="text-blue-700" />
-                <span className="font-display text-base font-bold text-slate-900">Progres BAB 03</span>
+                <PieChart className="size-4 text-primary" />
+                <CardTitle className="text-sm font-semibold">Progres BAB 03</CardTitle>
               </div>
-              <span className="font-body text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 uppercase">
+              <Badge variant="secondary" className="text-[10px] font-semibold uppercase">
                 50% Tercapai
-              </span>
-            </div>
-            <div className="pt-4 flex flex-col gap-2">
-              <div className="flex justify-between font-body text-xs text-slate-500">
+              </Badge>
+            </CardHeader>
+            <CardContent className="p-4 flex flex-col gap-3">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>2 dari 4 Modul Tuntas</span>
-                <span className="font-bold text-slate-700">Target: 28 Sep</span>
+                <span className="font-semibold text-foreground">Target: 28 Sep</span>
               </div>
-              <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-600 rounded-full" style={{ width: '50%' }}></div>
+              <Progress value={50} className="h-2" />
+              <div className="mt-2 p-2.5 bg-muted/40 border border-border rounded-lg flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Peserta: <strong className="text-foreground">Rakha Arkana</strong></span>
+                <span className="text-muted-foreground font-semibold">XII RPL 1</span>
               </div>
-            </div>
-            <div className="mt-4 p-2 bg-slate-50 border border-slate-100 rounded-lg flex items-center justify-between font-body text-xs">
-              <span className="text-slate-500">Peserta: <strong className="text-slate-800">Rakha Arkana</strong></span>
-              <span className="text-slate-400 font-semibold">XII RPL 1</span>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
           
           {/* Syllabus Navigation */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
-            <div className="px-5 py-4 bg-slate-50 border-b border-slate-200/60 flex items-center justify-between">
+          <Card className="border border-border shadow-sm overflow-hidden">
+            <CardHeader className="p-4 pb-3 bg-muted/40 border-b border-border space-y-0 flex flex-row items-center justify-between">
               <div className="flex flex-col">
-                <span className="font-body text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-0.5">Silabus Pembelajaran</span>
-                <span className="font-display text-sm font-bold text-blue-900">BAB 03: RESTful API Backend</span>
+                <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Silabus Pembelajaran
+                </span>
+                <CardTitle className="text-sm font-semibold text-foreground mt-0.5">
+                  BAB 03: RESTful API Backend
+                </CardTitle>
               </div>
-              <span className="px-2 py-1 rounded-md bg-white border border-slate-200 text-slate-600 font-body text-[10px] font-bold">
+              <Badge variant="outline" className="text-[10px] font-semibold">
                 4 Modul
-              </span>
-            </div>
+              </Badge>
+            </CardHeader>
             
-            <div className="p-3 flex flex-col gap-1.5">
-              
-              <Link href="/siswa/materi/modul-07" className="p-3 rounded-lg flex items-start gap-3 hover:bg-slate-50 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check size={14} />
+            <CardContent className="p-2.5 flex flex-col gap-1">
+              <Link href="/siswa/materi/modul-07" className="p-2.5 rounded-lg flex items-start gap-3 hover:bg-muted/50 transition-colors group">
+                <div className="size-5 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Check className="size-3" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-body text-[10px] text-green-700 font-bold uppercase tracking-wider">Modul 07 • Selesai</span>
-                  <span className="font-body text-sm font-bold text-slate-700 group-hover:text-blue-700 transition-colors line-clamp-1">
+                  <span className="text-[10px] text-emerald-600 font-semibold uppercase">Modul 07 • Selesai</span>
+                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                     Konsep RESTful Architecture
                   </span>
-                  <span className="font-body text-[11px] text-slate-400 mt-0.5">Nilai Quiz: 92/100</span>
+                  <span className="text-[10px] text-muted-foreground mt-0.5">Nilai Quiz: 92/100</span>
                 </div>
               </Link>
               
-              <Link href="/siswa/materi/modul-08" className="p-3 rounded-lg flex items-start gap-3 hover:bg-slate-50 transition-colors group">
-                <div className="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center shrink-0 mt-0.5">
-                  <Check size={14} />
+              <Link href="/siswa/materi/modul-08" className="p-2.5 rounded-lg flex items-start gap-3 hover:bg-muted/50 transition-colors group">
+                <div className="size-5 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Check className="size-3" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-body text-[10px] text-green-700 font-bold uppercase tracking-wider">Modul 08 • Selesai</span>
-                  <span className="font-body text-sm font-bold text-slate-700 group-hover:text-blue-700 transition-colors line-clamp-1">
+                  <span className="text-[10px] text-emerald-600 font-semibold uppercase">Modul 08 • Selesai</span>
+                  <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                     Setup Node.js & Express.js
                   </span>
-                  <span className="font-body text-[11px] text-slate-400 mt-0.5">Praktikum Mandiri Tuntas</span>
+                  <span className="text-[10px] text-muted-foreground mt-0.5">Praktikum Mandiri Tuntas</span>
                 </div>
               </Link>
               
-              <div className="p-3 rounded-lg flex items-start gap-3 bg-blue-50 border border-blue-100">
-                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
-                  <PlayCircle size={14} />
+              <div className="p-2.5 rounded-lg flex items-start gap-3 bg-primary/10 border border-primary/20">
+                <div className="size-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                  <PlayCircle className="size-3" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-body text-[10px] text-blue-700 font-bold uppercase tracking-wider">Modul 09 • Aktif</span>
-                  <span className="font-body text-sm font-bold text-blue-900 line-clamp-2">
+                  <span className="text-[10px] text-primary font-semibold uppercase">Modul 09 • Aktif</span>
+                  <span className="text-xs font-semibold text-foreground truncate">
                     Implementasi JWT & Middleware
                   </span>
-                  <span className="font-body text-[11px] text-blue-600 mt-0.5">Sedang dipelajari (75%)</span>
+                  <span className="text-[10px] text-primary font-medium mt-0.5">Sedang dipelajari (75%)</span>
                 </div>
               </div>
               
-              <div className="p-3 rounded-lg flex items-start gap-3 opacity-60">
-                <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center shrink-0 mt-0.5">
-                  <Lock size={14} />
+              <div className="p-2.5 rounded-lg flex items-start gap-3 opacity-60">
+                <div className="size-5 rounded-full bg-muted text-muted-foreground flex items-center justify-center shrink-0 mt-0.5">
+                  <Lock className="size-3" />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-body text-[10px] text-slate-400 font-bold uppercase tracking-wider">Modul 10 • Terkunci</span>
-                  <span className="font-body text-sm font-bold text-slate-600 line-clamp-1">
+                  <span className="text-[10px] text-muted-foreground font-semibold uppercase">Modul 10 • Terkunci</span>
+                  <span className="text-xs font-semibold text-foreground truncate">
                     Endpoint Testing Postman
                   </span>
-                  <span className="font-body text-[11px] text-slate-400 mt-0.5">Selesaikan Modul 09</span>
+                  <span className="text-[10px] text-muted-foreground mt-0.5">Selesaikan Modul 09</span>
                 </div>
               </div>
-              
-            </div>
-          </div>
-          
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

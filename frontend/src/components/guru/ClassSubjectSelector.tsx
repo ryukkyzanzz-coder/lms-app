@@ -2,7 +2,15 @@
 
 import React from 'react';
 import { useTeacher } from '@/lib/guru/teacher-context';
-import { DoorOpen, BookOpen, ChevronDown, Loader2 } from 'lucide-react';
+import { DoorOpen, BookOpen } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ClassSubjectSelectorProps {
   className?: string;
@@ -29,40 +37,37 @@ export default function ClassSubjectSelector({
       {/* 1. Class Selector */}
       <div className="flex flex-col gap-1">
         {showLabels && (
-          <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-            <DoorOpen size={12} className="text-blue-700" />
+          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+            <DoorOpen size={12} className="text-primary" />
             <span>Rombongan Belajar (Kelas)</span>
           </label>
         )}
-        <div className="relative">
+        <div>
           {isLoadingClasses ? (
-            <div className="h-10 px-3 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-400">
-              <Loader2 size={14} className="animate-spin text-blue-700" />
-              <span>Memuat kelas...</span>
-            </div>
+            <Skeleton className="h-8 w-full sm:w-[220px]" />
           ) : (
-            <>
-              <select
-                value={selectedKelasId || ''}
-                onChange={(e) => setSelectedKelasId(e.target.value || null)}
-                disabled={availableClasses.length === 0}
-                className="w-full sm:w-[220px] appearance-none h-10 pl-3 pr-8 bg-white border border-slate-200/80 rounded-lg text-sm text-slate-800 font-medium focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-shadow disabled:bg-slate-50 disabled:text-slate-400"
-              >
+            <Select
+              value={selectedKelasId || ''}
+              onValueChange={(val) => setSelectedKelasId((val as string) || null)}
+              disabled={availableClasses.length === 0}
+            >
+              <SelectTrigger className="w-full sm:w-[220px] bg-card text-card-foreground">
+                <SelectValue placeholder={availableClasses.length === 0 ? 'Tidak ada kelas diampu' : 'Pilih Kelas'} />
+              </SelectTrigger>
+              <SelectContent>
                 {availableClasses.length === 0 ? (
-                  <option value="">Tidak ada kelas diampu</option>
+                  <SelectItem value="_empty" disabled>
+                    Tidak ada kelas diampu
+                  </SelectItem>
                 ) : (
                   availableClasses.map((cls) => (
-                    <option key={cls._id} value={cls._id}>
+                    <SelectItem key={cls._id} value={cls._id}>
                       {cls.nama} ({cls.program})
-                    </option>
+                    </SelectItem>
                   ))
                 )}
-              </select>
-              <ChevronDown
-                size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-              />
-            </>
+              </SelectContent>
+            </Select>
           )}
         </div>
       </div>
@@ -70,40 +75,37 @@ export default function ClassSubjectSelector({
       {/* 2. Subject Selector */}
       <div className="flex flex-col gap-1">
         {showLabels && (
-          <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1">
-            <BookOpen size={12} className="text-blue-700" />
+          <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+            <BookOpen size={12} className="text-primary" />
             <span>Mata Pelajaran</span>
           </label>
         )}
-        <div className="relative">
+        <div>
           {isLoadingSubjects ? (
-            <div className="h-10 px-3 flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-400">
-              <Loader2 size={14} className="animate-spin text-blue-700" />
-              <span>Memuat mapel...</span>
-            </div>
+            <Skeleton className="h-8 w-full sm:w-[240px]" />
           ) : (
-            <>
-              <select
-                value={selectedMapelId || ''}
-                onChange={(e) => setSelectedMapelId(e.target.value || null)}
-                disabled={availableSubjects.length === 0}
-                className="w-full sm:w-[240px] appearance-none h-10 pl-3 pr-8 bg-white border border-slate-200/80 rounded-lg text-sm text-slate-800 font-medium focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 transition-shadow disabled:bg-slate-50 disabled:text-slate-400"
-              >
+            <Select
+              value={selectedMapelId || ''}
+              onValueChange={(val) => setSelectedMapelId((val as string) || null)}
+              disabled={availableSubjects.length === 0}
+            >
+              <SelectTrigger className="w-full sm:w-[240px] bg-card text-card-foreground">
+                <SelectValue placeholder={availableSubjects.length === 0 ? 'Tidak ada mapel diampu' : 'Pilih Mapel'} />
+              </SelectTrigger>
+              <SelectContent>
                 {availableSubjects.length === 0 ? (
-                  <option value="">Tidak ada mapel diampu</option>
+                  <SelectItem value="_empty" disabled>
+                    Tidak ada mapel diampu
+                  </SelectItem>
                 ) : (
                   availableSubjects.map((sub) => (
-                    <option key={sub._id} value={sub._id}>
+                    <SelectItem key={sub._id} value={sub._id}>
                       {sub.nama} ({sub.kode})
-                    </option>
+                    </SelectItem>
                   ))
                 )}
-              </select>
-              <ChevronDown
-                size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-              />
-            </>
+              </SelectContent>
+            </Select>
           )}
         </div>
       </div>

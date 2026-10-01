@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -9,25 +10,42 @@ import {
   ClipboardCheck, 
   Star, 
   TrendingUp, 
-  Megaphone,
-  HelpCircle,
-  Settings,
-  LayoutDashboard,
-  BarChart3,
-  CalendarCheck,
-  AlertCircle,
-  Layers,
-  Book,
-  Target,
-  Calendar,
-  CheckSquare,
-  Users,
-  Award,
-  ArrowRightLeft,
-  FolderTree,
-  CheckCircle2,
-  LucideIcon
+  Megaphone, 
+  HelpCircle, 
+  Settings, 
+  LayoutDashboard, 
+  BarChart3, 
+  CalendarCheck, 
+  AlertCircle, 
+  Layers, 
+  Book, 
+  Target, 
+  Calendar, 
+  CheckSquare, 
+  Users, 
+  Award, 
+  ArrowRightLeft, 
+  FolderTree, 
+  CheckCircle2, 
+  LucideIcon 
 } from 'lucide-react';
+import {
+  Sidebar as ShadcnSidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuBadge,
+  SidebarRail,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 type NavItem = {
   type?: 'group';
@@ -68,10 +86,14 @@ const guruNavItems: NavItem[] = [
 
 const siswaNavItems: NavItem[] = [
   { name: 'Beranda', path: '/siswa/dashboard', icon: Home },
-  { type: 'group', name: 'Akademik' },
+  { type: 'group', name: 'Pembelajaran' },
   { name: 'Kelas Saya', path: '/siswa/kelas', icon: DoorOpen },
+  { name: 'Materi', path: '/siswa/materi', icon: BookOpen },
   { name: 'Tugas', path: '/siswa/tugas', icon: ClipboardCheck },
+  { type: 'group', name: 'Hasil Belajar' },
   { name: 'Nilai Akademik', path: '/siswa/nilai', icon: Star },
+  { type: 'group', name: 'Informasi' },
+  { name: 'Pengumuman', path: '/siswa/pengumuman', icon: Megaphone },
 ];
 
 const kepsekNavItems: NavItem[] = [
@@ -106,6 +128,13 @@ export default function Sidebar({
   userProfile?: { name: string; idNumber?: string; roleSub?: string };
 }) {
   const pathname = usePathname();
+  const { setOpenMobile, isMobile } = useSidebar();
+
+  const handleNavClick = () => {
+    if (onNavigate) onNavigate();
+    if (isMobile) setOpenMobile(false);
+  };
+
   const navItems = role === 'admin' 
     ? adminNavItems 
     : role === 'guru' 
@@ -126,157 +155,159 @@ export default function Sidebar({
     ? 'Kepala Sekolah' 
     : 'Kurikulum';
 
+  // Group items into sections
+  const groupedSections: { title?: string; items: NavItem[] }[] = [];
+  let currentSection: { title?: string; items: NavItem[] } = { items: [] };
+
+  for (const item of navItems) {
+    if (item.type === 'group') {
+      if (currentSection.items.length > 0) {
+        groupedSections.push(currentSection);
+      }
+      currentSection = { title: item.name, items: [] };
+    } else {
+      currentSection.items.push(item);
+    }
+  }
+  if (currentSection.items.length > 0) {
+    groupedSections.push(currentSection);
+  }
+
   return (
-    <aside className="h-full w-full bg-white border-r border-slate-200/60 flex flex-col justify-between select-none">
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Brand Header */}
-        <div className="h-[60px] px-6 flex items-center gap-3 border-b border-slate-200/60 shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-blue-900 text-white flex items-center justify-center font-display font-semibold text-sm">
+    <ShadcnSidebar className="border-r border-border bg-sidebar text-sidebar-foreground">
+      {/* Header / Brand */}
+      <SidebarHeader className="border-b border-border p-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold text-sm">
             S
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="font-display text-sm font-semibold text-slate-900 truncate leading-none">
-              SMK N 1 Surabaya
+            <span className="font-semibold text-sm truncate leading-tight text-foreground">
+              SMK CITRA NEGARA
             </span>
-            <span className="font-body text-[11px] font-semibold text-slate-500 uppercase tracking-wider mt-0.5">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mt-0.5">
               LMS Akademik
             </span>
           </div>
         </div>
-
-        {/* Role Context */}
-        <div className="px-6 py-3 border-b border-slate-200/40 bg-blue-50/50 flex items-center justify-between shrink-0">
+        <div className="mt-3 flex items-center justify-between rounded-md bg-muted/60 px-2.5 py-1.5 text-[11px]">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-green-500"></span>
-            <span className="font-body text-[11px] font-medium text-slate-500">Peran:</span>
-            <span className="font-body text-[11px] font-semibold text-slate-900 bg-blue-100 px-1.5 py-0.5 rounded">
-              {roleLabel}
+            <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span className="text-muted-foreground">Peran:</span>
+            <span className="font-semibold text-foreground">{roleLabel}</span>
+          </div>
+          <Badge variant="outline" className="text-[10px] h-4 px-1 py-0">v2.6</Badge>
+        </div>
+      </SidebarHeader>
+
+      {/* Nav Content */}
+      <SidebarContent className="px-2 py-3">
+        {groupedSections.map((section, sIdx) => (
+          <SidebarGroup key={section.title || `section-${sIdx}`} className="p-0 mb-3">
+            {section.title && (
+              <SidebarGroupLabel className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                {section.title}
+              </SidebarGroupLabel>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item, iIdx) => {
+                  const Icon = item.icon as LucideIcon;
+                  const targetPath = item.path?.split('#')[0].split('?')[0] as string;
+                  const isActive = pathname === targetPath || (pathname?.startsWith(targetPath) && targetPath !== '/admin');
+
+                  return (
+                    <SidebarMenuItem key={`${item.name}-${iIdx}`}>
+                      <SidebarMenuButton 
+                        render={<Link href={item.path as string} onClick={handleNavClick} />}
+                        isActive={isActive}
+                        className={isActive ? 'bg-primary text-primary-foreground font-medium hover:bg-primary/90 hover:text-primary-foreground' : ''}
+                      >
+                        {Icon && <Icon className="size-4 shrink-0" />}
+                        <span className="truncate">{item.name}</span>
+                      </SidebarMenuButton>
+                      {item.badge && (
+                        <SidebarMenuBadge className={
+                          isActive 
+                            ? 'bg-primary-foreground/20 text-primary-foreground' 
+                            : item.badge.includes('Valid') 
+                            ? 'bg-emerald-100 text-emerald-700' 
+                            : 'bg-rose-100 text-rose-700'
+                        }>
+                          {item.badge}
+                        </SidebarMenuBadge>
+                      )}
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+
+      {/* Footer / Profile */}
+      <SidebarFooter className="border-t border-border p-3 gap-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton render={<Link href="#" />} size="sm">
+              <HelpCircle className="size-4" />
+              <span>Bantuan</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton render={<Link href="#" />} size="sm">
+              <Settings className="size-4" />
+              <span>Pengaturan</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+
+        {/* User Card */}
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-card p-2 text-card-foreground">
+          <Avatar size="default">
+            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+              {role === 'admin' ? 'BS' : role === 'guru' ? (userProfile?.name ? userProfile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'D') : role === 'siswa' ? 'RA' : role === 'kepsek' ? 'W' : 'AH'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col min-w-0 flex-1 leading-tight">
+            <span className="text-xs font-semibold truncate text-foreground">
+              {role === 'admin'
+                ? 'Bambang Sudarmono, S.AP.'
+                : role === 'guru'
+                ? userProfile?.name || 'Dafiand'
+                : role === 'siswa'
+                ? 'Rakha Arkana'
+                : role === 'kepsek'
+                ? 'Drs. H. Wardoyo, M.Pd.'
+                : 'Ahmad Hidayat, M.Kom'}
+            </span>
+            <span className="text-[10px] text-muted-foreground truncate mt-0.5">
+              {role === 'admin'
+                ? 'NIP: 19780514 200501 1 003'
+                : role === 'guru'
+                ? userProfile?.idNumber || 'NIP. —'
+                : role === 'siswa'
+                ? 'NISN: 0061234567'
+                : role === 'kepsek'
+                ? '19680315 199303 1 004'
+                : 'NIP: 19750820 200012 1 002'}
+            </span>
+            <span className="text-[10px] font-medium text-primary truncate">
+              {role === 'admin'
+                ? 'Kepala Tata Usaha'
+                : role === 'guru'
+                ? userProfile?.roleSub || 'Guru Pengampu'
+                : role === 'siswa'
+                ? 'XII RPL 1'
+                : role === 'kepsek'
+                ? 'Kepala Sekolah'
+                : 'Waka Kurikulum'}
             </span>
           </div>
-          <span className="font-body text-[11px] text-slate-400">v2.6</span>
         </div>
-
-        {/* Navigation */}
-        <nav className="flex flex-col p-3 gap-0.5 overflow-y-auto">
-          {navItems.map((item, index) => {
-            if (item.type === 'group') {
-              return (
-                <div key={`group-${index}`} className="px-3 pt-3 pb-1 font-body text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                  {item.name}
-                </div>
-              );
-            }
-
-            const Icon = item.icon as React.ElementType;
-            const targetPath = item.path?.split('#')[0].split('?')[0] as string;
-            const isActive = pathname === targetPath || (pathname?.startsWith(targetPath) && targetPath !== '/admin');
-            
-            return (
-              <Link 
-                key={`${item.name}-${index}`} 
-                href={item.path as string}
-                onClick={onNavigate}
-                className={`flex items-center justify-between px-3 py-2 rounded-lg font-body text-[13px] font-medium transition-colors ${
-                  isActive 
-                    ? 'bg-blue-900 text-white' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <Icon size={18} className={item.badge && !isActive ? "text-red-500" : ""} />
-                  <span>{item.name}</span>
-                </div>
-                {item.badge && (
-                  <span className={`font-body text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                    isActive ? "bg-white/20 text-white" : item.badge.includes('Valid') ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="flex flex-col border-t border-slate-200/60 p-3 gap-1 bg-white shrink-0">
-        <nav className="flex flex-col gap-0.5">
-          <Link href="#" className="flex items-center gap-3 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors font-body text-xs font-medium">
-            <HelpCircle size={16} />
-            <span>Bantuan</span>
-          </Link>
-          <Link href="#" className="flex items-center gap-3 px-3 py-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors font-body text-xs font-medium">
-            <Settings size={16} />
-            <span>Pengaturan</span>
-          </Link>
-        </nav>
-
-        {role === 'admin' ? (
-          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-900 text-white flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              BS
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">Bambang Sudarmono, S.AP.</span>
-              <span className="font-body text-[10px] text-slate-500 truncate">NIP: 19780514 200501 1 003</span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">Kepala Tata Usaha</span>
-            </div>
-          </div>
-        ) : role === 'guru' ? (
-          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              {userProfile?.name 
-                ? userProfile.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
-                : 'HS'}
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">
-                {userProfile?.name || 'Drs. Hendra Setiawan'}
-              </span>
-              <span className="font-body text-[10px] text-slate-500 truncate">
-                {userProfile?.idNumber || '19850412 201001 1 018'}
-              </span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">
-                {userProfile?.roleSub || 'Guru Produktif RPL'}
-              </span>
-            </div>
-          </div>
-        ) : role === 'siswa' ? (
-          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              RA
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">Rakha Arkana</span>
-              <span className="font-body text-[10px] text-slate-500 truncate">NISN: 0061234567</span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">XII RPL 1</span>
-            </div>
-          </div>
-        ) : role === 'kepsek' ? (
-          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              W
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">Drs. H. Wardoyo, M.Pd.</span>
-              <span className="font-body text-[10px] text-slate-500 truncate">19680315 199303 1 004</span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">Kepala Sekolah</span>
-            </div>
-          </div>
-        ) : (
-          <div className="mt-1 p-2 rounded-lg bg-slate-50/80 border border-slate-200/60 flex items-center gap-2">
-            <div className="w-9 h-9 rounded-full bg-blue-100 text-slate-700 flex items-center justify-center font-display text-sm font-semibold shrink-0">
-              AH
-            </div>
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="font-body text-xs font-semibold text-slate-900 truncate">Ahmad Hidayat, M.Kom</span>
-              <span className="font-body text-[10px] text-slate-500 truncate">NIP: 19750820 200012 1 002</span>
-              <span className="font-body text-[10px] font-medium text-blue-700 truncate">Waka Kurikulum</span>
-            </div>
-          </div>
-        )}
-      </div>
-    </aside>
+      </SidebarFooter>
+      <SidebarRail />
+    </ShadcnSidebar>
   );
 }

@@ -14,7 +14,6 @@ import {
   RotateCcw,
   FileText,
   ExternalLink,
-  X,
   ChevronLeft,
   ChevronRight,
   Filter,
@@ -28,6 +27,44 @@ import {
   SubmissionRosterItem,
   SubmissionStats,
 } from '@/types/guru';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export default function AssignmentSubmissionsPage() {
   const params = useParams();
@@ -100,617 +137,588 @@ export default function AssignmentSubmissionsPage() {
     };
   }, [assignmentId, searchQuery, statusFilter, isLateFilter, page, refreshTrigger]);
 
-  // Debounce search input
+  // Debounced search submit
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(searchInput);
       setPage(1);
     }, 400);
+
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-
-  const handleOpenDetailModal = (item: SubmissionRosterItem) => {
-    setSelectedItem(item);
-    setIsDetailModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setSelectedItem(null);
-    setIsDetailModalOpen(false);
-  };
-
-  const formatDateTime = (dateStr?: string | Date) => {
-    if (!dateStr) return '-';
+  // Format Date Helper
+  const formatDateTime = (isoDate?: string | Date) => {
+    if (!isoDate) return '—';
     try {
-      return new Date(dateStr).toLocaleString('id-ID', {
-        day: '2-digit',
+      const d = new Date(isoDate);
+      return d.toLocaleDateString('id-ID', {
+        day: 'numeric',
         month: 'short',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
       });
     } catch {
-      return String(dateStr);
+      return '—';
     }
   };
 
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  // Format File Size Helper
+  const formatFileSize = (bytes?: number) => {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  // Open Submission Detail Modal
+  const handleOpenDetailModal = (item: SubmissionRosterItem) => {
+    setSelectedItem(item);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false);
+    setSelectedItem(null);
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-7xl mx-auto pb-16">
-      {/* 1. Header & Navigation */}
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-          <Link
-            href="/guru/tugas"
-            className="hover:text-blue-900 transition-colors flex items-center gap-1 font-semibold"
-          >
-            <ArrowLeft size={14} />
-            <span>Kembali ke Penugasan</span>
-          </Link>
-          <span>/</span>
-          <span className="text-slate-400">Rombel & Mapel</span>
-          <span>/</span>
-          <span className="text-blue-950 font-semibold truncate max-w-xs">
-            {data?.assignment?.judul || 'Pengumpulan Tugas'}
-          </span>
-        </div>
+    <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
+      {/* 1. Academic Header & Breadcrumbs */}
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <Breadcrumb>
+              <BreadcrumbList className="text-xs">
+                <BreadcrumbItem>
+                  <BreadcrumbLink render={<Link href="/guru/dashboard" className="text-primary font-medium hover:underline" />}>
+                    Beranda
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink render={<Link href="/guru/tugas" className="text-muted-foreground hover:text-foreground" />}>
+                    Tugas & Asesmen
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="font-semibold text-foreground">
+                    Pengumpulan Siswa
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
-              <span>Pengumpulan Tugas:</span>
-              <span className="text-blue-950">
-                {data?.assignment?.judul || 'Memuat Tugas...'}
-              </span>
-            </h1>
-            <p className="text-xs text-slate-500">
-              Pantau status penyerahan berkas siswa, ketepatan waktu deadline, dan verifikasi lampiran tugas.
-            </p>
+            <div className="flex flex-col gap-1">
+              <div>
+                <Button render={<Link href="/guru/tugas" className="gap-1.5" />} variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2 mb-1">
+                  <ArrowLeft className="size-3.5" />
+                  <span>Kembali ke Daftar Tugas</span>
+                </Button>
+              </div>
+              <h1 className="text-2xl font-semibold text-foreground tracking-tight">
+                {data?.assignment?.judul || 'Pengumpulan Tugas Siswa'}
+              </h1>
+              <p className="text-xs text-muted-foreground max-w-3xl leading-relaxed">
+                {data?.assignment?.deskripsi ||
+                  'Pantau status penyerahan berkas tugas peserta didik, evaluasi ketepatan waktu, dan lakukan pemeriksaan lembar kerja.'}
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <button
+          <div className="flex items-center gap-2.5 self-start lg:self-auto shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setRefreshTrigger((v) => v + 1)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200/80 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs"
+              className="gap-2 text-xs"
             >
-              <RotateCcw size={14} className={isLoading ? 'animate-spin' : ''} />
+              <RotateCcw className={`size-3.5 text-primary ${isLoading ? 'animate-spin' : ''}`} />
               <span>Muat Ulang</span>
-            </button>
+            </Button>
           </div>
         </div>
 
-        {/* Assignment Metadata Banner */}
+        {/* Academic Context Ribbon */}
         {data?.assignment && (
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-4 flex flex-wrap items-center gap-4 text-xs text-slate-700">
-            <div className="flex items-center gap-1.5 font-semibold text-slate-900">
-              <Layers size={15} className="text-blue-900" />
-              <span>Kelas: {data.assignment.kelas?.nama}</span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-            <div className="flex items-center gap-1.5 font-semibold text-slate-900">
-              <BookOpen size={15} className="text-blue-900" />
-              <span>Mapel: {data.assignment.mapel?.nama}</span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Calendar size={15} className="text-slate-400" />
-              <span>Batas Waktu: <strong>{formatDateTime(data.assignment.deadline)}</strong></span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Award size={15} className="text-blue-700" />
-              <span>Nilai Maks: <strong>{data.assignment.maxScore} Poin</strong></span>
-            </div>
-            <div className="w-1 h-1 rounded-full bg-slate-300"></div>
-            <div>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${
-                data.assignment.status === 'published'
-                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                  : 'bg-amber-50 text-amber-700 border-amber-200'
-              }`}>
+          <Card>
+            <CardContent className="p-3.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5 text-foreground font-semibold">
+                <Layers className="size-4 text-primary" />
+                <span>Kelas: {data.assignment.kelas?.nama}</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1.5 text-foreground font-medium">
+                <BookOpen className="size-4 text-primary" />
+                <span>Mapel: {data.assignment.mapel?.nama}</span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1.5 text-foreground font-medium">
+                <Calendar className="size-4 text-muted-foreground" />
+                <span>Batas Waktu: <strong>{formatDateTime(data.assignment.deadline)}</strong></span>
+              </div>
+              <span>•</span>
+              <div className="flex items-center gap-1.5 text-foreground font-medium">
+                <Award className="size-4 text-primary" />
+                <span>Nilai Maks: <strong>{data.assignment.maxScore} Poin</strong></span>
+              </div>
+              <span>•</span>
+              <Badge variant={data.assignment.status === 'published' ? 'outline' : 'secondary'} className="font-semibold text-xs">
                 {data.assignment.status === 'published' ? 'Dipublikasikan' : data.assignment.status}
-              </span>
-            </div>
-          </div>
+              </Badge>
+            </CardContent>
+          </Card>
         )}
       </div>
 
       {/* 2. Stats Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {/* Total Siswa */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Total Siswa
-            </span>
-            <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-900 flex items-center justify-center">
-              <Users size={16} />
-            </div>
+        <Card className="p-4 flex flex-col gap-1">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-bold uppercase tracking-wider">Total Siswa</span>
+            <Users className="size-4 text-primary" />
           </div>
-          <span className="font-display text-2xl font-bold text-slate-900">
+          <span className="text-2xl font-bold text-foreground">
             {stats ? stats.totalStudents : 0}
           </span>
-          <span className="text-[11px] text-slate-400">Terdaftar di rombel</span>
-        </div>
+          <span className="text-[11px] text-muted-foreground">Terdaftar di rombel</span>
+        </Card>
 
         {/* Sudah Mengumpulkan */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Sudah Kumpul
-            </span>
-            <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
-              <CheckCircle2 size={16} />
-            </div>
+        <Card className="p-4 flex flex-col gap-1">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-bold uppercase tracking-wider">Sudah Kumpul</span>
+            <CheckCircle2 className="size-4 text-emerald-600" />
           </div>
-          <span className="font-display text-2xl font-bold text-emerald-700">
+          <span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats ? stats.submittedCount : 0}
           </span>
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[11px] text-muted-foreground">
             {stats && stats.totalStudents > 0
               ? `${Math.round((stats.submittedCount / stats.totalStudents) * 100)}% partisipasi`
               : '0% partisipasi'}
           </span>
-        </div>
+        </Card>
 
         {/* Belum Mengumpulkan */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Belum Kumpul
-            </span>
-            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
-              <Clock size={16} />
-            </div>
+        <Card className="p-4 flex flex-col gap-1">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-bold uppercase tracking-wider">Belum Kumpul</span>
+            <Clock className="size-4 text-amber-600" />
           </div>
-          <span className="font-display text-2xl font-bold text-amber-700">
+          <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">
             {stats ? stats.unsubmittedCount : 0}
           </span>
-          <span className="text-[11px] text-slate-400">Menunggu submission</span>
-        </div>
+          <span className="text-[11px] text-muted-foreground">Menunggu submission</span>
+        </Card>
 
         {/* Terlambat */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col gap-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Terlambat
-            </span>
-            <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-700 flex items-center justify-center">
-              <AlertTriangle size={16} />
-            </div>
+        <Card className="p-4 flex flex-col gap-1">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-bold uppercase tracking-wider">Terlambat</span>
+            <AlertTriangle className="size-4 text-destructive" />
           </div>
-          <span className="font-display text-2xl font-bold text-rose-700">
+          <span className="text-2xl font-bold text-destructive">
             {stats ? stats.lateCount : 0}
           </span>
-          <span className="text-[11px] text-slate-400">Melewati deadline</span>
-        </div>
+          <span className="text-[11px] text-muted-foreground">Melewati deadline</span>
+        </Card>
 
         {/* Sudah Dinilai */}
-        <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col gap-1 col-span-2 sm:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-              Sudah Dinilai
-            </span>
-            <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center">
-              <Award size={16} />
-            </div>
+        <Card className="p-4 flex flex-col gap-1 col-span-2 sm:col-span-1">
+          <div className="flex items-center justify-between text-muted-foreground">
+            <span className="text-[11px] font-bold uppercase tracking-wider">Sudah Dinilai</span>
+            <Award className="size-4 text-indigo-600" />
           </div>
-          <span className="font-display text-2xl font-bold text-indigo-700">
+          <span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
             {stats ? stats.gradedCount : 0}
           </span>
-          <span className="text-[11px] text-slate-400">Telah diberi nilai</span>
-        </div>
+          <span className="text-[11px] text-muted-foreground">Telah diberi nilai</span>
+        </Card>
       </div>
 
       {/* 3. Filter & Search Controls */}
-      <div className="bg-white border border-slate-200/60 rounded-xl p-4 shadow-2xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Search */}
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none" />
+          <Input
             type="text"
             placeholder="Cari nama siswa atau NISN..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 transition-all"
+            className="pl-9 h-9 text-xs"
           />
         </div>
 
         {/* Filter Badges / Dropdowns */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Status Filter */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5">
-            <Filter size={13} className="text-slate-400" />
-            <span className="text-[11px] font-semibold text-slate-500">Status:</span>
-            <select
+          <div className="flex items-center gap-1.5">
+            <Filter className="size-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground font-medium">Status:</span>
+            <Select
               value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
+              onValueChange={(val) => {
+                setStatusFilter(val || 'ALL');
                 setPage(1);
               }}
-              className="bg-transparent text-xs font-semibold text-slate-700 focus:outline-hidden cursor-pointer"
             >
-              <option value="ALL">Semua Roster</option>
-              <option value="SUBMITTED">Sudah Kumpul</option>
-              <option value="GRADED">Sudah Dinilai</option>
-              <option value="RESUBMITTED">Kumpul Ulang</option>
-              <option value="UNSUBMITTED">Belum Kumpul</option>
-            </select>
+              <SelectTrigger className="h-9 min-w-36">
+                <SelectValue placeholder="Semua Roster" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Semua Roster</SelectItem>
+                <SelectItem value="SUBMITTED">Sudah Kumpul</SelectItem>
+                <SelectItem value="GRADED">Sudah Dinilai</SelectItem>
+                <SelectItem value="RESUBMITTED">Kumpul Ulang</SelectItem>
+                <SelectItem value="UNSUBMITTED">Belum Kumpul</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Late Filter */}
-          <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5">
-            <Clock size={13} className="text-slate-400" />
-            <span className="text-[11px] font-semibold text-slate-500">Keterlambatan:</span>
-            <select
+          <div className="flex items-center gap-1.5">
+            <Clock className="size-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground font-medium">Waktu:</span>
+            <Select
               value={isLateFilter}
-              onChange={(e) => {
-                setIsLateFilter(e.target.value);
+              onValueChange={(val) => {
+                setIsLateFilter(val || 'ALL');
                 setPage(1);
               }}
-              className="bg-transparent text-xs font-semibold text-slate-700 focus:outline-hidden cursor-pointer"
             >
-              <option value="ALL">Semua Waktu</option>
-              <option value="false">Tepat Waktu</option>
-              <option value="true">Terlambat</option>
-            </select>
+              <SelectTrigger className="h-9 min-w-32">
+                <SelectValue placeholder="Semua Waktu" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Semua Waktu</SelectItem>
+                <SelectItem value="false">Tepat Waktu</SelectItem>
+                <SelectItem value="true">Terlambat</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
 
       {/* 4. Error State */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
-          <div className="flex items-center gap-3">
-            <AlertTriangle size={24} className="text-red-600 shrink-0" />
-            <div className="text-xs text-red-800">
-              <strong>Gagal memuat data pengumpulan:</strong> {error}
-            </div>
-          </div>
-          <button
-            onClick={() => setRefreshTrigger((v) => v + 1)}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-semibold transition-colors shadow-2xs"
-          >
-            Coba Lagi
-          </button>
-        </div>
+        <Alert variant="destructive">
+          <AlertTriangle className="size-5" />
+          <AlertTitle>Gagal Memuat Data Pengumpulan</AlertTitle>
+          <AlertDescription className="mt-2 flex items-center justify-between gap-4">
+            <span>{error}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setRefreshTrigger((v) => v + 1)}
+            >
+              Coba Lagi
+            </Button>
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* 5. Loading Skeleton */}
       {isLoading && !error && (
-        <div className="bg-white border border-slate-200/60 rounded-xl p-6 shadow-2xs flex flex-col gap-4 animate-pulse">
+        <Card className="p-6 flex flex-col gap-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-14 bg-slate-100 rounded-lg"></div>
+            <Skeleton key={i} className="h-14 w-full" />
           ))}
-        </div>
+        </Card>
       )}
 
       {/* 6. Submissions Roster Table */}
       {!isLoading && !error && (
-        <div className="bg-white border border-slate-200/60 rounded-xl shadow-2xs overflow-hidden flex flex-col">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200/60 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                  <th className="py-3 px-4 w-12 text-center">No</th>
-                  <th className="py-3 px-4">Siswa</th>
-                  <th className="py-3 px-4 text-center">Status Pengumpulan</th>
-                  <th className="py-3 px-4">Waktu Penyerahan</th>
-                  <th className="py-3 px-4 text-center">Berkas Lampiran</th>
-                  <th className="py-3 px-4">Catatan Siswa</th>
-                  <th className="py-3 px-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                {roster.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="py-12 text-center">
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <Users size={36} className="text-slate-300" />
-                        <p className="text-sm font-semibold text-slate-700">
-                          Tidak Ada Data Siswa Ditemukan
-                        </p>
-                        <p className="text-xs text-slate-400 max-w-sm">
-                          {searchQuery || statusFilter !== 'ALL' || isLateFilter !== 'ALL'
-                            ? 'Tidak ada siswa yang sesuai dengan kriteria filter pencarian.'
-                            : 'Belum ada siswa yang terdaftar di kelas tugas ini.'}
-                        </p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  roster.map((item, idx) => {
-                    const rowNumber = data?.pagination
-                      ? (data.pagination.page - 1) * data.pagination.limit + idx + 1
-                      : idx + 1;
-                    const sub = item.submission;
+        <Card className="overflow-hidden flex flex-col">
+          <Table>
+            <TableHeader className="bg-muted/40">
+              <TableRow>
+                <TableHead className="w-12 text-center text-[11px] font-bold uppercase tracking-wider">No</TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider">Siswa</TableHead>
+                <TableHead className="text-center text-[11px] font-bold uppercase tracking-wider">Status Pengumpulan</TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider">Waktu Penyerahan</TableHead>
+                <TableHead className="text-center text-[11px] font-bold uppercase tracking-wider">Berkas Lampiran</TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider">Catatan Siswa</TableHead>
+                <TableHead className="text-right text-[11px] font-bold uppercase tracking-wider">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {roster.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="py-12 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Users className="size-10 text-muted-foreground/50" />
+                      <p className="text-sm font-semibold text-foreground">
+                        Tidak Ada Data Siswa Ditemukan
+                      </p>
+                      <p className="text-xs text-muted-foreground max-w-sm">
+                        {searchQuery || statusFilter !== 'ALL' || isLateFilter !== 'ALL'
+                          ? 'Tidak ada siswa yang sesuai dengan kriteria filter pencarian.'
+                          : 'Belum ada siswa yang terdaftar di kelas tugas ini.'}
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                roster.map((item, idx) => {
+                  const rowNumber = data?.pagination
+                    ? (data.pagination.page - 1) * data.pagination.limit + idx + 1
+                    : idx + 1;
+                  const sub = item.submission;
 
-                    return (
-                      <tr key={item.siswa._id} className="hover:bg-slate-50/70 transition-colors">
-                        <td className="py-3.5 px-4 text-center font-mono text-slate-400 text-xs">
-                          {rowNumber < 10 ? `0${rowNumber}` : rowNumber}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-blue-900/10 text-blue-900 font-bold flex items-center justify-center text-xs shrink-0">
+                  return (
+                    <TableRow key={item.siswa._id}>
+                      <TableCell className="text-center font-mono text-muted-foreground text-xs">
+                        {rowNumber < 10 ? `0${rowNumber}` : rowNumber}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar size="sm">
+                            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                               {item.siswa.nama.charAt(0)}
-                            </div>
-                            <div className="flex flex-col">
-                              <span className="font-semibold text-slate-900 text-[13px]">
-                                {item.siswa.nama}
-                              </span>
-                              <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                                <span>NISN: {item.siswa.nisn}</span>
-                                <span>•</span>
-                                <span className="uppercase">{item.siswa.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}</span>
-                              </div>
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground text-sm">
+                              {item.siswa.nama}
+                            </span>
+                            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                              <span>NISN: {item.siswa.nisn}</span>
+                              <span>•</span>
+                              <span>{item.siswa.jenisKelamin}</span>
                             </div>
                           </div>
-                        </td>
-                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                          {item.hasSubmitted && sub ? (
-                            <div className="inline-flex flex-col items-center gap-1">
-                              {sub.status === 'SUBMITTED' ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                                  Sudah Mengumpulkan
-                                </span>
-                              ) : sub.status === 'GRADED' ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-semibold">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-600"></span>
-                                  Sudah Dinilai
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-semibold">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-purple-600"></span>
-                                  Kumpul Ulang
-                                </span>
-                              )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        {sub ? (
+                          <div className="flex flex-col items-center gap-1">
+                            <Badge variant="outline" className="gap-1 font-semibold text-emerald-700 dark:text-emerald-400 border-emerald-300 text-xs">
+                              <span className="size-1.5 rounded-full bg-emerald-600" />
+                              {sub.status === 'SUBMITTED' ? 'Terkumpul' : sub.status}
+                            </Badge>
+                            {sub.isLate && (
+                              <Badge variant="destructive" className="text-[10px] py-0 h-4">
+                                Terlambat
+                              </Badge>
+                            )}
+                          </div>
+                        ) : (
+                          <Badge variant="secondary" className="text-muted-foreground text-xs">
+                            Belum Kumpul
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs text-foreground font-mono">
+                        {sub?.submittedAt ? formatDateTime(sub.submittedAt) : '—'}
+                      </TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
+                        {sub?.files && sub.files.length > 0 ? (
+                          <Badge variant="outline" className="gap-1 font-mono text-xs">
+                            <FileText className="size-3" />
+                            <span>{sub.files.length} File</span>
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="max-w-xs">
+                        <span className="text-xs text-muted-foreground line-clamp-1 italic">
+                          {sub?.catatanSiswa || '—'}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right whitespace-nowrap">
+                        {sub ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenDetailModal(item)}
+                            className="gap-1 text-xs"
+                          >
+                            <span>Periksa</span>
+                            <ExternalLink className="size-3" />
+                          </Button>
+                        ) : (
+                          <Button variant="ghost" size="sm" disabled className="text-xs">
+                            Belum Ada
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
 
-                              {sub.isLate && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.2 rounded bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold">
-                                  <Clock size={10} />
-                                  Terlambat
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-slate-100 text-slate-500 border border-slate-200 text-[11px] font-medium">
-                              Belum Mengumpulkan
-                            </span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 whitespace-nowrap text-xs text-slate-600">
-                          {item.hasSubmitted && sub ? (
-                            <span className="font-mono text-[11px]">
-                              {formatDateTime(sub.submittedAt)}
-                            </span>
-                          ) : (
-                            <span className="text-slate-300">-</span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                          {item.hasSubmitted && sub && sub.files && sub.files.length > 0 ? (
-                            <button
-                              onClick={() => handleOpenDetailModal(item)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200/80 text-[11px] font-semibold transition-colors cursor-pointer"
-                            >
-                              <FileText size={12} />
-                              <span>{sub.files.length} Berkas</span>
-                            </button>
-                          ) : (
-                            <span className="text-slate-300">-</span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 max-w-xs truncate">
-                          {item.hasSubmitted && sub && sub.catatanSiswa ? (
-                            <span className="text-slate-600 italic text-[11px]">
-                              &ldquo;{sub.catatanSiswa}&rdquo;
-                            </span>
-                          ) : (
-                            <span className="text-slate-300">-</span>
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                          {item.hasSubmitted && sub ? (
-                            <button
-                              onClick={() => handleOpenDetailModal(item)}
-                              className="px-3 py-1.5 bg-blue-900 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-colors shadow-2xs"
-                            >
-                              <FileText size={13} />
-                              <span>Periksa Berkas</span>
-                            </button>
-                          ) : (
-                            <span className="text-xs text-slate-400 italic">Menunggu</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Footer */}
+          {/* Pagination Controls */}
           {data?.pagination && data.pagination.totalPages > 1 && (
-            <div className="p-4 border-t border-slate-200/60 bg-slate-50/50 flex items-center justify-between text-xs text-slate-500">
+            <div className="p-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
               <span>
-                Menampilkan {roster.length} dari {data.pagination.total} siswa
+                Menampilkan{' '}
+                <strong className="text-foreground">
+                  {(data.pagination.page - 1) * data.pagination.limit + 1}
+                </strong>{' '}
+                -{' '}
+                <strong className="text-foreground">
+                  {Math.min(data.pagination.page * data.pagination.limit, data.pagination.total)}
+                </strong>{' '}
+                dari <strong className="text-foreground">{data.pagination.total}</strong> siswa
               </span>
+
               <div className="flex items-center gap-2">
-                <button
-                  disabled={data.pagination.page <= 1}
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  className="p-1.5 rounded border border-slate-200 hover:bg-white disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
+                  disabled={data.pagination.page <= 1 || isLoading}
+                  className="gap-1 text-xs"
                 >
-                  <ChevronLeft size={16} />
-                </button>
-                <span className="px-2 font-semibold text-slate-700">
-                  Halaman {data.pagination.page} dari {data.pagination.totalPages}
+                  <ChevronLeft className="size-3.5" />
+                  <span>Sebelumnya</span>
+                </Button>
+
+                <span className="px-2 font-medium text-foreground">
+                  Halaman {data.pagination.page} / {data.pagination.totalPages}
                 </span>
-                <button
-                  disabled={data.pagination.page >= data.pagination.totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                  className="p-1.5 rounded border border-slate-200 hover:bg-white disabled:opacity-40 disabled:hover:bg-transparent transition-colors cursor-pointer"
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(data.pagination.totalPages, p + 1))}
+                  disabled={data.pagination.page >= data.pagination.totalPages || isLoading}
+                  className="gap-1 text-xs"
                 >
-                  <ChevronRight size={16} />
-                </button>
+                  <span>Berikutnya</span>
+                  <ChevronRight className="size-3.5" />
+                </Button>
               </div>
             </div>
           )}
-        </div>
+        </Card>
       )}
 
-      {/* 7. Modal: Inspection & Submission Detail */}
-      {isDetailModalOpen && selectedItem && selectedItem.submission && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-xl shadow-xl border border-slate-200 max-w-2xl w-full p-6 flex flex-col gap-5 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div>
-                <h3 className="font-display text-base font-bold text-slate-900">
-                  Detail Pengumpulan Siswa
-                </h3>
-                <span className="text-xs text-slate-400">
-                  Verifikasi lampiran berkas dan data submisi tugas
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={handleCloseDetailModal}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors"
-              >
-                <X size={18} />
-              </button>
+      {/* DETAIL SUBMISSION MODAL */}
+      <Dialog open={isDetailModalOpen && !!selectedItem?.submission} onOpenChange={setIsDetailModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <DialogTitle>Detail Lembar Kerja Siswa</DialogTitle>
+              <Badge variant="outline">
+                {selectedItem?.submission?.status}
+              </Badge>
             </div>
+            <DialogDescription>
+              Penyerahan berkas tugas oleh peserta didik.
+            </DialogDescription>
+          </DialogHeader>
 
-            {/* Student & Status Info */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/70 p-4 rounded-xl border border-slate-200/60 text-xs">
-              <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
-                  Nama Siswa
-                </span>
-                <span className="font-semibold text-slate-900 text-sm mt-0.5 block">
-                  {selectedItem.siswa.nama}
-                </span>
-                <span className="text-slate-500 text-[11px]">
-                  NISN: {selectedItem.siswa.nisn}
-                </span>
-              </div>
-
-              <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
-                  Status Pengumpulan
-                </span>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    {selectedItem.submission.status}
+          {selectedItem?.submission && (
+            <div className="flex flex-col gap-4 py-2">
+              {/* Student Header Summary */}
+              <div className="grid grid-cols-2 gap-3 p-3 bg-muted/30 border border-border rounded-lg text-xs">
+                <div>
+                  <span className="text-muted-foreground uppercase font-bold text-[10px]">Nama Siswa</span>
+                  <span className="font-semibold text-foreground text-sm mt-0.5 block">
+                    {selectedItem.siswa.nama}
                   </span>
-                  {selectedItem.submission.isLate ? (
-                    <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                      Terlambat
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                      Tepat Waktu
-                    </span>
-                  )}
+                  <span className="text-muted-foreground text-[11px]">
+                    NISN: {selectedItem.siswa.nisn}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground uppercase font-bold text-[10px]">Status Pengumpulan</span>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="font-semibold text-emerald-700 dark:text-emerald-400 border-emerald-300">
+                      {selectedItem.submission.status}
+                    </Badge>
+                    {selectedItem.submission.isLate ? (
+                      <Badge variant="destructive">Terlambat</Badge>
+                    ) : (
+                      <Badge variant="secondary" className="text-primary font-medium">Tepat Waktu</Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground uppercase font-bold text-[10px]">Waktu Diserahkan</span>
+                  <span className="font-semibold text-foreground mt-0.5 block font-mono">
+                    {formatDateTime(selectedItem.submission.submittedAt)}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-muted-foreground uppercase font-bold text-[10px]">Batas Waktu (Deadline)</span>
+                  <span className="font-semibold text-foreground mt-0.5 block font-mono">
+                    {formatDateTime(data?.assignment?.deadline)}
+                  </span>
                 </div>
               </div>
 
-              <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
-                  Waktu Diserahkan
-                </span>
-                <span className="font-semibold text-slate-800 mt-0.5 block font-mono">
-                  {formatDateTime(selectedItem.submission.submittedAt)}
-                </span>
-              </div>
+              {/* Student Notes */}
+              {selectedItem.submission.catatanSiswa && (
+                <div>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                    Catatan dari Siswa
+                  </span>
+                  <p className="text-xs text-foreground leading-relaxed mt-1 p-3 bg-muted/20 border border-border rounded-lg italic">
+                    &ldquo;{selectedItem.submission.catatanSiswa}&rdquo;
+                  </p>
+                </div>
+              )}
 
+              {/* Files List */}
               <div>
-                <span className="text-slate-400 block text-[10px] uppercase font-bold">
-                  Batas Waktu (Deadline)
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-2">
+                  Lampiran Berkas ({selectedItem.submission.files.length})
                 </span>
-                <span className="font-semibold text-slate-800 mt-0.5 block font-mono">
-                  {formatDateTime(data?.assignment?.deadline)}
-                </span>
-              </div>
-            </div>
-
-            {/* Student Notes */}
-            {selectedItem.submission.catatanSiswa && (
-              <div>
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Catatan dari Siswa
-                </span>
-                <p className="text-xs text-slate-700 leading-relaxed mt-1 p-3 bg-white border border-slate-200/80 rounded-lg italic">
-                  &ldquo;{selectedItem.submission.catatanSiswa}&rdquo;
-                </p>
-              </div>
-            )}
-
-            {/* Files List */}
-            <div>
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                Lampiran Berkas ({selectedItem.submission.files.length})
-              </span>
-              <div className="flex flex-col gap-2">
-                {selectedItem.submission.files.map((file, fIdx) => (
-                  <div
-                    key={fIdx}
-                    className="p-3 bg-slate-50 border border-slate-200/80 rounded-lg flex items-center justify-between text-xs hover:bg-slate-100/70 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-blue-900/10 text-blue-900 flex items-center justify-center shrink-0">
-                        <FileText size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-slate-900 text-xs">
-                          {file.name}
-                        </span>
-                        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-mono">
-                          <span>{file.mimeType}</span>
-                          <span>•</span>
-                          <span>{formatFileSize(file.size)}</span>
+                <div className="flex flex-col gap-2 max-h-52 overflow-y-auto">
+                  {selectedItem.submission.files.map((file, fIdx) => (
+                    <div
+                      key={fIdx}
+                      className="p-3 bg-muted/30 border border-border rounded-lg flex items-center justify-between text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex size-8 rounded bg-primary/10 text-primary items-center justify-center shrink-0">
+                          <FileText className="size-4" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-foreground text-xs">
+                            {file.name}
+                          </span>
+                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                            <span>{file.mimeType}</span>
+                            <span>•</span>
+                            <span>{formatFileSize(file.size)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <a
-                      href={file.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 bg-white border border-slate-200 hover:border-blue-900 hover:text-blue-900 text-slate-700 rounded-md font-semibold text-xs flex items-center gap-1.5 transition-colors shadow-2xs"
-                    >
-                      <span>Buka File</span>
-                      <ExternalLink size={12} />
-                    </a>
-                  </div>
-                ))}
+                      <Button render={<a href={file.url} target="_blank" rel="noopener noreferrer" className="gap-1.5 text-xs" />} variant="outline" size="sm">
+                        <span>Buka File</span>
+                        <ExternalLink className="size-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          )}
 
-            {/* Modal Footer */}
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-              <span>ID Submisi: {selectedItem.submission._id}</span>
-              <button
-                type="button"
-                onClick={handleCloseDetailModal}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-semibold transition-colors"
-              >
-                Tutup
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          <DialogFooter className="pt-2 flex justify-between sm:justify-between">
+            <span className="text-xs text-muted-foreground self-center">
+              ID: {selectedItem?.submission?._id}
+            </span>
+            <Button variant="outline" size="sm" onClick={handleCloseDetailModal}>
+              Tutup
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
