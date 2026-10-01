@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { 
@@ -29,11 +29,97 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { fetchAPI } from '@/lib/api';
 
 export default function SiswaDetailTugasPage() {
   const params = useParams();
   const taskId = (params?.taskId as string) || '';
   const isQuiz = taskId.includes('quiz');
+
+  const [taskData, setTaskData] = useState<any>(null);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [catatanSiswa, setCatatanSiswa] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+    if (!taskId) return;
+    fetchAPI(`/students/me/assignments/${taskId}`)
+      .then((res) => {
+        if (isMounted && res?.success) {
+          setTaskData(res.data);
+          if (res.data?.mySubmission?.linkUrl) {
+            setLinkUrl(res.data.mySubmission.linkUrl);
+          }
+          if (res.data?.mySubmission?.catatanSiswa) {
+            setCatatanSiswa(res.data.mySubmission.catatanSiswa);
+          }
+        }
+      })
+      .catch(() => {
+        // Fallback for demo routes
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [taskId]);
+
+  const handleSubmit = async () => {
+    if (!linkUrl.trim()) {
+      setErrorMsg('Harap masukkan tautan tugas Anda (misal URL GitHub / Google Drive)');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setErrorMsg('');
+    try {
+      const res = await fetchAPI(`/students/me/assignments/${taskId}/submit`, {
+        method: 'POST',
+        body: JSON.stringify({
+          linkUrl: linkUrl.trim(),
+          catatanSiswa: catatanSiswa.trim() || undefined,
+        }),
+      });
+
+      if (res?.success) {
+        setSubmitSuccess(true);
+        const updated = await fetchAPI(`/students/me/assignments/${taskId}`);
+        if (updated?.success) {
+          setTaskData(updated.data);
+        }
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Gagal menyerahkan tugas');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const tugas = taskData?.tugas;
+  const mySubmission = taskData?.mySubmission;
+
+  const displayTitle = tugas?.judul || (isQuiz ? 'Pemahaman Asinkron: Promise & Async/Await' : 'Implementasi Autentikasi JWT & Middleware Express.js');
+  const displayMapel = tugas?.mapelId?.nama || 'Pemrograman Web & Perangkat Bergerak (XII RPL 1)';
+  const displayDeskripsi = tugas?.deskripsi || 'Buat skema login & register dengan hashing kata sandi (bcrypt) serta verifikasi token Bearer JWT pada protected route data siswa.';
+  const displayMaxScore = tugas?.maxScore || 100;
+  
+  const formatDeadline = (isoDate?: string) => {
+    if (!isoDate) return '1 Okt 2026, 15:00';
+    try {
+      const d = new Date(isoDate);
+      return d.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '1 Okt 2026, 15:00';
+    }
+  };
 
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
@@ -73,12 +159,12 @@ export default function SiswaDetailTugasPage() {
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 pt-1">
             <div className="flex flex-col gap-2 max-w-3xl">
               <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground leading-tight">
-                {isQuiz ? 'Pemahaman Asinkron: Promise & Async/Await' : 'Implementasi Autentikasi JWT & Middleware Express.js'}
+                {displayTitle}
               </h1>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
                   <BookOpen className="size-4 text-primary" />
-                  Pemrograman Web & Perangkat Bergerak (XII RPL 1)
+                  {displayMapel}
                 </span>
                 <span>•</span>
                 <span className="inline-flex items-center gap-1.5">
@@ -88,115 +174,37 @@ export default function SiswaDetailTugasPage() {
               </div>
             </div>
             
-            <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3 flex items-center gap-3 self-start lg:self-auto shrink-0">
-              <div className="size-10 rounded-lg bg-destructive/20 text-destructive flex items-center justify-center shrink-0">
-                <Timer className="size-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[11px] font-bold text-destructive uppercase tracking-wider">
-                  Tersisa 4 Hari 6 Jam
-                </span>
-                <span className="text-xs font-semibold text-foreground">
-                  Batas: 1 Okt 2026, 15:00 WIB
-                </span>
+            <div className="flex items-center gap-3 shrink-0 self-start lg:self-center">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/10 text-destructive text-xs font-semibold">
+                <Timer className="size-4" />
+                <span>Batas: {formatDeadline(tugas?.deadline)}</span>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* 2. Metric Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Card className="border border-border shadow-sm">
-          <CardContent className="p-4 flex flex-col justify-between h-full gap-2">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">Durasi</span>
-              <Timer className="size-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{isQuiz ? '25' : '1'}</span>
-              <span className="text-xs text-muted-foreground font-medium">{isQuiz ? 'Menit' : 'Minggu'}</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground">{isQuiz ? 'Hitung mundur otomatis' : 'Waktu pengerjaan'}</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-border shadow-sm">
-          <CardContent className="p-4 flex flex-col justify-between h-full gap-2">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">{isQuiz ? 'Butir Soal' : 'Tipe Penyerahan'}</span>
-              <FileText className="size-4 text-amber-500" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{isQuiz ? '15' : 'File'}</span>
-              <span className="text-xs text-muted-foreground font-medium">{isQuiz ? 'Soal' : 'ZIP/PDF'}</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground">{isQuiz ? 'PG Kompleks & Analisis' : 'Maksimal 10 MB'}</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-border shadow-sm">
-          <CardContent className="p-4 flex flex-col justify-between h-full gap-2">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">Percobaan</span>
-              <Monitor className="size-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{isQuiz ? '1' : '3'}</span>
-              <span className="text-xs text-muted-foreground font-medium">{isQuiz ? 'Kali Sah' : 'Revisi'}</span>
-            </div>
-            <span className="text-[10px] text-destructive font-semibold">Tidak ada remedial instan</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-border shadow-sm">
-          <CardContent className="p-4 flex flex-col justify-between h-full gap-2">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">KKTP Target</span>
-              <CheckCircle2 className="size-4 text-emerald-600" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">75.0</span>
-              <span className="text-xs text-muted-foreground font-medium">/ 100</span>
-            </div>
-            <span className="text-[10px] text-emerald-600 font-semibold">Standar Kompetensi RPL</span>
-          </CardContent>
-        </Card>
-        
-        <Card className="border border-border shadow-sm col-span-2 md:col-span-1">
-          <CardContent className="p-4 flex flex-col justify-between h-full gap-2">
-            <div className="flex items-center justify-between text-muted-foreground">
-              <span className="text-[10px] font-semibold uppercase tracking-wider">Koreksi</span>
-              <Shield className="size-4 text-primary" />
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-lg font-bold text-foreground">{isQuiz ? 'CBT Auto' : 'Manual'}</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground">{isQuiz ? 'Kunci enkripsi SHA-256' : 'Oleh Guru Pengampu'}</span>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 3. Main Workspace */}
+      {/* 2. Workspace Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* Left Col (Main content) */}
+        {/* Left Col (Instructions) */}
         <div className="lg:col-span-8 flex flex-col gap-6">
           <Card className="border border-border shadow-sm">
-            <CardHeader className="p-5 pb-3 border-b border-border space-y-0 flex flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-primary" />
-                <CardTitle className="text-base font-semibold">Silabus & Ruang Lingkup Materi</CardTitle>
-              </div>
-              <Badge variant="secondary" className="font-mono text-[10px]">
-                {isQuiz ? 'MODUL-06.JS' : 'MODUL-09.JWT'}
-              </Badge>
+            <CardHeader className="p-5 pb-3 border-b border-border">
+              <CardTitle className="text-base font-semibold text-foreground">
+                Deskripsi & Ketentuan Tugas
+              </CardTitle>
             </CardHeader>
-            
-            <CardContent className="p-5 flex flex-col gap-5">
-              <div className="bg-muted/40 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border">
-                <div className="flex items-center gap-3.5">
-                  <div className="size-10 rounded-lg bg-card text-primary border border-border flex items-center justify-center font-bold text-base shadow-sm">
+            <CardContent className="p-5 flex flex-col gap-4">
+              <p className="text-xs sm:text-sm text-foreground leading-relaxed">
+                {displayDeskripsi}
+              </p>
+
+              <div className="p-4 bg-muted/40 rounded-xl border border-border flex flex-col gap-2.5">
+                <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">
+                  Materi Rujukan
+                </span>
+                <div className="flex items-center gap-3">
+                  <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                     JS
                   </div>
                   <div className="flex flex-col">
@@ -229,34 +237,6 @@ export default function SiswaDetailTugasPage() {
                       </div>
                     </CardContent>
                   </Card>
-                  
-                  <Card className="border border-border bg-card">
-                    <CardContent className="p-4 flex items-start gap-3.5">
-                      <div className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                        2
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">Promise API & Chaining (40%)</h4>
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                          Menyelesaikan masalah callback hell dan memprediksi output dari serangkaian .then() dan .catch().
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="border border-border bg-card">
-                    <CardContent className="p-4 flex items-start gap-3.5">
-                      <div className="size-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
-                        3
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">Async/Await & Error Handling (40%)</h4>
-                        <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                          Mengubah kode Promise lama menjadi sintaks async/await dan membungkusnya dalam try...catch block.
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </div>
               ) : (
                 <div className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -265,7 +245,7 @@ export default function SiswaDetailTugasPage() {
                     <li>Implementasikan rute <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">POST /api/auth/login</code> yang memvalidasi kredensial statis dan mengembalikan token JWT.</li>
                     <li>Buat middleware <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">authenticateToken</code> di folder terpisah.</li>
                     <li>Lindungi rute <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">GET /api/users/profile</code> menggunakan middleware tersebut.</li>
-                    <li>Kumpulkan kode sumber dalam bentuk <code className="px-1.5 py-0.5 bg-muted border border-border rounded text-xs font-mono text-foreground">.zip</code> (tanpa folder node_modules) atau berikan link ke repository GitHub.</li>
+                    <li>Kumpulkan kode sumber dalam bentuk tautan URL GitHub / Google Drive.</li>
                   </ol>
                 </div>
               )}
@@ -280,22 +260,38 @@ export default function SiswaDetailTugasPage() {
               <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Status Pengerjaan
               </span>
-              <CardTitle className="text-lg font-semibold text-foreground">Belum Diserahkan</CardTitle>
+              <CardTitle className="text-lg font-semibold text-foreground">
+                {mySubmission?.status === 'GRADED'
+                  ? 'Sudah Dinilai'
+                  : mySubmission?.status === 'SUBMITTED' || mySubmission?.status === 'RESUBMITTED'
+                    ? 'Sudah Diserahkan'
+                    : 'Belum Diserahkan'}
+              </CardTitle>
             </CardHeader>
             
             <CardContent className="p-5 flex flex-col gap-4">
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Nilai Saat Ini</span>
-                  <span className="font-semibold text-foreground">- / 100</span>
+                  <span className="font-semibold text-foreground">
+                    {mySubmission?.nilai !== undefined ? `${mySubmission.nilai} / ${displayMaxScore}` : `- / ${displayMaxScore}`}
+                  </span>
                 </div>
+                {mySubmission?.catatanGuru && (
+                  <div className="p-2.5 bg-emerald-500/10 border border-emerald-200 dark:border-emerald-900/50 rounded-lg text-xs text-foreground">
+                    <span className="text-[10px] font-bold uppercase text-emerald-700 dark:text-emerald-400 block mb-0.5">Catatan Guru:</span>
+                    <p className="italic">&ldquo;{mySubmission.catatanGuru}&rdquo;</p>
+                  </div>
+                )}
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Percobaan ke</span>
-                  <span className="font-semibold text-foreground">1 dari {isQuiz ? '1' : '3'}</span>
+                  <span className="font-semibold text-foreground">
+                    {mySubmission ? '1' : '0'} dari {isQuiz ? '1' : '3'}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Tenggat Waktu</span>
-                  <span className="font-bold text-destructive">1 Okt 2026, 15:00</span>
+                  <span className="font-bold text-destructive">{formatDeadline(tugas?.deadline)}</span>
                 </div>
               </div>
               
@@ -315,26 +311,49 @@ export default function SiswaDetailTugasPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <button type="button" className="w-full py-3 rounded-lg border-2 border-dashed border-border hover:border-primary/50 hover:bg-muted/40 text-muted-foreground hover:text-foreground text-xs font-semibold transition-all flex flex-col items-center justify-center gap-1.5 h-28">
-                    <Upload className="size-5 mb-0.5 text-muted-foreground" />
-                    <span>Unggah File Tugas (.zip / .pdf)</span>
-                    <span className="text-[10px] text-muted-foreground/80 font-normal">Maksimal 10 MB</span>
-                  </button>
-                  <div className="flex items-center gap-2 my-0.5">
-                    <div className="h-px bg-border flex-1" />
-                    <span className="text-[10px] text-muted-foreground font-medium">ATAU</span>
-                    <div className="h-px bg-border flex-1" />
-                  </div>
+                  {submitSuccess && (
+                    <Alert className="py-2.5 px-3 bg-emerald-500/10 border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-300">
+                      <CheckCircle2 className="size-4 text-emerald-600" />
+                      <AlertDescription className="text-xs font-medium ml-2">
+                        Tugas berhasil dikumpulkan dan tersimpan di sistem!
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {errorMsg && (
+                    <Alert variant="destructive" className="py-2 px-3">
+                      <AlertCircle className="size-4" />
+                      <AlertDescription className="text-xs ml-2">
+                        {errorMsg}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
                   <div className="relative">
                     <LinkIcon className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
                     <Input 
                       type="url" 
                       placeholder="Tempel tautan (GitHub, Drive, dll)" 
                       className="h-9 pl-9 pr-3 text-xs"
+                      value={linkUrl}
+                      onChange={(e) => setLinkUrl(e.target.value)}
                     />
                   </div>
-                  <Button className="w-full text-xs font-semibold mt-1">
-                    Serahkan Tugas
+
+                  <Input 
+                    type="text" 
+                    placeholder="Catatan tambahan untuk guru (opsional)" 
+                    className="h-9 px-3 text-xs"
+                    value={catatanSiswa}
+                    onChange={(e) => setCatatanSiswa(e.target.value)}
+                  />
+
+                  <Button 
+                    onClick={handleSubmit} 
+                    disabled={isSubmitting} 
+                    className="w-full text-xs font-semibold mt-1"
+                  >
+                    {isSubmitting ? 'Menyerahkan...' : mySubmission ? 'Perbarui Penyerahan' : 'Serahkan Tugas'}
                   </Button>
                 </div>
               )}

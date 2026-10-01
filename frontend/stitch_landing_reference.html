@@ -1,0 +1,827 @@
+<!DOCTYPE html><html lang="id" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-tint":"#186c45","on-background":"#151e19","on-secondary-fixed-variant":"#005233","secondary-fixed-dim":"#7cd9a7","outline":"#6f7a71","on-secondary-container":"#00734a","secondary-fixed":"#98f6c2","error":"#ba1a1a","on-error-container":"#93000a","surface-bright":"#f2fcf3","outline-variant":"#bfc9c0","primary-container":"#176b45","inverse-primary":"#88d7a8","inverse-surface":"#29322d","primary-fixed-dim":"#88d7a8","surface-container-highest":"#dbe5dd","on-primary-container":"#99e9b9","surface":"#f2fcf3","on-primary":"#ffffff","tertiary-fixed":"#dbe5df","on-tertiary-container":"#d0dad4","primary":"#005131","surface-container-high":"#e1ebe2","surface-container-low":"#ecf6ee","surface-variant":"#dbe5dd","on-surface-variant":"#3f4942","on-tertiary-fixed":"#151d1a","tertiary-container":"#56605c","on-primary-fixed":"#002111","primary-fixed":"#a4f4c3","error-container":"#ffdad6","tertiary":"#3f4844","surface-container-lowest":"#ffffff","inverse-on-surface":"#e9f3eb","secondary":"#006c45","on-secondary-fixed":"#002112","on-primary-fixed-variant":"#005232","tertiary-fixed-dim":"#bfc9c3","on-error":"#ffffff","secondary-container":"#98f6c2","surface-container":"#e6f0e8","on-surface":"#151e19","on-tertiary-fixed-variant":"#3f4945","on-tertiary":"#ffffff","background":"#f2fcf3","surface-dim":"#d2ddd4","on-secondary":"#ffffff"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"space-xl":"2.5rem","gutter-sm":"1rem","space-sm":"0.5rem",margin:"3rem","space-xs":"0.25rem","space-md":"1rem","space-lg":"1.5rem","margin-sm":"1.25rem",gutter:"1.5rem"},fontFamily:{"headline-lg":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"display-mobile":["Plus Jakarta Sans"],"body-md":["Plus Jakarta Sans"],"headline-xl":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"mono-caption":["Plus Jakarta Sans"],"label-md":["Plus Jakarta Sans"],"headline-sm":["Plus Jakarta Sans"],"headline-md":["Plus Jakarta Sans"],display:["Plus Jakarta Sans"],"label-sm":["Plus Jakarta Sans"]},fontSize:{"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.015em",fontWeight:"700"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"display-mobile":["36px",{lineHeight:"44px",letterSpacing:"-0.02em",fontWeight:"800"}],"body-md":["15px",{lineHeight:"24px",letterSpacing:"0",fontWeight:"400"}],"headline-xl":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["13px",{lineHeight:"20px",letterSpacing:"0.005em",fontWeight:"400"}],"body-lg":["18px",{lineHeight:"28px",letterSpacing:"0",fontWeight:"400"}],"mono-caption":["11px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"700"}],"label-md":["14px",{lineHeight:"20px",letterSpacing:"0.01em",fontWeight:"600"}],"headline-sm":["20px",{lineHeight:"28px",letterSpacing:"-0.005em",fontWeight:"600"}],"headline-md":["24px",{lineHeight:"32px",letterSpacing:"-0.01em",fontWeight:"600"}],display:["56px",{lineHeight:"64px",letterSpacing:"-0.03em",fontWeight:"800"}],"label-sm":["12px",{lineHeight:"16px",letterSpacing:"0.02em",fontWeight:"600"}]}}}};</script><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 max-w-7xl mx-auto px-margin-sm lg:px-margin flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-md"><div class="w-1.5 h-7 bg-primary rounded-DEFAULT"></div><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-headline-sm text-headline-sm text-on-surface uppercase tracking-tight">SMK CITRA NEGARA</span></div><span class="font-mono-caption text-mono-caption text-on-surface-variant uppercase tracking-wider">Sekolah Menengah Kejuruan</span></div></div><nav class="hidden xl:flex items-center gap-space-lg" data-active-classes="text-primary font-bold"><a aria-current="page" class="transition-colors text-primary font-bold" data-path="beranda" href="#">Beranda</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="tentang-kami" href="#">Tentang Kami</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="program-keahlian" href="#">Program Keahlian</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="kehidupan-siswa" href="#">Kehidupan Siswa</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="berita" href="#">Berita</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="kontak" href="#">Kontak</a></nav><div class="flex items-center gap-space-md"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors px-2 py-2" href="#login">Masuk</a><a class="inline-flex items-center justify-center bg-primary text-on-primary font-label-md text-label-md px-space-md py-2.5 rounded-lg hover:bg-secondary transition-colors" data-path="pendaftaran-ppdb" href="#daftar">Daftar</a></div></div></header><main class="w-full pt-20 bg-surface"><div class="flex flex-col w-full bg-background text-on-surface selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- ==========================================
+       SECTION 01: HERO (ASYMMETRIC 12-COL)
+  =========================================== -->
+<section class="relative w-full border-b border-surface-variant/80 bg-background overflow-hidden">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin pt-space-xl pb-24">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Editorial Content (7 cols) -->
+<div class="lg:col-span-7 flex flex-col pt-space-sm">
+<!-- Eyebrow Metadata -->
+<div class="flex items-center gap-space-xs mb-space-md hero-fade" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<span class="inline-block w-2 h-2 bg-primary"></span>
+<span class="font-mono-caption text-mono-caption text-primary tracking-widest uppercase">
+              01 / PENDIDIKAN KEJURUAN BERBASIS INDUSTRI
+            </span>
+<span class="text-outline-variant font-mono-caption text-mono-caption">·</span>
+<span class="font-mono-caption text-mono-caption text-on-surface-variant tracking-wider uppercase">
+              DEP.CN-VOC
+            </span>
+</div>
+<!-- Massive Headline -->
+<h1 class="font-display text-display font-extrabold text-on-surface tracking-tighter uppercase mb-space-lg hero-title leading-[1.08]" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+            Membentuk<br>
+            Keterampilan.<br>
+<span class="text-primary">Menyiapkan</span><br>
+            Masa Depan.
+          </h1>
+<!-- Supporting Editorial Copy -->
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl hero-fade" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+            Pendidikan kejuruan yang menghubungkan pembelajaran terapan, teknologi mutakhir, kedisiplinan karakter, dan kesiapan nyata menghadapi ekosistem kerja global.
+          </p>
+<!-- Interactive CTAs -->
+<div class="flex flex-wrap items-center gap-space-md mb-space-xl hero-fade" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<a class="inline-flex items-center justify-center bg-primary text-on-primary font-label-md text-label-md px-7 py-3.5 rounded-DEFAULT hover:bg-secondary transition-colors duration-150 group shadow-sm" href="#program-keahlian">
+<span class="">Jelajahi Program Keahlian</span>
+<span class="material-symbols-outlined ml-2 text-[18px] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
+</a>
+<a class="inline-flex items-center gap-2 font-label-md text-label-md text-primary hover:text-secondary py-3 px-2 group transition-colors" href="#pengalaman-belajar">
+<span class="">Kenali SMK Citra Negara</span>
+<span class="transition-transform duration-150 group-hover:translate-x-1">→</span>
+</a>
+</div>
+<!-- Technical Grid Coordinates Bar -->
+<div class="grid grid-cols-3 pt-space-md border-t border-surface-variant/80 max-w-xl hero-fade" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<div class="flex flex-col pr-space-sm">
+<span class="font-mono-caption text-mono-caption text-on-surface-variant uppercase tracking-wider">Status NPSN</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold mt-1">Terakreditasi A</span>
+<span class="font-mono-caption text-mono-caption text-primary">Unggul 96.00</span>
+</div>
+<div class="flex flex-col px-space-sm border-l border-surface-variant/80">
+<span class="font-mono-caption text-mono-caption text-on-surface-variant uppercase tracking-wider">Kurikulum</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold mt-1">Merdeka Vokasi</span>
+<span class="font-mono-caption text-mono-caption text-outline">Berbasis Industri</span>
+</div>
+<div class="flex flex-col pl-space-sm border-l border-surface-variant/80">
+<span class="font-mono-caption text-mono-caption text-on-surface-variant uppercase tracking-wider">Kemitraan DUDI</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold mt-1">48+ Korporasi</span>
+<span class="font-mono-caption text-mono-caption text-outline">Jabodetabek Area</span>
+</div>
+</div>
+</div>
+<!-- Right: Photographic Architecture Frame (5 cols) -->
+<div class="lg:col-span-5 relative mt-space-lg lg:mt-0 hero-visual" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<div class="relative bg-surface-container-lowest p-2 border border-surface-variant shadow-[0_4px_20px_-4px_rgba(21,30,25,0.06)]">
+<!-- Precise Corner Index Brackets -->
+<div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-primary z-10 pointer-events-none"></div>
+<div class="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-primary z-10 pointer-events-none"></div>
+<div class="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-primary z-10 pointer-events-none"></div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-primary z-10 pointer-events-none"></div>
+<!-- Authentic Photo Slot -->
+<div class="relative w-full aspect-[4/5] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover object-center transition-transform duration-700 hover:scale-[1.02]" data-alt="Indonesian vocational students in blue hijabs and crisp white uniforms intensely coding and collaborating at desktop monitors inside a bright computer engineering laboratory with whiteboards filled with software architecture diagrams" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDyMifuBvDREPs-vUafhkWZCz5RfLw9pCZqUCC3ZnUyZg61PyBqXuj-D_5b9ew_TwjBVuDZb-DinCrLgdzfHN5wO5PB_ZXaWyHZMkMsWGKE2NoyZfRlgO9V-QB4TjDxCh237PKrRO2qPnCPsjVyUCiHuAzO5sBW4PyCxos9o8uxcaXwldTYmLl_giASyzBqAXDydKEHhZoIAJwKmCGNqcQJY8p1Y4rY5yMwIu3NJK09p_oqdndFHfe1g">
+<div class="absolute top-3 left-3 bg-surface/90 backdrop-blur-sm px-2 py-1 border border-surface-variant">
+<span class="font-mono-caption text-mono-caption text-primary uppercase font-bold">LAB-PPLG // CAM-01</span>
+</div>
+</div>
+<!-- Architectural Metadata Caption -->
+<div class="pt-3 pb-1 px-2 flex items-center justify-between font-mono-caption text-mono-caption text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-on-surface font-semibold">Laboratorium Rekayasa Perangkat Lunak</span>
+</div>
+<span class="text-outline uppercase">Sesi Praktik Terbimbing</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 02: EDITORIAL INTRODUCTION
+  =========================================== -->
+<section class="w-full bg-surface py-24 border-b border-surface-variant/80">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<!-- Anchor Accent Marker -->
+<div class="flex items-center gap-4 mb-space-lg">
+<span class="w-12 h-[2px] bg-primary"></span>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest">
+          02 / MANIFIESTO PENDIDIKAN
+        </span>
+</div>
+<!-- Monumental Statement -->
+<div class="max-w-5xl mb-space-xl">
+<p class="font-headline-xl text-headline-xl text-on-surface font-bold tracking-tight leading-[1.25]">
+          Belajar bukan hanya tentang memahami teori. Tetapi tentang membangun kapasitas nyata untuk mengeksekusi, berinovasi, dan bertanggung jawab di dunia kerja.
+        </p>
+</div>
+<!-- Institutional Tenets -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter pt-space-lg border-t border-surface-variant/80">
+<div class="flex flex-col pr-space-md">
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-2">Pilar I</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-semibold">Kurikulum Berbasis Kompetensi</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Struktur pengajaran disusun secara presisi bersama pakar industri teknologi dan manufaktur untuk memastikan relevansi setiap jam tatap muka praktikum.
+          </p>
+</div>
+<div class="flex flex-col px-0 md:px-space-md md:border-l border-surface-variant/80">
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-2">Pilar II</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-semibold">Karakter &amp; Disiplin Kerja</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Standar etos kerja 5R (Ringkas, Rapi, Resik, Rawat, Rajin) diterapkan secara konsisten dalam seluruh ritme harian interaksi akademik siswa.
+          </p>
+</div>
+<div class="flex flex-col pl-0 md:pl-space-md md:border-l border-surface-variant/80">
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-2">Pilar III</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2 font-semibold">Fasilitas Standar Industri</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            Ruang server rack, workstation pengembang, dan perangkat bengkel diagnosa terstandardisasi sesuai ekosistem kerja perusahaan rekanan.
+          </p>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 03: PROGRAM KEAHLIAN (VOCATIONAL MAJORS)
+  =========================================== -->
+<section class="w-full bg-background py-24 border-b border-surface-variant/80" id="program-keahlian">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<!-- Index Header Rule -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl pb-space-sm border-b border-surface-variant/80">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest block mb-2">
+            03 / PROGRAM STUDI KEJURUAN
+          </span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">
+            Departemen Keahlian Terapan
+          </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 md:mt-0 max-w-sm">
+          Kurikulum vokasi 3 tahun terintegrasi sertifikasi kompetensi BNSP dan sertifikasi vendor global.
+        </p>
+</div>
+<!-- Disciplined Editorial Row List -->
+<div class="divide-y divide-surface-variant/80 border-t border-b border-surface-variant/80">
+<!-- Major Item 01 -->
+<div class="group relative py-space-xl transition-all duration-200 hover:bg-surface-container-low/60 px-4 -mx-4 rounded-DEFAULT major-row" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-1 flex items-baseline">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">01/</span>
+</div>
+<div class="lg:col-span-4">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-mono-caption text-mono-caption px-2 py-0.5 bg-secondary-container/40 text-on-secondary-container font-semibold rounded-DEFAULT">PPLG</span>
+<span class="font-mono-caption text-mono-caption text-outline">DEPT-TECH</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                Pengembangan Perangkat Lunak &amp; Gim
+              </h3>
+</div>
+<div class="lg:col-span-4">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Pemrograman aplikasi web dan mobile, arsitektur database terdistribusi, perancangan antarmuka pengguna (UI/UX), dan logika rekayasa perangkat lunak modern.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-col justify-between h-full pt-1">
+<div class="flex flex-wrap gap-1.5 mb-4">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">JavaScript</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Python</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Flutter</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Git</span>
+</div>
+<div class="flex items-center text-primary font-label-md text-label-md font-semibold gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="">Rincian Kurikulum</span>
+<span class="transition-transform group-hover:translate-x-1">→</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Major Item 02 -->
+<div class="group relative py-space-xl transition-all duration-200 hover:bg-surface-container-low/60 px-4 -mx-4 rounded-DEFAULT major-row" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-1 flex items-baseline">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">02/</span>
+</div>
+<div class="lg:col-span-4">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-mono-caption text-mono-caption px-2 py-0.5 bg-secondary-container/40 text-on-secondary-container font-semibold rounded-DEFAULT">TJKT</span>
+<span class="font-mono-caption text-mono-caption text-outline">DEPT-NETW</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                Teknik Jaringan Komputer &amp; Telekomunikasi
+              </h3>
+</div>
+<div class="lg:col-span-4">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Konfigurasi infrastruktur jaringan data, dasar pertahanan siber (cyber security), routing &amp; switching multi-vendor, administrasi server cloud, dan terminasi fiber optics.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-col justify-between h-full pt-1">
+<div class="flex flex-wrap gap-1.5 mb-4">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Cisco CCNA</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">MikroTik MTCNA</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Linux Server</span>
+</div>
+<div class="flex items-center text-primary font-label-md text-label-md font-semibold gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="">Rincian Kurikulum</span>
+<span class="transition-transform group-hover:translate-x-1">→</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Major Item 03 -->
+<div class="group relative py-space-xl transition-all duration-200 hover:bg-surface-container-low/60 px-4 -mx-4 rounded-DEFAULT major-row" style="translate: none; rotate: none; scale: none; transform: translate(0px, 0px); opacity: 1;">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="lg:col-span-1 flex items-baseline">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">03/</span>
+</div>
+<div class="lg:col-span-4">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-mono-caption text-mono-caption px-2 py-0.5 bg-secondary-container/40 text-on-secondary-container font-semibold rounded-DEFAULT">DKV</span>
+<span class="font-mono-caption text-mono-caption text-outline">DEPT-DESN</span>
+</div>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface group-hover:text-primary transition-colors">
+                Desain Komunikasi Visual
+              </h3>
+</div>
+<div class="lg:col-span-4">
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                Produksi konten visual komersial, animasi 2D &amp; 3D terapan, rancang identitas merek (brand identity), fotografi studio terarah, dan motion graphics editorial.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-col justify-between h-full pt-1">
+<div class="flex flex-wrap gap-1.5 mb-4">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Vector Design</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Motion Graphics</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 rounded-DEFAULT text-on-surface">Video Studio</span>
+</div>
+<div class="flex items-center text-primary font-label-md text-label-md font-semibold gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="">Rincian Kurikulum</span>
+<span class="transition-transform group-hover:translate-x-1">→</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Major Item 04 -->
+<div class="group relative py-space-xl transition-all duration-200 hover:bg-surface-container-low/60 px-4 -mx-4 rounded-DEFAULT major-row" style="translate: none; rotate: none; scale: none; transform: translate(0px, 11.022px); opacity: 0.5408;">
+
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 04: EDUCATIONAL EXPERIENCE
+  =========================================== -->
+<section class="w-full bg-surface-container-low py-24 border-b border-surface-variant/80" id="pengalaman-belajar">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Left: Monumental Stacked Typography (4 cols) -->
+<div class="lg:col-span-4 flex flex-col justify-between h-full">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest block mb-4">
+              04 / METODOLOGI PEDAGOGI
+            </span>
+<div class="font-display text-display font-extrabold text-on-surface uppercase tracking-tighter leading-[0.95] mb-8">
+              Learn.<br>
+              Build.<br>
+<span class="text-outline">Collab.</span><br>
+<span class="text-primary">Grow.</span>
+</div>
+</div>
+<div class="border-t border-surface-variant/80 pt-4 hidden lg:block">
+<span class="font-mono-caption text-mono-caption text-on-surface-variant block">METODE: TEACHING FACTORY</span>
+<span class="font-body-sm text-body-sm text-outline">Simulasi riil lingkungan korporasi sejak semester pertama.</span>
+</div>
+</div>
+<!-- Right: 4 Articulated Principles (8 cols) -->
+<div class="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-gutter">
+<!-- Principle 1 -->
+<div class="bg-surface-container-lowest p-space-lg border border-surface-variant flex flex-col justify-between">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-3 block">01 // SISTEM PEMBELAJARAN</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">
+                Project-Based Learning
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Siswa tidak hanya mengerjakan lembar tugas ujian teori, melainkan menyelesaikan pesanan solusi perangkat lunak atau perancangan riil dari mitra usaha.
+              </p>
+</div>
+<div class="mt-6 pt-3 border-t border-surface-variant/60 flex items-center justify-between text-outline font-mono-caption text-mono-caption">
+<span class="">OUTPUT: SISTEM KERJA NYATA</span>
+<span class="material-symbols-outlined text-[16px]">terminal</span>
+</div>
+</div>
+<!-- Principle 2 -->
+<div class="bg-surface-container-lowest p-space-lg border border-surface-variant flex flex-col justify-between">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-3 block">02 // FASILITAS LAB</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">
+                Laboratorium Standar Industri
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Peralatan praktek, server, dan instrumen jaringan identik dengan standar data center Tier-2, didukung konektivitas serat optik berkecepatan tinggi.
+              </p>
+</div>
+<div class="mt-6 pt-3 border-t border-surface-variant/60 flex items-center justify-between text-outline font-mono-caption text-mono-caption">
+<span class="">STANDAR: ISO/IEC 27001 COMPLIANT</span>
+<span class="material-symbols-outlined text-[16px]">dns</span>
+</div>
+</div>
+<!-- Principle 3 -->
+<div class="bg-surface-container-lowest p-space-lg border border-surface-variant flex flex-col justify-between">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-3 block">03 // BUDAYA KERJA</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">
+                Kedisiplinan &amp; Etos Profesional
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Ketepatan waktu, dokumentasi teknis yang akuntabel, dan tanggung jawab kerja tim diajarkan sebagai kompetensi fundamental yang tidak dapat ditawar.
+              </p>
+</div>
+<div class="mt-6 pt-3 border-t border-surface-variant/60 flex items-center justify-between text-outline font-mono-caption text-mono-caption">
+<span class="">ETOS: INTEGRITAS &amp; PRESISI</span>
+<span class="material-symbols-outlined text-[16px]">verified</span>
+</div>
+</div>
+<!-- Principle 4 -->
+<div class="bg-surface-container-lowest p-space-lg border border-surface-variant flex flex-col justify-between">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary font-bold uppercase mb-3 block">04 // VALIDASI KOMPETENSI</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">
+                Sertifikasi &amp; Portofolio Teruji
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Lulusan dibekali sertifikat kompetensi resmi Badan Nasional Sertifikasi Profesi (BNSP) serta portofolio karya digital siap uji seleksi kerja.
+              </p>
+</div>
+<div class="mt-6 pt-3 border-t border-surface-variant/60 flex items-center justify-between text-outline font-mono-caption text-mono-caption">
+<span class="">LISENSI: LSP-P1 SMK CITRA NEGARA</span>
+<span class="material-symbols-outlined text-[16px]">workspace_premium</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 05: KEHIDUPAN SISWA & DINAMIKA KAMPUS
+  =========================================== -->
+<section class="w-full bg-background py-24 border-b border-surface-variant/80">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<!-- Section Header -->
+<div class="max-w-3xl mb-space-xl">
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest block mb-2">
+          05 / EKOSISTEM SISWA
+        </span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">
+          Kehidupan Siswa &amp; Aktivitas Kampus
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+          Mengimbangi ketajaman teknis dengan kepemimpinan organisasi, kebugaran fisik, dan kepekaan sosial.
+        </p>
+</div>
+<!-- Asymmetric Editorial Visual & Content -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<!-- Left: Featured Documentary Photograph (7 cols) -->
+<div class="lg:col-span-7">
+<div class="relative bg-surface-container-lowest p-2 border border-surface-variant">
+<!-- Structural Corner Tags -->
+<div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-primary z-10 pointer-events-none"></div>
+<div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-primary z-10 pointer-events-none"></div>
+<div class="relative w-full aspect-[4/3] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover object-center" data-alt="Indonesian vocational high school students in batik and white uniform skirts assembling patch cables into a full-height server rack network cabinet with Cisco and Adobe accreditation signs on the wall in background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAaoCp6JibRF0z1scaaW1V0N6JLHoBpffdKcBGtUDy6yZ5fgESHG9_TLOGeeKTXMsQFK1nQfhVJWYmecIAs-ouPeXVMLZQnhI29TbnfyEtQ65Srik0-TgAXGvMVbUVtbZLnQHiQhZ1I808TQEqhjmS86UnT8OXEs4-ekO9VS1SCegFis-q3fqs6xMsK4dO6ePYHf-VzC9O_aHPkcmrfdm9Z7Ej5o_FvD30lu0oP3-CkiUa2-QkAO4yCg">
+<div class="absolute bottom-3 left-3 bg-on-surface/90 text-surface px-3 py-1.5 backdrop-blur-sm">
+<span class="font-mono-caption text-mono-caption tracking-wider uppercase">TJKT LAB // MODUL 04: FIBER OPTIC TERMINATION</span>
+</div>
+</div>
+<div class="pt-3 pb-1 px-2 flex items-center justify-between font-mono-caption text-mono-caption text-on-surface-variant">
+<span class="">DOKUMENTASI RIIL WORKSHOP KOMPUTER</span>
+<span class="text-primary font-semibold">KERJA KELOMPOK TERPIMPIN</span>
+</div>
+</div>
+</div>
+<!-- Right: Activities Breakdown (5 cols) -->
+<div class="lg:col-span-5 flex flex-col space-y-4">
+<div class="p-5 bg-surface border border-surface-variant/80 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Robotika &amp; Coding Club</h4>
+<span class="font-mono-caption text-mono-caption text-primary">KLUB TEKNOLOGI</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Wadah eksplorasi mikrokontroler Arduino, IoT smart-campus, dan persiapan kompetisi Lomba Kompetensi Siswa (LKS) tingkat provinsi.
+            </p>
+</div>
+<div class="p-5 bg-surface border border-surface-variant/80 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Desain &amp; Media Kreatif</h4>
+<span class="font-mono-caption text-mono-caption text-primary">KONTEN &amp; PUBLIKASI</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Mengelola kanal publikasi resmi kampus, peliputan acara berkala, siaran podcast kejuruan, dan pameran berkala karya visual siswa.
+            </p>
+</div>
+<div class="p-5 bg-surface border border-surface-variant/80 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">OSIS &amp; Kepemimpinan</h4>
+<span class="font-mono-caption text-mono-caption text-primary">ORGANISASI FORMAL</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Pusat koordinasi dinamika santun siswa, simulasi manajemen kepemimpinan publik, dan penegakan kultur kedisiplinan sesama rekan sebaya.
+            </p>
+</div>
+<div class="p-5 bg-surface border border-surface-variant/80 hover:border-primary/50 transition-colors">
+<div class="flex items-center justify-between mb-1">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Pramuka &amp; Olahraga Prestasi</h4>
+<span class="font-mono-caption text-mono-caption text-primary">KETAHANAN FISIK</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Pembentukan mental tangguh, resiliensi di bawah tekanan fisik, dan pembinaan cabang futsal, basket, serta pencak silat kejuaraan.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 06: APA YANG KAMI BANGUN (STUDENT WORKS)
+  =========================================== -->
+<section class="w-full bg-surface-container-low py-24 border-b border-surface-variant/80">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<!-- Section Heading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl pb-space-sm border-b border-surface-variant/80">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest block mb-2">
+            06 / HASIL KARYA SISWA
+          </span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">
+            Inovasi Terapan &amp; Produk Nyata
+          </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2 md:mt-0 max-w-sm">
+          Portofolio proyek akhir siswa yang telah diimplementasikan pada operasional sekolah dan industri lokal.
+        </p>
+</div>
+<!-- Tabular / Technical List Architecture -->
+<div class="space-y-4">
+<!-- Project 01 -->
+<div class="bg-surface-container-lowest border border-surface-variant p-space-lg transition-shadow hover:shadow-sm">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-2">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">PROYEK 01 // 2024</span>
+<div class="font-mono-caption text-mono-caption text-outline">DEPT. PPLG</div>
+</div>
+<div class="lg:col-span-5">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1">
+                Sistem Informasi Presensi Siswa Berbasis QR &amp; Web
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Platform pencatatan kehadiran otomatis waktu-nyata dengan verifikasi geolokasi dan integrasi pelaporan WhatsApp Gateway untuk orang tua siswa.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-wrap gap-1.5">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Next.js</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">PostgreSQL</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Docker</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Tailwind</span>
+</div>
+<div class="lg:col-span-2 flex justify-start lg:justify-end">
+<span class="inline-flex items-center gap-1.5 font-mono-caption text-mono-caption text-primary border border-primary/30 px-2.5 py-1 rounded-DEFAULT font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                TERPASANG DI SEKOLAH
+              </span>
+</div>
+</div>
+</div>
+<!-- Project 02 -->
+<div class="bg-surface-container-lowest border border-surface-variant p-space-lg transition-shadow hover:shadow-sm">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-2">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">PROYEK 02 // 2024</span>
+<div class="font-mono-caption text-mono-caption text-outline">DEPT. DKV</div>
+</div>
+<div class="lg:col-span-5">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1">
+                Identitas Visual &amp; Kemasan Produk 12 UMKM Depok
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Standardisasi brand guidelines, perancangan kemasan siap cetak bersertifikasi SNI, dan materi promosi digital untuk pengusaha kuliner binaan daerah.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-wrap gap-1.5">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Adobe Illustrator</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Packaging 3D</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Photography</span>
+</div>
+<div class="lg:col-span-2 flex justify-start lg:justify-end">
+<span class="inline-flex items-center gap-1.5 font-mono-caption text-mono-caption text-secondary border border-secondary/30 px-2.5 py-1 rounded-DEFAULT font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                KEMITRAAN DINAS
+              </span>
+</div>
+</div>
+</div>
+<!-- Project 03 -->
+<div class="bg-surface-container-lowest border border-surface-variant p-space-lg transition-shadow hover:shadow-sm">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-2">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">PROYEK 03 // 2024</span>
+<div class="font-mono-caption text-mono-caption text-outline">DEPT. TJKT</div>
+</div>
+<div class="lg:col-span-5">
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1">
+                Implementasi Mesh Network Skala Kampus Sekolah
+              </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Revitalisasi topologi jaringan gedung pembelajaran utama, pembagian segmentasi VLAN antar laboratorium, dan manajemen bandwidth traffic shaping mikrotik.
+              </p>
+</div>
+<div class="lg:col-span-3 flex flex-wrap gap-1.5">
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">MikroTik RouterOS</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">VLAN 802.1Q</span>
+<span class="font-mono-caption text-mono-caption bg-surface-container px-2 py-1 text-on-surface">Ubiquiti AP</span>
+</div>
+<div class="lg:col-span-2 flex justify-start lg:justify-end">
+<span class="inline-flex items-center gap-1.5 font-mono-caption text-mono-caption text-primary border border-primary/30 px-2.5 py-1 rounded-DEFAULT font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                INFRASTRUKTUR AKTIF
+              </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 07: FASILITAS & LINGKUNGAN BELAJAR
+  =========================================== -->
+<section class="w-full bg-surface py-24 border-b border-surface-variant/80">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<div class="flex items-center gap-4 mb-space-lg">
+<span class="w-12 h-[2px] bg-primary"></span>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest">
+          07 / SARANA &amp; PRASARANA
+        </span>
+</div>
+<div class="max-w-3xl mb-space-xl">
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight font-bold">
+          Infrastruktur Berstandar Industri
+        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">
+          Setiap laboratorium dirancang untuk merefleksikan alur kerja workstation modern, memastikan transisi mulus siswa dari bangku sekolah menuju dunia karir.
+        </p>
+</div>
+<!-- Architectural Grid of Facilities -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<div class="p-6 bg-surface-container-lowest border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">RUANG 101 // BLOK A</span>
+<span class="material-symbols-outlined text-outline">computer</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Lab Komputasi Kinerja Tinggi</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              42 unit desktop workstation dengan prosesor multi-core generasi terkini, memori 32GB, dan layar ganda untuk simulasi komputasi intensif.
+            </p>
+</div>
+<div class="pt-4 mt-6 border-t border-surface-variant/60 font-mono-caption text-mono-caption text-outline">
+            KAPASITAS: 42 SISWA // DUAL AC CLIMATE CONTROLLED
+          </div>
+</div>
+<div class="p-6 bg-surface-container-lowest border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">RUANG 104 // BLOK A</span>
+<span class="material-symbols-outlined text-outline">palette</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Studio Multimedia &amp; Fotografi</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Dilengkapi cyclorama wall, continuous lighting studio CRI 96+, audio recording booth kedap suara, dan pen tablet grafis profesional.
+            </p>
+</div>
+<div class="pt-4 mt-6 border-t border-surface-variant/60 font-mono-caption text-mono-caption text-outline">
+            PERALATAN: GODOX LIGHTING // SONY CINEMA LINE
+          </div>
+</div>
+<div class="p-6 bg-surface-container-lowest border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">RUANG 202 // BLOK B</span>
+<span class="material-symbols-outlined text-outline">router</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Ruang Server &amp; Workshop Jaringan</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Rak server modular 42U, perangkat switch managed Cisco Catalyst, splicer fiber optic presisi, dan perangkat uji OTDR untuk praktek telekomunikasi.
+            </p>
+</div>
+<div class="pt-4 mt-6 border-t border-surface-variant/60 font-mono-caption text-mono-caption text-outline">
+            RACK UNIT: CISCO &amp; MIKROTIK MANAGED SWITCHES
+          </div>
+</div>
+<div class="p-6 bg-surface-container-lowest border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">HANGAR 01 // BLOK C</span>
+<span class="material-symbols-outlined text-outline">two_wheeler</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Bengkel Otomotif Terpadu</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Area bengkel bersertifikasi pabrikan dengan 8 unit bike-lift hidrolik, fuel injection tester, exhaust gas analyzer, dan tools set lengkap.
+            </p>
+</div>
+<div class="pt-4 mt-6 border-t border-surface-variant/60 font-mono-caption text-mono-caption text-outline">
+            STANDAR: APM REKANAN RESMI // 8 BIKE-LIFT PNEUMATIK
+          </div>
+</div>
+<div class="p-6 bg-surface-container-lowest border border-surface-variant flex flex-col justify-between lg:col-span-2">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-mono-caption text-mono-caption text-primary font-bold">PUSAT LITERASI // BLOK UTAMA</span>
+<span class="material-symbols-outlined text-outline">local_library</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-2">Perpustakaan &amp; Ruang Kolaborasi Terbuka</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Ruang baca dengan katalog ribuan referensi teknis vokasi internasional, akses repositori IEEE/ACM, serta zona kerja kelompok fleksibel untuk merancang startup dan proposal tugas akhir.
+            </p>
+</div>
+<div class="pt-4 mt-6 border-t border-surface-variant/60 font-mono-caption text-mono-caption text-outline">
+            KONEKSI: 1 GBPS DEDICATED FIBER // HIGH-DENSITY WI-FI 6
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 08: WARTA & INFORMASI (EDITORIAL JOURNALISM)
+  =========================================== -->
+<section class="w-full bg-background py-24 border-b border-surface-variant/80">
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl pb-space-sm border-b border-surface-variant/80">
+<div>
+<span class="font-mono-caption text-mono-caption text-primary uppercase tracking-widest block mb-2">
+            08 / PUBLIKASI &amp; WARTA
+          </span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase tracking-tight">
+            Kabar Institusi &amp; Prestasi
+          </h2>
+</div>
+<a class="font-label-md text-label-md text-primary font-semibold hover:text-secondary inline-flex items-center gap-1 mt-2 md:mt-0" href="#">
+<span class="">Arsip Berita Lengkap</span>
+<span class="">→</span>
+</a>
+</div>
+<!-- Journalistic Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Featured Headline (7 cols) -->
+<article class="lg:col-span-7 bg-surface p-space-lg border border-surface-variant flex flex-col justify-between h-full">
+<div>
+<div class="flex items-center gap-space-xs font-mono-caption text-mono-caption text-outline mb-3">
+<span class="text-primary font-bold">KERJASAMA INDUSTRI</span>
+<span class="">//</span>
+<time datetime="2025-01-14">14 JANUARI 2025</time>
+</div>
+<h3 class="font-headline-lg text-headline-lg font-bold text-on-surface hover:text-primary transition-colors mb-space-md leading-tight">
+              Pembaruan Kerja Sama Kurikulum Industri dan Kesiapan Sertifikasi Kompetensi Siswa 2025/2026
+            </h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-space-lg leading-relaxed">
+              SMK Citra Negara memperluas sinkronisasi kurikulum dengan konsorsium penyedia cloud dan telekomunikasi regional. Sebanyak 180 calon lulusan tahun ajaran berjalan ditargetkan memiliki lisensi sertifikasi berstandar industri internasional sebelum masa kelulusan resmi.
+            </p>
+</div>
+<div class="pt-4 border-t border-surface-variant/60 flex items-center justify-between font-mono-caption text-mono-caption text-on-surface-variant">
+<span class="">DOKUMEN PERS // ID-PR-2025-01</span>
+<a class="text-primary font-semibold hover:underline" href="#">Baca Laporan Penuh →</a>
+</div>
+</article>
+<!-- Secondary Stories (5 cols) -->
+<div class="lg:col-span-5 flex flex-col space-y-gutter">
+<article class="bg-surface p-6 border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs font-mono-caption text-mono-caption text-outline mb-2">
+<span class="text-primary font-bold">INFORMASI PENERIMAAN</span>
+<span class="">//</span>
+<time datetime="2025-01-10">10 JANUARI 2025</time>
+</div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface hover:text-primary transition-colors mb-2">
+                Jadwal Sosialisasi Penerimaan Peserta Didik Baru (PPDB) Gelombang I
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Agenda pengenalan program keahlian secara tatap muka dan tur laboratorium terbuka diselenggarakan setiap akhir pekan sepanjang bulan Februari 2025.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-variant/60 flex justify-end font-mono-caption text-mono-caption">
+<a class="text-primary font-semibold hover:underline" href="#">Rincian Acara &amp; Registrasi →</a>
+</div>
+</article>
+<article class="bg-surface p-6 border border-surface-variant flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs font-mono-caption text-mono-caption text-outline mb-2">
+<span class="text-primary font-bold">PAMERAN KARYA</span>
+<span class="">//</span>
+<time datetime="2024-12-20">20 DESEMBER 2024</time>
+</div>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface hover:text-primary transition-colors mb-2">
+                Pameran Karya Akhir dan Gelar Produk Inovasi Siswa SMK Citra Negara
+              </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Menampilkan lebih dari 40 purwarupa aplikasi, solusi jaringan, identitas visual UMKM, serta performa mesin sepeda motor hasil rancangan siswa kelas XII.
+              </p>
+</div>
+<div class="mt-4 pt-3 border-t border-surface-variant/60 flex justify-end font-mono-caption text-mono-caption">
+<a class="text-primary font-semibold hover:underline" href="#">Galeri Dokumentasi →</a>
+</div>
+</article>
+</div>
+</div>
+</div>
+</section>
+<!-- ==========================================
+       SECTION 09: FINAL CALL TO ACTION (THE STRONGER GREEN SECTION)
+  =========================================== -->
+<section class="w-full bg-primary text-on-primary py-24 relative overflow-hidden">
+<!-- Subtle Coordinate Accents on Solid Green -->
+<div class="absolute inset-0 pointer-events-none opacity-10">
+<div class="max-w-7xl mx-auto h-full px-margin-sm lg:px-margin flex justify-between border-x border-on-primary">
+<div class="w-px h-full bg-on-primary"></div>
+<div class="w-px h-full bg-on-primary"></div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-margin-sm lg:px-margin relative z-10">
+<div class="max-w-4xl">
+<!-- Eyebrow Tag -->
+<div class="flex items-center gap-2 mb-6">
+<span class="w-2 h-2 bg-secondary-fixed"></span>
+<span class="font-mono-caption text-mono-caption text-secondary-fixed uppercase tracking-widest">
+            09 / TAHUN AJARAN 2025/2026
+          </span>
+</div>
+<!-- Monumental Headline -->
+<h2 class="font-display text-display font-extrabold text-on-primary uppercase tracking-tighter mb-6 leading-tight">
+          Siap melangkah ke dunia yang lebih luas?
+        </h2>
+<!-- Context Copy -->
+<p class="font-body-lg text-body-lg text-on-primary-container max-w-2xl mb-10 leading-relaxed">
+          Pendaftaran Peserta Didik Baru (PPDB) Tahun Ajaran 2025/2026 telah dibuka. Konsultasikan peminatan keahlian putra-putri Anda bersama tim akademik kami atau ikuti program kunjungan kampus mandiri.
+        </p>
+<!-- CTA Buttons -->
+<div class="flex flex-wrap items-center gap-4">
+<a class="inline-flex items-center justify-center bg-surface-container-lowest text-primary font-label-md text-label-md px-8 py-4 rounded-DEFAULT hover:bg-surface-container transition-colors shadow-sm font-bold tracking-tight" data-path="pendaftaran-ppdb" href="#">
+<span class="">Informasi &amp; Pendaftaran PPDB</span>
+<span class="material-symbols-outlined ml-2 text-[18px]">how_to_reg</span>
+</a>
+<a class="inline-flex items-center justify-center bg-transparent text-on-primary border border-secondary-fixed/40 hover:bg-on-primary/10 font-label-md text-label-md px-7 py-4 rounded-DEFAULT transition-colors font-medium" href="#">
+<span class="material-symbols-outlined mr-2 text-[18px]">download</span>
+<span class="">Unduh Panduan Brosur Akademik</span>
+</a>
+</div>
+<!-- Bottom Informational Bar -->
+<div class="mt-14 pt-8 border-t border-on-primary/20 flex flex-wrap items-center justify-between gap-4 font-mono-caption text-mono-caption text-secondary-fixed">
+<div class="">HOTLINE PPDB: (021) 7721-3456 / WHATSAPP: 0812-9900-2025</div>
+<div class="">LOKASI: KEMIRI MUKA, BEJI, KOTA DEPOK</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- GSAP + ScrollTrigger Scripts for Polished Editorial Entrance -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Respect user motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero Stagger Reveal
+    gsap.from('.hero-fade', {
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
+      stagger: 0.15,
+      ease: 'power2.out'
+    });
+
+    gsap.from('.hero-title', {
+      opacity: 0,
+      y: 30,
+      duration: 1.0,
+      ease: 'power3.out',
+      delay: 0.1
+    });
+
+    gsap.from('.hero-visual', {
+      opacity: 0,
+      scale: 0.98,
+      duration: 1.1,
+      ease: 'power2.out',
+      delay: 0.3
+    });
+
+    // Program Keahlian Rows Stagger On Scroll
+    gsap.from('.major-row', {
+      scrollTrigger: {
+        trigger: '#program-keahlian',
+        start: 'top 75%',
+      },
+      opacity: 0,
+      y: 24,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: 'power2.out'
+    });
+  });
+</script></main><footer class="w-full bg-on-surface text-surface-container-highest"><div class="max-w-7xl mx-auto px-margin-sm lg:px-margin pt-space-xl pb-space-lg"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter pb-space-xl"><div class="lg:col-span-4 flex flex-col"><div class="flex items-center gap-space-xs mb-space-xs"><span class="font-headline-sm text-headline-sm text-surface-container-lowest uppercase tracking-tight">SMK CITRA NEGARA</span><span class="font-mono-caption text-mono-caption text-secondary-fixed bg-surface-variant/20 px-1.5 py-0.5 rounded-DEFAULT">ID-VOC-3276</span></div><p class="font-mono-caption text-mono-caption text-outline-variant uppercase mb-space-md tracking-wider">Pendidikan Berbasis Industri &amp; Integritas Teknologis</p><div class="font-body-sm text-body-sm text-outline-variant space-y-space-xs"><p class="">Jl. Tanah Baru No. 12, Kemiri Muka, Beji</p><p class="">Kota Depok, Jawa Barat 16423, Indonesia</p><p class="font-mono-caption text-mono-caption text-secondary-fixed pt-space-xs">NPSN: 20268291 // NSS: 402026804001</p></div></div><div class="lg:col-span-2 flex flex-col"><span class="font-mono-caption text-mono-caption text-secondary-fixed uppercase tracking-wider mb-space-md">01 / Navigasi Utama</span><ul class="space-y-space-xs font-body-sm text-body-sm text-surface-container-highest"><li class="hover:text-surface-container-lowest transition-colors"><a data-path="beranda" href="#" class="">Beranda</a></li><li class="hover:text-surface-container-lowest transition-colors"><a data-path="tentang-kami" href="#" class="">Tentang Kami</a></li><li class="hover:text-surface-container-lowest transition-colors"><a data-path="program-keahlian" href="#" class="">Program Keahlian</a></li><li class="hover:text-surface-container-lowest transition-colors"><a data-path="kehidupan-siswa" href="#" class="">Kehidupan Siswa</a></li><li class="hover:text-surface-container-lowest transition-colors"><a data-path="berita" href="#" class="">Warta &amp; Berita</a></li><li class="hover:text-surface-container-lowest transition-colors"><a data-path="kontak" href="#" class="">Pusat Kontak</a></li></ul></div><div class="lg:col-span-3 flex flex-col"><span class="font-mono-caption text-mono-caption text-secondary-fixed uppercase tracking-wider mb-space-md">02 / Program Keahlian</span><ul class="space-y-space-xs font-body-sm text-body-sm text-surface-container-highest"><li class="flex items-center justify-between"><span class="text-outline-variant font-mono-caption text-mono-caption">PPLG</span><span class="">Pengembangan Perangkat Lunak</span></li><li class="flex items-center justify-between"><span class="text-outline-variant font-mono-caption text-mono-caption">TJKT</span><span class="">Teknik Jaringan Komputer</span></li><li class="flex items-center justify-between"><span class="text-outline-variant font-mono-caption text-mono-caption">DKV</span><span class="">Desain Komunikasi Visual</span></li><li class="flex items-center justify-between"><span class="text-outline-variant font-mono-caption text-mono-caption">TKRO</span><span class="">Teknik Kendaraan Ringan</span></li><li class="flex items-center justify-between"><span class="text-outline-variant font-mono-caption text-mono-caption">MPLB</span><span class="">Manajemen Perkantoran</span></li></ul></div><div class="lg:col-span-3 flex flex-col"><span class="font-mono-caption text-mono-caption text-secondary-fixed uppercase tracking-wider mb-space-md">03 / Informasi &amp; Kontak</span><div class="font-body-sm text-body-sm space-y-space-xs mb-space-md"><div class="flex flex-col"><span class="font-mono-caption text-mono-caption text-outline-variant uppercase">Telepon Sentral</span><span class="text-surface-container-lowest font-label-md text-label-md">(021) 7721-3456</span></div><div class="flex flex-col"><span class="font-mono-caption text-mono-caption text-outline-variant uppercase">Surel Kedinasan</span><span class="text-surface-container-lowest font-label-md text-label-md">info@smkcitranegara.sch.id</span></div><div class="flex flex-col"><span class="font-mono-caption text-mono-caption text-outline-variant uppercase">Jam Operasional</span><span class="text-outline-variant">Senin - Jumat: 07.00 - 16.00 WIB</span></div></div><a class="inline-flex items-center justify-center bg-primary text-on-primary font-label-sm text-label-sm py-2 px-space-md rounded-lg hover:bg-secondary transition-colors" data-path="pendaftaran-ppdb" href="#">Pusat Informasi PPDB Online</a></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-md font-mono-caption text-mono-caption text-outline-variant"><div class="flex items-center gap-space-md"><span class="">© 2025 SMK CITRA NEGARA. Hak Cipta Dilindungi.</span><span class="hidden md:inline">•</span><span class="">STATUS AKREDITASI: A (UNGGUL)</span></div><div class="flex items-center gap-space-lg"><span class="">KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET, DAN TEKNOLOGI</span></div></div></div></footer>
+
+</body></html>

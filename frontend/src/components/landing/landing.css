@@ -1,0 +1,219 @@
+/* ==========================================================================
+   SMK CITRA NEGARA — STITCH LANDING PAGE DESIGN SYSTEM TOKENS
+   Screen: 34ed1245f6a5452eb3b457b914c53bdd (2560px wide desktop)
+   Content width capped at 1440px to feel full on 1920px viewports.
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────
+   COLOR & VARIABLE TOKENS
+   ────────────────────────────────────────────────────── */
+.stitch-root {
+  --stitch-primary: #005131;
+  --stitch-secondary: #006c45;
+  --stitch-primary-container: #176b45;
+  --stitch-on-primary: #ffffff;
+  --stitch-on-primary-container: #99e9b9;
+  --stitch-surface: #f2fcf3;
+  --stitch-surface-container-lowest: #ffffff;
+  --stitch-surface-container-low: #ecf6ee;
+  --stitch-surface-container: #e6f0e8;
+  --stitch-surface-container-high: #e1ebe2;
+  --stitch-surface-container-highest: #dbe5dd;
+  --stitch-surface-variant: #dbe5dd;
+  --stitch-on-surface: #151e19;
+  --stitch-on-surface-variant: #3f4942;
+  --stitch-outline: #6f7a71;
+  --stitch-outline-variant: #bfc9c0;
+  --stitch-secondary-container: #98f6c2;
+  --stitch-on-secondary-container: #00734a;
+  --stitch-secondary-fixed: #98f6c2;
+
+  /* Stitch spacing tokens (from Tailwind config in Stitch HTML) */
+  --stitch-margin: 3rem;       /* 48px — lg:px-margin */
+  --stitch-margin-sm: 1.25rem; /* 20px — px-margin-sm */
+  --stitch-gutter: 1.5rem;     /* 24px — gap-gutter */
+  --stitch-space-xl: 2.5rem;   /* 40px */
+  --stitch-space-lg: 1.5rem;   /* 24px */
+  --stitch-space-md: 1rem;     /* 16px */
+  --stitch-space-sm: 0.5rem;   /* 8px */
+  --stitch-space-xs: 0.25rem;  /* 4px */
+
+  --stitch-font: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+.stitch-root {
+  font-family: var(--stitch-font);
+  background-color: var(--stitch-surface);
+  color: var(--stitch-on-surface);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ──────────────────────────────────────────────────────
+   STITCH CONTAINER — max 1440px, mirrors Stitch at 1920px
+   Stitch at 2560px uses max-w-7xl (1280px) + 640px margins.
+   At 1920px we use 1440px + ~240px margins (much better).
+   ────────────────────────────────────────────────────── */
+.stitch-container {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: var(--stitch-margin-sm);
+}
+
+@media (min-width: 1024px) {
+  .stitch-container {
+    padding-inline: var(--stitch-margin);
+  }
+}
+
+/* ──────────────────────────────────────────────────────
+   TYPOGRAPHY UTILITY CLASSES (Stitch design system)
+   ────────────────────────────────────────────────────── */
+.stitch-display {
+  font-family: var(--stitch-font);
+  font-size: 36px;
+  line-height: 44px;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+@media (min-width: 1024px) {
+  .stitch-display {
+    font-size: 56px;
+    line-height: 64px;
+    letter-spacing: -0.03em;
+  }
+}
+
+.stitch-headline-xl {
+  font-family: var(--stitch-font);
+  font-size: 28px;
+  line-height: 36px;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .stitch-headline-xl {
+    font-size: 40px;
+    line-height: 48px;
+    letter-spacing: -0.02em;
+  }
+}
+
+.stitch-headline-lg {
+  font-family: var(--stitch-font);
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .stitch-headline-lg {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -0.015em;
+  }
+}
+
+.stitch-headline-md {
+  font-family: var(--stitch-font);
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .stitch-headline-md {
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+.stitch-headline-sm {
+  font-family: var(--stitch-font);
+  font-size: 18px;
+  line-height: 26px;
+  letter-spacing: -0.005em;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .stitch-headline-sm {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+.stitch-body-lg {
+  font-family: var(--stitch-font);
+  font-size: 16px;
+  line-height: 26px;
+  font-weight: 400;
+}
+
+@media (min-width: 768px) {
+  .stitch-body-lg {
+    font-size: 18px;
+    line-height: 28px;
+  }
+}
+
+.stitch-body-md {
+  font-family: var(--stitch-font);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.stitch-body-sm {
+  font-family: var(--stitch-font);
+  font-size: 13px;
+  line-height: 20px;
+  letter-spacing: 0.005em;
+  font-weight: 400;
+}
+
+.stitch-label-md {
+  font-family: var(--stitch-font);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.01em;
+  font-weight: 600;
+}
+
+.stitch-label-sm {
+  font-family: var(--stitch-font);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+}
+
+.stitch-mono-caption {
+  font-family: var(--stitch-font);
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+/* ──────────────────────────────────────────────────────
+   GSAP SCROLLSMOOTHER WRAPPERS
+   ────────────────────────────────────────────────────── */
+#smooth-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#smooth-content {
+  will-change: transform;
+  overflow: hidden;
+}

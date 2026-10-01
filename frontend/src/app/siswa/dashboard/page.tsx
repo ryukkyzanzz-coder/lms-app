@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   BookOpen,
@@ -22,8 +22,91 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { fetchAPI } from '@/lib/api';
 
 export default function SiswaDashboardPage() {
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadDashboard = async () => {
+      try {
+        const res = await fetchAPI('/students/me/dashboard');
+        if (isMounted && res?.success) {
+          setData(res.data);
+        }
+      } catch (err) {
+        console.error('Failed to load dashboard:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+    loadDashboard();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const siswaName = data?.siswa?.nama || 'Dafiand';
+  const siswaNisn = data?.siswa?.nisn || '2204128';
+  const rerataNilai = data?.rerataNilai !== undefined ? data.rerataNilai : 86.4;
+  const predikat = data?.predikat || 'A-';
+  const tugasList = data?.tugasTerdekat && data.tugasTerdekat.length > 0 ? data.tugasTerdekat : [
+    {
+      _id: 'tugas-03',
+      judul: 'Tugas 03: Autentikasi JWT & Middleware',
+      mapelId: { nama: 'Pemrograman Web & Perangkat Bergerak' },
+      deadline: '2026-09-30T23:59:00.000Z',
+      hasSubmitted: false,
+    },
+    {
+      _id: 'quiz-02',
+      judul: 'Kuis Formatif: Pemahaman Asinkronus JS',
+      mapelId: { nama: 'Pemrograman Web & Perangkat Bergerak' },
+      deadline: '2026-10-01T15:00:00.000Z',
+      hasSubmitted: false,
+    }
+  ];
+  const uncompletedCount = data?.tugasBelumSelesaiCount !== undefined ? data.tugasBelumSelesaiCount : 2;
+  const progresList = data?.progresBelajar && data.progresBelajar.length > 0 ? data.progresBelajar : [
+    { mapel: 'Pemrograman Web', selesai: 8, total: 12, persentase: 67 },
+    { mapel: 'Basis Data', selesai: 6, total: 9, persentase: 66 },
+    { mapel: 'PBO (Java)', selesai: 7, total: 10, persentase: 70 }
+  ];
+  const pengumumanList = data?.pengumuman && data.pengumuman.length > 0 ? data.pengumuman : [
+    {
+      _id: 'peng-1',
+      judul: 'Perubahan Jadwal Praktikum Lab',
+      konten: 'Diinformasikan kepada seluruh siswa XII RPL 1, jadwal praktikum Web dipindah ke Lab 2 karena perbaikan jaringan.',
+      guru: 'Budi Pratama, S.Kom.',
+      tanggal: 'Kemarin, 14:30',
+      isNew: true,
+    },
+    {
+      _id: 'peng-2',
+      judul: 'Pembayaran SPP Bulan September',
+      konten: 'Batas akhir pembayaran administrasi SPP adalah tanggal 30 September.',
+      guru: 'Tata Usaha',
+      tanggal: '23 Sep 2026',
+      isNew: false,
+    }
+  ];
+
+  const formatDeadline = (isoDate: string) => {
+    try {
+      const d = new Date(isoDate);
+      return d.toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return '30 Sep, 23:59';
+    }
+  };
+
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
       {/* 1. ACADEMIC CONTEXT HEADER */}
@@ -32,10 +115,10 @@ export default function SiswaDashboardPage() {
           <div className="flex flex-col gap-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-0.5">
               <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                Selamat datang kembali, Dafiand
+                Selamat datang kembali, {siswaName}
               </h1>
               <Badge variant="secondary" className="font-semibold text-xs py-0.5">
-                NISN 2204128
+                NISN {siswaNisn}
               </Badge>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground text-xs sm:text-sm flex-wrap">
@@ -59,7 +142,7 @@ export default function SiswaDashboardPage() {
                   Rerata Nilai
                 </span>
                 <span className="text-lg font-bold text-foreground">
-                  86.4 <span className="text-emerald-600 text-xs font-semibold ml-1">(A-)</span>
+                  {rerataNilai} <span className="text-emerald-600 text-xs font-semibold ml-1">({predikat})</span>
                 </span>
               </div>
             </div>
@@ -137,68 +220,65 @@ export default function SiswaDashboardPage() {
                 <h2 className="text-base sm:text-lg font-semibold text-foreground">Tugas & Tenggat Waktu Terdekat</h2>
               </div>
               <Badge variant="destructive" className="text-[11px] font-semibold">
-                2 Belum Selesai
+                {uncompletedCount} Belum Selesai
               </Badge>
             </div>
             
             <div className="flex flex-col gap-3">
-              <Link href="/siswa/tugas/tugas-03" className="group">
-                <Card className="border border-border group-hover:border-primary/50 transition-colors">
-                  <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <div className="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                        <FileText className="size-5" />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                          Tugas 03: Autentikasi JWT & Middleware
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">Pemrograman Web & Perangkat Bergerak</p>
-                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                          <Badge variant="destructive" className="text-[10px] font-semibold py-0">
-                            Sisa 4 Hari
-                          </Badge>
-                          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
-                            <Clock className="size-3" /> Batas: 30 Sep, 23:59
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="hidden sm:flex text-muted-foreground group-hover:text-primary transition-colors shrink-0">
-                      <ChevronRight className="size-5" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+              {tugasList.map((tugas: any) => {
+                const mapelName = tugas.mapelId?.nama || 'Mata Pelajaran';
+                const deadlineFormatted = formatDeadline(tugas.deadline);
+                const hasSubmitted = tugas.hasSubmitted || !!tugas.mySubmission;
 
-              <Link href="/siswa/tugas/quiz-02" className="group">
-                <Card className="border border-border group-hover:border-primary/50 transition-colors">
-                  <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div className="flex items-start gap-3">
-                      <div className="size-10 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
-                        <PieChart className="size-5" />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                          Kuis Formatif: Pemahaman Asinkronus JS
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">Pemrograman Web & Perangkat Bergerak</p>
-                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                          <Badge variant="secondary" className="text-[10px] font-semibold py-0">
-                            Belum Dikerjakan
-                          </Badge>
-                          <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
-                            <Clock className="size-3" /> Batas: 1 Okt, 15:00
-                          </span>
+                return (
+                  <Link key={tugas._id} href={`/siswa/tugas/${tugas._id}`} className="group">
+                    <Card className="border border-border group-hover:border-primary/50 transition-colors">
+                      <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex items-start gap-3">
+                          <div className={`size-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                            hasSubmitted 
+                              ? 'bg-emerald-500/10 text-emerald-600' 
+                              : tugas.judul?.toLowerCase().includes('quiz')
+                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                                : 'bg-primary/10 text-primary'
+                          }`}>
+                            {hasSubmitted ? (
+                              <CheckCircle2 className="size-5" />
+                            ) : tugas.judul?.toLowerCase().includes('quiz') ? (
+                              <PieChart className="size-5" />
+                            ) : (
+                              <FileText className="size-5" />
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {tugas.judul}
+                            </h3>
+                            <p className="text-xs text-muted-foreground mt-0.5">{mapelName}</p>
+                            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                              {hasSubmitted ? (
+                                <Badge variant="outline" className="text-[10px] text-emerald-700 bg-emerald-50/50 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 font-semibold py-0">
+                                  Terkumpul
+                                </Badge>
+                              ) : (
+                                <Badge variant="destructive" className="text-[10px] font-semibold py-0">
+                                  Belum Selesai
+                                </Badge>
+                              )}
+                              <span className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
+                                <Clock className="size-3" /> Batas: {deadlineFormatted}
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="hidden sm:flex text-muted-foreground group-hover:text-primary transition-colors shrink-0">
-                      <ChevronRight className="size-5" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+                        <div className="hidden sm:flex text-muted-foreground group-hover:text-primary transition-colors shrink-0">
+                          <ChevronRight className="size-5" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
             
             <Button render={<Link href="/siswa/tugas" />} variant="outline" className="w-full gap-1.5 text-xs font-semibold mt-1">
@@ -222,29 +302,15 @@ export default function SiswaDashboardPage() {
               </Button>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-4">
-              <div>
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span className="font-semibold text-foreground">Pemrograman Web</span>
-                  <span>8 / 12 Modul</span>
+              {progresList.map((prog: any, idx: number) => (
+                <div key={idx}>
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                    <span className="font-semibold text-foreground">{prog.mapel}</span>
+                    <span>{prog.selesai} / {prog.total} Modul</span>
+                  </div>
+                  <Progress value={prog.persentase} className="h-2" />
                 </div>
-                <Progress value={67} className="h-2" />
-              </div>
-              
-              <div>
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span className="font-semibold text-foreground">Basis Data</span>
-                  <span>6 / 9 Modul</span>
-                </div>
-                <Progress value={66} className="h-2" />
-              </div>
-              
-              <div>
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span className="font-semibold text-foreground">PBO (Java)</span>
-                  <span>7 / 10 Modul</span>
-                </div>
-                <Progress value={70} className="h-2" />
-              </div>
+              ))}
             </CardContent>
           </Card>
 
@@ -256,37 +322,33 @@ export default function SiswaDashboardPage() {
                 <CardTitle className="text-sm font-semibold">Pengumuman</CardTitle>
               </div>
               <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50">
-                1 Baru
+                {pengumumanList.length} Pengumuman
               </Badge>
             </CardHeader>
             <CardContent className="p-4 flex flex-col gap-3">
-              <Link href="/siswa/pengumuman/peng-1" className="group block">
-                <div className="flex flex-col gap-1 hover:bg-muted/50 p-2 -mx-2 rounded-lg transition-colors">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
-                      Perubahan Jadwal Praktikum Lab
-                    </span>
-                    <span className="size-2 rounded-full bg-primary shrink-0" />
-                  </div>
-                  <span className="text-[11px] text-muted-foreground">Budi Pratama, S.Kom. • Kemarin, 14:30</span>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
-                    Diinformasikan kepada seluruh siswa XII RPL 1, jadwal praktikum Web dipindah ke Lab 2 karena...
-                  </p>
-                </div>
-              </Link>
-              
-              <Separator />
-              
-              <Link href="/siswa/pengumuman/peng-2" className="group block">
-                <div className="flex flex-col gap-1 hover:bg-muted/50 p-2 -mx-2 rounded-lg transition-colors">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
-                      Pembayaran SPP Bulan September
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-muted-foreground">Tata Usaha • 23 Sep 2026</span>
-                </div>
-              </Link>
+              {pengumumanList.map((peng: any, idx: number) => (
+                <React.Fragment key={peng._id || idx}>
+                  <Link href="/siswa/pengumuman" className="group block">
+                    <div className="flex flex-col gap-1 hover:bg-muted/50 p-2 -mx-2 rounded-lg transition-colors">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {peng.judul}
+                        </span>
+                        {peng.isPinned && <span className="size-2 rounded-full bg-primary shrink-0" />}
+                      </div>
+                      <span className="text-[11px] text-muted-foreground">
+                        {peng.guru || 'Guru Pengampu'} • {peng.tanggal || 'Terbaru'}
+                      </span>
+                      {peng.konten && (
+                        <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                          {peng.konten}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                  {idx < pengumumanList.length - 1 && <Separator />}
+                </React.Fragment>
+              ))}
             </CardContent>
           </Card>
         </div>

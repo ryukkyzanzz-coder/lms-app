@@ -77,4 +77,34 @@ export class SubmissionController {
       next(error);
     }
   }
+
+  /**
+   * POST /api/v1/teachers/me/assignments/:assignmentId/submissions/:submissionId/grade
+   */
+  static async gradeSubmission(req: Request, res: Response, next: NextFunction) {
+    try {
+      const assignmentId = objectIdSchema.parse(req.params.assignmentId);
+      const submissionId = objectIdSchema.parse(req.params.submissionId);
+      const { nilai, catatanGuru } = req.body;
+
+      if (typeof nilai !== 'number' || isNaN(nilai)) {
+        return res.status(400).json({ success: false, message: 'Nilai harus berupa angka valid' });
+      }
+
+      const submission = await SubmissionService.gradeSubmission(
+        req.user!.userId,
+        assignmentId,
+        submissionId,
+        { nilai: Number(nilai), catatanGuru }
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Penilaian tugas berhasil disimpan',
+        data: submission,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

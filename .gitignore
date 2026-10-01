@@ -50,3 +50,6 @@ frontend/next-env.d.ts
 
 # Scratch
 scratch/
+
+# Agent Configurations & Keys
+.agents/

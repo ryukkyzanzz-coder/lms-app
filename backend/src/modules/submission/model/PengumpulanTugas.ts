@@ -16,7 +16,13 @@ export interface IPengumpulanTugasDocument extends Document {
     size: number;
   }[];
 
+  linkUrl?: string;
   catatanSiswa?: string;
+
+  nilai?: number;
+  catatanGuru?: string;
+  gradedAt?: Date;
+  gradedBy?: mongoose.Types.ObjectId;
 
   createdAt: Date;
   updatedAt: Date;
@@ -47,7 +53,13 @@ const pengumpulanTugasSchema = new Schema<IPengumpulanTugasDocument>(
       },
     ],
 
+    linkUrl: { type: String, trim: true },
     catatanSiswa: { type: String, trim: true },
+
+    nilai: { type: Number, min: 0 },
+    catatanGuru: { type: String, trim: true },
+    gradedAt: { type: Date },
+    gradedBy: { type: Schema.Types.ObjectId, ref: 'Guru' },
   },
   {
     timestamps: true,

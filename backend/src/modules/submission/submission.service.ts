@@ -6,6 +6,7 @@ import { Pengampu } from '../core/model/Pengampu';
 import { Kelas } from '../core/model/Kelas';
 import { Siswa } from '../core/model/Siswa';
 import { MataPelajaran } from '../core/model/MataPelajaran';
+import { Nilai } from '../core/model/Nilai';
 import { AppError } from '../../shared/errors/AppError';
 
 export interface IListSubmissionsQuery {
@@ -19,12 +20,13 @@ export interface IListSubmissionsQuery {
 
 export interface ISubmitAssignmentInput {
   siswaId: string;
-  files: {
+  files?: {
     name: string;
     url: string;
     mimeType: string;
     size: number;
   }[];
+  linkUrl?: string;
   catatanSiswa?: string;
   submittedAt?: Date;
 }
@@ -133,7 +135,11 @@ export class SubmissionService {
               isLate: sub.isLate,
               submittedAt: sub.submittedAt,
               files: sub.files,
+              linkUrl: sub.linkUrl,
               catatanSiswa: sub.catatanSiswa,
+              nilai: sub.nilai,
+              catatanGuru: sub.catatanGuru,
+              gradedAt: sub.gradedAt,
               createdAt: sub.createdAt,
               updatedAt: sub.updatedAt,
             }
@@ -309,8 +315,9 @@ export class SubmissionService {
     let submission: IPengumpulanTugasDocument;
 
     if (existingSubmission) {
-      existingSubmission.files = input.files;
-      existingSubmission.catatanSiswa = input.catatanSiswa;
+      if (input.files) existingSubmission.files = input.files;
+      if (input.linkUrl !== undefined) existingSubmission.linkUrl = input.linkUrl;
+      if (input.catatanSiswa !== undefined) existingSubmission.catatanSiswa = input.catatanSiswa;
       existingSubmission.submittedAt = submittedAt;
       existingSubmission.isLate = isLate;
       existingSubmission.status = existingSubmission.status === 'GRADED' ? 'RESUBMITTED' : 'SUBMITTED';
@@ -323,10 +330,66 @@ export class SubmissionService {
         status: 'SUBMITTED',
         isLate,
         submittedAt,
-        files: input.files,
+        files: input.files || [],
+        linkUrl: input.linkUrl,
         catatanSiswa: input.catatanSiswa,
       });
     }
+
+    return submission;
+  }
+
+  /**
+   * Grade a submission (Teacher only).
+   * Updates PengumpulanTugas and upserts Nilai document for cross-role grade synchronization.
+   */
+  static async gradeSubmission(
+    userId: string,
+    assignmentId: string,
+    submissionId: string,
+    input: { nilai: number; catatanGuru?: string }
+  ) {
+    const { guru, assignment } = await this.verifyTeacherOwnsAssignment(userId, assignmentId);
+
+    const submission = await PengumpulanTugas.findOne({
+      _id: submissionId,
+      tugasId: assignment._id,
+    });
+
+    if (!submission) {
+      throw new AppError('Pengumpulan tugas tidak ditemukan', 404, 'NOT_FOUND');
+    }
+
+    if (input.nilai < 0 || (assignment.maxScore && input.nilai > assignment.maxScore)) {
+      throw new AppError(
+        `Nilai harus berada di antara 0 dan ${assignment.maxScore || 100}`,
+        400,
+        'INVALID_SCORE'
+      );
+    }
+
+    submission.nilai = input.nilai;
+    submission.catatanGuru = input.catatanGuru;
+    submission.gradedAt = new Date();
+    submission.gradedBy = guru._id;
+    submission.status = 'GRADED';
+    await submission.save();
+
+    // Synchronize to Nilai collection for permanent academic grading source of truth
+    await Nilai.findOneAndUpdate(
+      { tugasId: assignment._id, siswaId: submission.siswaId },
+      {
+        tugasId: assignment._id,
+        siswaId: submission.siswaId,
+        guruId: guru._id,
+        pengumpulanId: submission._id,
+        nilai: input.nilai,
+        feedback: input.catatanGuru,
+        gradedAt: new Date(),
+        $inc: { version: 1 },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     return submission;
   }

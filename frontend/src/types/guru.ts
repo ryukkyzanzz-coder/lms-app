@@ -208,7 +208,12 @@ export interface IPengumpulanTugas {
   isLate: boolean;
   submittedAt: string;
   files: ISubmissionFile[];
+  linkUrl?: string;
   catatanSiswa?: string;
+  nilai?: number;
+  catatanGuru?: string;
+  gradedAt?: string;
+  gradedBy?: string;
   createdAt: string;
   updatedAt: string;
 }

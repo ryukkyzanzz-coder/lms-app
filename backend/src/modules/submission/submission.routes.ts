@@ -19,4 +19,9 @@ router.get(
   SubmissionController.getSubmissionDetail
 );
 
+router.post(
+  '/assignments/:assignmentId/submissions/:submissionId/grade',
+  SubmissionController.gradeSubmission
+);
+
 export default router;

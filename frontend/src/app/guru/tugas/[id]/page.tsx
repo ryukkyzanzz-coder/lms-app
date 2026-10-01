@@ -173,15 +173,72 @@ export default function AssignmentSubmissionsPage() {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   };
 
+  // Grading State
+  const [gradeInput, setGradeInput] = useState<number | string>('');
+  const [feedbackInput, setFeedbackInput] = useState<string>('');
+  const [isGrading, setIsGrading] = useState<boolean>(false);
+  const [gradeSuccessMsg, setGradeSuccessMsg] = useState<string | null>(null);
+
   // Open Submission Detail Modal
   const handleOpenDetailModal = (item: SubmissionRosterItem) => {
     setSelectedItem(item);
+    setGradeInput(item.submission?.nilai ?? '');
+    setFeedbackInput(item.submission?.catatanGuru ?? '');
+    setGradeSuccessMsg(null);
     setIsDetailModalOpen(true);
   };
 
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false);
     setSelectedItem(null);
+    setGradeSuccessMsg(null);
+  };
+
+  const handleGradeSubmission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedItem?.submission?._id || !assignmentId) return;
+    const score = Number(gradeInput);
+    if (isNaN(score) || score < 0 || score > 100) {
+      alert('Nilai harus berupa angka antara 0 dan 100');
+      return;
+    }
+
+    setIsGrading(true);
+    setGradeSuccessMsg(null);
+    try {
+      const res = await fetchAPI<any>(
+        `/teachers/me/assignments/${assignmentId}/submissions/${selectedItem.submission._id}/grade`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            nilai: score,
+            catatanGuru: feedbackInput.trim() || undefined,
+          }),
+        }
+      );
+
+      if (res?.success) {
+        setGradeSuccessMsg('Nilai dan umpan balik berhasil disimpan!');
+        setRefreshTrigger((prev) => prev + 1);
+        setSelectedItem((prev) => {
+          if (!prev || !prev.submission) return prev;
+          return {
+            ...prev,
+            submission: {
+              ...prev.submission,
+              status: 'GRADED',
+              nilai: score,
+              catatanGuru: feedbackInput.trim(),
+            },
+          };
+        });
+      }
+    } catch (err: any) {
+      console.error('Failed to grade submission:', err);
+      alert(err.message || 'Gagal menyimpan nilai');
+    } finally {
+      setIsGrading(false);
+    }
   };
 
   return (
@@ -671,41 +728,132 @@ export default function AssignmentSubmissionsPage() {
                 </div>
               )}
 
-              {/* Files List */}
-              <div>
-                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-2">
-                  Lampiran Berkas ({selectedItem.submission.files.length})
-                </span>
-                <div className="flex flex-col gap-2 max-h-52 overflow-y-auto">
-                  {selectedItem.submission.files.map((file, fIdx) => (
-                    <div
-                      key={fIdx}
-                      className="p-3 bg-muted/30 border border-border rounded-lg flex items-center justify-between text-xs"
+              {/* Link Url if available */}
+              {selectedItem.submission.linkUrl && (
+                <div className="p-3 bg-muted/30 border border-border rounded-lg flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 truncate">
+                    <ExternalLink className="size-4 text-primary shrink-0" />
+                    <span className="text-muted-foreground font-semibold">Tautan Proyek:</span>
+                    <a
+                      href={selectedItem.submission.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline truncate font-mono"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex size-8 rounded bg-primary/10 text-primary items-center justify-center shrink-0">
-                          <FileText className="size-4" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-foreground text-xs">
-                            {file.name}
-                          </span>
-                          <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
-                            <span>{file.mimeType}</span>
-                            <span>•</span>
-                            <span>{formatFileSize(file.size)}</span>
+                      {selectedItem.submission.linkUrl}
+                    </a>
+                  </div>
+                  <Button
+                    render={
+                      <a
+                        href={selectedItem.submission.linkUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="gap-1.5 text-xs shrink-0"
+                      />
+                    }
+                    variant="outline"
+                    size="sm"
+                  >
+                    <span>Buka Tautan</span>
+                    <ExternalLink className="size-3" />
+                  </Button>
+                </div>
+              )}
+
+              {/* Files List */}
+              {selectedItem.submission.files && selectedItem.submission.files.length > 0 && (
+                <div>
+                  <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider block mb-2">
+                    Lampiran Berkas ({selectedItem.submission.files.length})
+                  </span>
+                  <div className="flex flex-col gap-2 max-h-52 overflow-y-auto">
+                    {selectedItem.submission.files.map((file, fIdx) => (
+                      <div
+                        key={fIdx}
+                        className="p-3 bg-muted/30 border border-border rounded-lg flex items-center justify-between text-xs"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="flex size-8 rounded bg-primary/10 text-primary items-center justify-center shrink-0">
+                            <FileText className="size-4" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-foreground text-xs">
+                              {file.name}
+                            </span>
+                            <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-mono">
+                              <span>{file.mimeType}</span>
+                              <span>•</span>
+                              <span>{formatFileSize(file.size)}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <Button render={<a href={file.url} target="_blank" rel="noopener noreferrer" className="gap-1.5 text-xs" />} variant="outline" size="sm">
-                        <span>Buka File</span>
-                        <ExternalLink className="size-3" />
-                      </Button>
-                    </div>
-                  ))}
+                        <Button render={<a href={file.url} target="_blank" rel="noopener noreferrer" className="gap-1.5 text-xs" />} variant="outline" size="sm">
+                          <span>Buka File</span>
+                          <ExternalLink className="size-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {/* Grading Form */}
+              <form onSubmit={handleGradeSubmission} className="flex flex-col gap-3 pt-3 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                    <Award className="size-4 text-primary" />
+                    Penilaian Guru
+                  </span>
+                  {selectedItem.submission.nilai !== undefined && (
+                    <Badge variant="secondary" className="font-bold text-primary">
+                      Nilai Saat Ini: {selectedItem.submission.nilai} / 100
+                    </Badge>
+                  )}
+                </div>
+
+                {gradeSuccessMsg && (
+                  <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 text-xs font-semibold flex items-center gap-2">
+                    <CheckCircle2 className="size-4" />
+                    <span>{gradeSuccessMsg}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-muted-foreground">Nilai Angka (0-100)</label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={1}
+                      placeholder="Contoh: 85"
+                      value={gradeInput}
+                      onChange={(e) => setGradeInput(e.target.value)}
+                      required
+                      className="font-mono text-sm"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2 flex flex-col gap-1">
+                    <label className="text-xs font-medium text-muted-foreground">Catatan / Umpan Balik untuk Siswa</label>
+                    <Input
+                      type="text"
+                      placeholder="Contoh: Struktur tugas rapi, tingkatkan validasi error."
+                      value={feedbackInput}
+                      onChange={(e) => setFeedbackInput(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-1">
+                  <Button type="submit" size="sm" disabled={isGrading || gradeInput === ''} className="gap-1.5 text-xs font-semibold">
+                    {isGrading && <Clock className="size-3.5 animate-spin" />}
+                    <span>{selectedItem.submission.status === 'GRADED' ? 'Perbarui Nilai' : 'Simpan Nilai & Publikasikan'}</span>
+                  </Button>
+                </div>
+              </form>
             </div>
           )}
 

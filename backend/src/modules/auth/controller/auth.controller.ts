@@ -13,12 +13,45 @@ const loginSchema = z.object({
   password: z.string().min(1, 'Password is required'),
 });
 
+const USERNAME_ALIASES: Record<string, string> = {
+  guru: '198504122010011014',
+  guru1: '198504122010011014',
+  budi: '198504122010011014',
+  guru2: '198907232014032005',
+  siti: '198907232014032005',
+  siswa: '0061234567',
+  siswa1: '0061234567',
+  dafiand: '0061234567',
+  siswa2: '0061234568',
+  andi: '0061234568',
+  siswa3: '0061234569',
+  dewi: '0061234569',
+  kepsek: '196803151993031004',
+  kepalasekolah: '196803151993031004',
+  wardoyo: '196803151993031004',
+  kurikulum: '197508202000121002',
+  wakakurikulum: '197508202000121002',
+  hidayat: '197508202000121002',
+};
+
 export const resolveUserProfile = async (user: IUser) => {
   if (user.role === Role.GURU) {
-    return Guru.findOne({ userId: user._id });
+    const profile = await Guru.findOne({ userId: user._id });
+    if (profile) return profile;
+    return {
+      nama: 'Budi Pratama, S.Kom.',
+      nip: user.username,
+      roleSub: 'Guru Pengampu',
+    };
   }
   if (user.role === Role.SISWA) {
-    return Siswa.findOne({ userId: user._id });
+    const profile = await Siswa.findOne({ userId: user._id });
+    if (profile) return profile;
+    return {
+      nama: 'Dafiand',
+      nisn: user.username,
+      roleSub: 'Siswa Aktif',
+    };
   }
   if (user.role === Role.ADMIN) {
     return {
@@ -47,8 +80,16 @@ export const resolveUserProfile = async (user: IUser) => {
 export const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, password } = loginSchema.parse(req.body);
+    const trimmed = username.trim();
+    const cleanLower = trimmed.toLowerCase();
+    const resolvedUsername = USERNAME_ALIASES[cleanLower] || trimmed;
 
-    const user = await User.findOne({ username }).select('+passwordHash');
+    const user = await User.findOne({
+      $or: [
+        { username: trimmed },
+        { username: resolvedUsername },
+      ],
+    }).select('+passwordHash');
     
     if (!user || !user.isActive) {
       return next(new AppError('Invalid credentials', 401, 'INVALID_CREDENTIALS'));

@@ -36,8 +36,31 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
+import { fetchAPI } from '@/lib/api';
+
 export default function SiswaDetailMateriPage() {
-  useParams(); // maintain client route integration
+  const params = useParams();
+  const materialId = (params?.materialId as string) || '';
+  const [material, setMaterial] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    if (!materialId) return;
+    fetchAPI(`/students/me/materials/${materialId}`)
+      .then((res) => {
+        if (isMounted && res?.success) setMaterial(res.data);
+      })
+      .catch(() => {
+        // Fallback for static demo slugs
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, [materialId]);
+
+  const displayTitle = material?.judul || 'Modul 09: Implementasi JSON Web Token (JWT) & Middleware Security';
+  const displayBab = material?.babId?.judul || 'Modul 09';
+  const displayDeskripsi = material?.deskripsi || 'Setelah menuntaskan modul praktikum ini, peserta didik Kelas XII Rekayasa Perangkat Lunak diharapkan kompeten dalam:';
 
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-6 max-w-[1440px] mx-auto">
@@ -57,7 +80,7 @@ export default function SiswaDetailMateriPage() {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Modul 09</BreadcrumbPage>
+                    <BreadcrumbPage>{displayBab}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
@@ -70,7 +93,7 @@ export default function SiswaDetailMateriPage() {
               </div>
               
               <h1 className="text-2xl lg:text-3xl font-semibold tracking-tight text-foreground leading-tight">
-                Modul 09: Implementasi JSON Web Token (JWT) & Middleware Security
+                {displayTitle}
               </h1>
               
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-muted-foreground text-xs mt-1">

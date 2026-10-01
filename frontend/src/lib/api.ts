@@ -5,7 +5,7 @@ export interface ApiError extends Error {
   code?: string;
 }
 
-export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
+export const fetchAPI = async <T = any>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const defaultHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
   };

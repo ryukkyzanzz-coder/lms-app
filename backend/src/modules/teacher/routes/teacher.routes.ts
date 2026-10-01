@@ -10,6 +10,7 @@ import {
   getMyAssignments,
   getMyDashboard,
   getTeacherAnnouncements,
+  createTeacherAnnouncement,
   getTeacherStudentProgress
 } from '../controller/teacher.controller';
 import materialRoutes from '../../material/material.routes';
@@ -40,7 +41,12 @@ router.use('/me', assignmentRoutes);
 router.use('/me', submissionRoutes);
 
 
+router.get('/me/announcements', getTeacherAnnouncements);
+router.post('/me/announcements', createTeacherAnnouncement);
 router.get('/me/classes/:kelasId/announcements', getTeacherAnnouncements);
+router.post('/me/classes/:kelasId/announcements', createTeacherAnnouncement);
+
+router.get('/me/students-progress', getTeacherStudentProgress);
 router.get('/me/classes/:kelasId/students-progress', getTeacherStudentProgress);
 
 export default router;

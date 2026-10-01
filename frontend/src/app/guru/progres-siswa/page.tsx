@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   Download, 
@@ -15,7 +15,8 @@ import {
   Search, 
   LayoutGrid,
   List,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import {
   Breadcrumb,
@@ -57,49 +58,93 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { fetchAPI } from '@/lib/api';
+
+const DEFAULT_STUDENTS = [
+  {
+    nis: '2204128',
+    no: '#24',
+    name: 'Dafiand',
+    initials: 'D',
+    classInfo: 'XII RPL 1 • Hadir Penuh',
+    materiProgress: 92,
+    materiCount: '11 / 12 Modul',
+    assignmentSubmissions: '8/8',
+    assignmentStatus: 'Tepat Waktu',
+    assignmentVariant: 'default' as const,
+    avgGrade: 88.0,
+    lastActivityTime: '15 mnt lalu',
+    lastActivityAction: 'Membaca Bab 3.2 JWT',
+    status: 'Baik',
+    category: 'baik',
+  },
+  {
+    nis: '2204101',
+    no: '#03',
+    name: 'Ahmad Fauzi',
+    initials: 'AF',
+    classInfo: 'Menunggak Tugas 03',
+    materiProgress: 41.6,
+    materiCount: '5 / 12 Modul',
+    assignmentSubmissions: '4/8',
+    assignmentStatus: '2 Terlambat',
+    assignmentVariant: 'destructive' as const,
+    avgGrade: 64.0,
+    lastActivityTime: 'Kemarin, 14:20',
+    lastActivityAction: 'Login Beranda',
+    status: 'Perlu Perhatian',
+    category: 'perhatian',
+  },
+];
 
 export default function ProgresSiswaPage() {
   const [activeTab, setActiveTab] = useState('semua');
   const [selectedBab, setSelectedBab] = useState('semua');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [loading, setLoading] = useState(true);
+  const [classes, setClasses] = useState<any[]>([]);
+  const [selectedClassId, setSelectedClassId] = useState<string>('');
+  const [students, setStudents] = useState<any[]>(DEFAULT_STUDENTS);
 
-  const students = [
-    {
-      nis: '2204128',
-      no: '#24',
-      name: 'Dafiand',
-      initials: 'D',
-      classInfo: 'XII RPL 1 • Hadir Penuh',
-      materiProgress: 92,
-      materiCount: '11 / 12 Modul',
-      assignmentSubmissions: '8/8',
-      assignmentStatus: 'Tepat Waktu',
-      assignmentVariant: 'default' as const,
-      avgGrade: 88.0,
-      lastActivityTime: '15 mnt lalu',
-      lastActivityAction: 'Membaca Bab 3.2 JWT',
-      status: 'Baik',
-      category: 'baik',
-    },
-    {
-      nis: '2204101',
-      no: '#03',
-      name: 'Ahmad Fauzi',
-      initials: 'AF',
-      classInfo: 'Menunggak Tugas 03',
-      materiProgress: 41.6,
-      materiCount: '5 / 12 Modul',
-      assignmentSubmissions: '4/8',
-      assignmentStatus: '2 Terlambat',
-      assignmentVariant: 'destructive' as const,
-      avgGrade: 64.0,
-      lastActivityTime: 'Kemarin, 14:20',
-      lastActivityAction: 'Login Beranda',
-      status: 'Perlu Perhatian',
-      category: 'perhatian',
-    },
-  ];
+  const loadData = async (targetClassId?: string) => {
+    setLoading(true);
+    try {
+      // 1. Fetch teacher classes
+      const classRes = await fetchAPI<any>('/teachers/me/classes').catch(() => null);
+      if (classRes?.data && classRes.data.length > 0) {
+        setClasses(classRes.data);
+        const activeCId = targetClassId || selectedClassId || classRes.data[0]._id;
+        setSelectedClassId(activeCId);
+
+        // 2. Fetch progress for this class
+        const progressRes = await fetchAPI<any>(`/teachers/me/classes/${activeCId}/students-progress`).catch(() => null);
+        if (progressRes?.data && progressRes.data.length > 0) {
+          setStudents(progressRes.data);
+          return;
+        }
+      }
+
+      // Fallback try general progress endpoint
+      const generalProgressRes = await fetchAPI<any>('/teachers/me/students-progress').catch(() => null);
+      if (generalProgressRes?.data && generalProgressRes.data.length > 0) {
+        setStudents(generalProgressRes.data);
+      }
+    } catch (err) {
+      console.error('Failed to load teacher student progress:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleClassChange = (newClassId: string) => {
+    setSelectedClassId(newClassId);
+    loadData(newClassId);
+  };
 
   const filteredStudents = students.filter(student => {
     if (activeTab !== 'semua' && student.category !== activeTab) return false;
@@ -109,6 +154,16 @@ export default function ProgresSiswaPage() {
     }
     return true;
   });
+
+  const activeClassName = classes.find(c => c._id === selectedClassId)?.nama || 'XII RPL 1';
+
+  // Computed summary metrics
+  const avgMateri = students.length > 0
+    ? Math.round(students.reduce((acc, s) => acc + (s.materiProgress || 0), 0) / students.length)
+    : 78.4;
+  const avgNilai = students.length > 0
+    ? Math.round((students.reduce((acc, s) => acc + (s.avgGrade || 0), 0) / students.length) * 10) / 10
+    : 81.2;
 
   return (
     <div className="w-full flex flex-col px-4 lg:px-6 py-6 gap-8">
@@ -137,8 +192,9 @@ export default function ProgresSiswaPage() {
               Pemrograman Web
             </span>
             <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary ml-auto sm:ml-0">
-              XII RPL 1
+              {activeClassName}
             </Badge>
+            {loading && <Loader2 className="size-4 animate-spin text-muted-foreground" />}
           </div>
           <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
             Pantau perkembangan belajar siswa pada kelas yang Anda ajar, ketuntasan modul ajar, dan kepatuhan tugas praktikum.
@@ -146,12 +202,12 @@ export default function ProgresSiswaPage() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => typeof window !== 'undefined' && window.print()}>
             <Download className="size-4 text-primary" />
             <span className="hidden sm:inline">Unduh Rekap Progres</span>
             <span className="sm:hidden">Unduh Rekap</span>
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => loadData(selectedClassId)}>
             <RefreshCcw className="size-4" />
             <span className="hidden sm:inline">Sinkronisasi Data</span>
             <span className="sm:hidden">Sinkron</span>
@@ -171,14 +227,14 @@ export default function ProgresSiswaPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-foreground">78.4%</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground">{avgMateri}%</span>
               <Badge variant="outline" className="gap-1 border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/40 dark:text-green-400">
                 <TrendingUp className="size-3.5" /> +4.2%
               </Badge>
             </div>
-            <Progress value={78.4} className="h-1.5" />
+            <Progress value={avgMateri} className="h-1.5" />
             <span className="text-xs text-muted-foreground font-medium">
-              25 dari 32 siswa aktif menyelesaikan modul
+              {students.length} siswa terdaftar di portal
             </span>
           </CardContent>
         </Card>
